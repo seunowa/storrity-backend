@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -53,6 +54,7 @@ public class UserProfileServiceImpl implements UserProfileService{
         return new CountDto(count);
     }
 
+    @Transactional
     @Override
     public UserProfileDto update(String username, UserProfileUpdateDto dto) {
         UserProfile userProfile = userProfileRepository.findByUsernameForUpdate(username)
