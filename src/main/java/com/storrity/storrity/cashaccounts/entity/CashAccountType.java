@@ -1,0 +1,13 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Enum.java to edit this template
+ */
+package com.storrity.storrity.cashaccounts.entity;
+
+/**
+ *
+ * @author Seun Owa
+ */
+public enum CashAccountType {
+    MAIN, CREDIT, REWARD, OPERATIONAL, PARENT
+}

@@ -1,0 +1,19 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.storrity.storrity.pos.event;
+
+import com.storrity.storrity.pos.entity.Pos;
+import com.storrity.storrity.util.event.AppEvent;
+
+/**
+ *
+ * @author Seun Owa
+ */
+public class PosCreatedEvent extends AppEvent<Pos>{
+    
+    public PosCreatedEvent(Pos data) {
+        super(data);
+    }
+}
