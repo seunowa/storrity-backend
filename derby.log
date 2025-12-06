@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Tue Nov 18 12:48:59 WAT 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.16.1.1 - (1901046): instance a816c00e-019a-96cb-eacf-0000023cdcd0 
+on database directory C:\Users\Prov-Soft-Dev-1\.storrity\data\derby\storritydb with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@11a4022a 
+Loaded from file:/C:/Users/Prov-Soft-Dev-1/.m2/repository/org/apache/derby/derby/10.16.1.1/derby-10.16.1.1.jar
+java.vendor=Azul Systems, Inc.
+java.runtime.version=24.0.1+9
+user.dir=C:\Users\Prov-Soft-Dev-1\Documents\NetBeansProjects\storrity
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

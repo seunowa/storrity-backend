@@ -4,6 +4,12 @@
  */
 package com.storrity.storrity.customer.service;
 
+import com.storrity.storrity.cashaccounts.dto.CashAccountCreationDto;
+import com.storrity.storrity.cashaccounts.entity.CashAccount;
+import com.storrity.storrity.cashaccounts.entity.CashAccountStatus;
+import com.storrity.storrity.cashaccounts.entity.CashAccountType;
+import com.storrity.storrity.cashaccounts.entity.Money;
+import com.storrity.storrity.cashaccounts.service.CashAccountService;
 import com.storrity.storrity.customer.dto.CustomerCreationDto;
 import com.storrity.storrity.customer.dto.CustomerUpdateDto;
 import com.storrity.storrity.customer.entity.Customer;
@@ -25,15 +31,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomerServiceImpl implements CustomerService{
     
     private final CustomerRepository customerRepository;
+    private final CashAccountService cashAccountService;
 
     @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, CashAccountService cashAccountService) {
         this.customerRepository = customerRepository;
+        this.cashAccountService = cashAccountService;
     }
     
     @Transactional
     @Override
     public Customer create(CustomerCreationDto dto) {
+        
         Customer customer = Customer.builder()
                 .city(dto.getCity())
                 .email(dto.getEmail())
@@ -44,6 +53,57 @@ public class CustomerServiceImpl implements CustomerService{
                 .build();
         
 //        @Todo customer cash accounts here
+       if(dto.getPhone() != null){
+           
+
+       }
+       
+       //        create main cash account
+            CashAccount mainCashAccount = 
+                    cashAccountService.create(CashAccountCreationDto
+                        .builder()
+//                        .cashAccountId(dto.getPhone())
+                        .cashAccountType(CashAccountType.MAIN)
+                        .email(dto.getEmail())
+                        .enforceMinimumBalance(true)
+                        .minimumBalance(new Money(0))
+                        .name(dto.getFullName())
+                        .phone(dto.getPhone())
+                        .status(CashAccountStatus.ACTIVE)
+                        .build());
+           
+//        create credit cash account
+            CashAccount creditCashAccount = 
+                    cashAccountService.create(CashAccountCreationDto
+                        .builder()
+//                        .cashAccountId(dto.getPhone())
+                        .cashAccountType(CashAccountType.CREDIT)
+                        .email(dto.getEmail())
+                        .enforceMinimumBalance(true)
+                        .minimumBalance(new Money(0))
+                        .name(dto.getFullName())
+                        .phone(dto.getPhone())
+                        .status(CashAccountStatus.ACTIVE)
+                        .build());
+           
+//        create reward cash account
+            CashAccount rewardCashAccount = 
+                    cashAccountService.create(CashAccountCreationDto
+                        .builder()
+//                        .cashAccountId(dto.getPhone())
+                        .cashAccountType(CashAccountType.REWARD)
+                        .email(dto.getEmail())
+                        .enforceMinimumBalance(true)
+                        .minimumBalance(new Money(0))
+                        .name(dto.getFullName())
+                        .phone(dto.getPhone())
+                        .status(CashAccountStatus.ACTIVE)
+                        .build());
+           
+           
+           customer.setMainCashAccountId(mainCashAccount.getId());
+           customer.setCreditCashAccounId(creditCashAccount.getId());
+           customer.setRewardCashAccountId(rewardCashAccount.getId());
 
         Customer savedCustomer = customerRepository.save(customer);
         return savedCustomer;

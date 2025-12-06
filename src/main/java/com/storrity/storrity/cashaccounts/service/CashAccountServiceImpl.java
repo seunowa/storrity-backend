@@ -44,7 +44,16 @@ public class CashAccountServiceImpl implements CashAccountService{
     }
     
     private String generateAccountId(){
-        return String.valueOf(random.nextLong(99999) + random.nextLong(99999));
+//        return String.valueOf(random.nextLong(99999) + random.nextLong(99999));
+        String accId = "";
+        for(int i = 0; i < 10; i++){
+            if(i == 0){
+                accId += String.valueOf(random.nextInt(1, 10));
+            }else{
+                accId += String.valueOf(random.nextInt(0, 10));
+            }            
+        }
+        return accId;
     }
 
     @Override

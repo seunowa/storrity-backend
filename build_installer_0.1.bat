@@ -11,7 +11,7 @@ echo =========================================
          --win-shortcut ^
          --win-menu ^
          --win-console ^
-		 --java-options "-Dspring.profiles.active=prod" ^
+         --java-options "-Dspring.profiles.active=webdev -Dspring.config.additional-location=file:%USERPROFILE%\.storrity\conf\storrity.properties" ^
          --dest "C:\Users\Prov-Soft-Dev-1\Documents\NetBeansProjects\storrity\dist"
 
 if %ERRORLEVEL% NEQ 0 (

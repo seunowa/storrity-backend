@@ -24,10 +24,11 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class SupplyItemCreationDto {
-    @NotNull
+    @NotNull(message = "Product id is required")
     private UUID productId;
     private String batchNumber;
     private LocalDate expiryDate;
+    @NotNull(message = "pckQty is required")
     private List<PckQty> pckQty;
     private Money costPrice;
     

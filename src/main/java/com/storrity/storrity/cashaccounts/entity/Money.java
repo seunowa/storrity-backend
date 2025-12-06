@@ -48,10 +48,16 @@ public class Money {
     }
 
     public Money add(Money other) {
+        if(other == null){
+            return new Money(this.valueInMicroNaira);
+        }
         return new Money(this.valueInMicroNaira + other.valueInMicroNaira);
     }
 
     public Money subtract(Money other) {
+        if(other == null){
+            return new Money(this.valueInMicroNaira);
+        }
         return new Money(this.valueInMicroNaira - other.valueInMicroNaira);
     }
     
