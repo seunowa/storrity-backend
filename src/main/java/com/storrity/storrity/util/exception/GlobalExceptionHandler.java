@@ -48,6 +48,13 @@ public class GlobalExceptionHandler {
         return new ApiError(400, "Resource already exists", ex.getMessage());
     }
     
+    @ExceptionHandler(BadRequestAppException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleBadRequest(BadRequestAppException ex) {
+        System.err.println(ex);
+        return new ApiError(400, "Bad request", ex.getMessage());
+    }
+    
     @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleIllegalStateException(IllegalStateException ex) {
