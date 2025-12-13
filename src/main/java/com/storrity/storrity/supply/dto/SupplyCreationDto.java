@@ -42,5 +42,6 @@ public class SupplyCreationDto {
     private String enteredByUserId;
     private String receivedByUserId;
     private String approvedByUserId;
-    private Collection<SupplyItemCreationDto> items;    
+    private Collection<SupplyItemCreationDto> items;
+    private String performedBy;  
 }

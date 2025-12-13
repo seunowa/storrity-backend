@@ -5,9 +5,15 @@
 package com.storrity.storrity.supply.service;
 
 import com.storrity.storrity.cashaccounts.entity.Money;
+import com.storrity.storrity.product.dto.StockFlow;
 import com.storrity.storrity.product.entity.Product;
 import com.storrity.storrity.product.entity.ProductPackage;
+import com.storrity.storrity.product.entity.SupplyStatus;
 import com.storrity.storrity.product.repository.ProductRepository;
+import com.storrity.storrity.stockmovement.dto.StockMovementInstruction;
+import com.storrity.storrity.stockmovement.dto.StockMovementInstructionItem;
+import com.storrity.storrity.stockmovement.entity.PckQty;
+import com.storrity.storrity.stockmovement.service.StockMovementService;
 import com.storrity.storrity.store.entity.Store;
 import com.storrity.storrity.store.service.StoreService;
 import com.storrity.storrity.supply.dto.SupplyCreationDto;
@@ -22,7 +28,9 @@ import com.storrity.storrity.supply.event.SupplyUpdatedEvent;
 import com.storrity.storrity.supply.repository.SupplyItemRepository;
 import com.storrity.storrity.supply.repository.SupplyRepository;
 import com.storrity.storrity.util.dto.CountDto;
+import com.storrity.storrity.util.exception.BadRequestAppException;
 import com.storrity.storrity.util.exception.ResourceNotFoundAppException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,15 +52,17 @@ public class SupplyServiceImpl implements SupplyService{
     private final SupplyRepository supplyRepository;
     private final SupplyItemRepository supplyItemRepository;
     private final ProductRepository productRepository;
+    private final StockMovementService stockMovementService;
     private final ApplicationEventPublisher eventPublisher;
 
     public SupplyServiceImpl(StoreService storeService, SupplyItemRepository supplyItemRepository
             , SupplyRepository supplyRepository, ProductRepository productRepository
-            , ApplicationEventPublisher eventPublisher) {
+            ,StockMovementService stockMovementService, ApplicationEventPublisher eventPublisher) {
         this.storeService = storeService;
         this.supplyRepository = supplyRepository;
         this.supplyItemRepository = supplyItemRepository;
         this.productRepository = productRepository;
+        this.stockMovementService = stockMovementService;
         this.eventPublisher = eventPublisher;
     }    
 
@@ -78,9 +88,14 @@ public class SupplyServiceImpl implements SupplyService{
         List<SupplyItem> savedSupplyItems = supplyItemRepository.saveAll(supplyItems);
         
         savedSupply.setItems(savedSupplyItems);
-        eventPublisher.publishEvent(new SupplyCreatedEvent(savedSupply));
         
-//        @Todo based on supply status do stock movement
+//      if supply status is RECEIVED create stock movement
+        if(SupplyStatus.RECEIVED.equals(dto.getSupplyStatus())){
+            StockMovementInstruction smInstruction = buildStockMovementInstruction(supplyItems, dto);
+            stockMovementService.create(smInstruction);
+        }        
+        
+        eventPublisher.publishEvent(new SupplyCreatedEvent(savedSupply));
         return SupplyDto.from(savedSupply);
     }
 
@@ -113,7 +128,9 @@ public class SupplyServiceImpl implements SupplyService{
         
         Supply prevSsupply = supplyRepository.findByIdForUpdate(id)
                 .orElseThrow(()->new ResourceNotFoundAppException("Supply not found with id: " + id));
-        // @Todo check prevSsupply status and determin if it can be updated to the new status in the update dto
+        // check prevSsupply status and determin if it can be updated to the new status in the update dto
+        checkIfMutationAllowed(prevSsupply);
+        
         Store store = storeService.fetch(dto.getStoreId());
         // update prevSsupply propoerties excluding prevSsupply items which will be updataed down the line
         updateProperties(dto, prevSsupply, store);        
@@ -137,9 +154,14 @@ public class SupplyServiceImpl implements SupplyService{
         
         List<SupplyItem> savedSupplyItems = supplyItemRepository.saveAll(supplyItems);        
         
-        savedSupply.setItems(savedSupplyItems);        
+        savedSupply.setItems(savedSupplyItems);       
         
-        //        @Todo based on supply status do stock movement
+//      if supply status is RECEIVED create stock movement
+        if(SupplyStatus.RECEIVED.equals(dto.getSupplyStatus())){
+            StockMovementInstruction smInstruction = buildStockMovementInstruction(supplyItems, dto);
+            stockMovementService.create(smInstruction);
+        }
+        
         eventPublisher.publishEvent(new SupplyUpdatedEvent(savedSupply, prevSsupply));
         return SupplyDto.from(savedSupply);
     }
@@ -150,8 +172,9 @@ public class SupplyServiceImpl implements SupplyService{
         Supply s = supplyRepository.findByIdForUpdate(id)
                 .orElseThrow(()->new ResourceNotFoundAppException("Supply not found with id: " + id));
         
-//        @Todo check prevSsupply status and determine if deleting prevSsupply is allowed
-//        if delete is not allowed throw exception
+//      check prevSsupply status and determine if deleting prevSsupply is allowed
+//      if delete is not allowed throw exception
+        checkIfMutationAllowed(s);
         
         supplyRepository.delete(s);
 //        eventPublisher.publishEvent(new SupplyDeletedEvent(s));
@@ -263,5 +286,34 @@ public class SupplyServiceImpl implements SupplyService{
             .reduce(new Money(0L), Money::add);
     
         return totalCostPrice;
+    }
+    
+    private StockMovementInstruction buildStockMovementInstruction(List<SupplyItem> supplyItems, SupplyCreationDto dto){
+        
+        List<StockMovementInstructionItem> instructionItems = supplyItems
+                .stream()
+                .map((s)->{
+                    List<PckQty> qtyList = new ArrayList<>(s.getPckQty());
+                    return new StockMovementInstructionItem(s.getQuantity(), StockFlow.INFLOW, s.getProduct().getId(), qtyList);})
+                .collect(Collectors.toList());
+        
+        StockMovementInstruction smInstruction = StockMovementInstruction.builder()
+                .description("supply")
+                .instructionItems(instructionItems)
+                .performedBy(dto.getPerformedBy())
+                .transactionRef(dto.getTransactionRef())                
+                .build();
+        
+        return smInstruction;
+    }
+    
+    private void checkIfMutationAllowed(Supply s){
+        if(SupplyStatus.RECEIVED.equals(s.getSupplyStatus())){
+           throw new  BadRequestAppException("Supply status is RECEIVED it can not be deleted");
+        }        
+        
+        if(SupplyStatus.RETURNED.equals(s.getSupplyStatus())){
+           throw new  BadRequestAppException("Supply status is RETURNED it can not be deleted");
+        }
     }
 }

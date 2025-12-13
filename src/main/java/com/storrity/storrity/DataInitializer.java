@@ -182,7 +182,7 @@ public class DataInitializer implements CommandLineRunner{
                 .supplierPhone("suppier phone")
                 .supplyDate(LocalDate.now())
                 .transactionRef("supplyref101")
-                .supplyStatus(SupplyStatus.CLOSED)
+                .supplyStatus(SupplyStatus.RECEIVED)
                 .build();
         
         supplyService.create(scDto);

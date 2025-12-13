@@ -9,13 +9,11 @@ package com.storrity.storrity.licernse.controller;
  * @author Seun Owa
  */
 
-import com.storrity.storrity.cart.dto.PricedCartDto;
 import com.storrity.storrity.license.dto.LicenseDto;
 import com.storrity.storrity.license.service.LicenseJwtUtil;
 import com.storrity.storrity.license.service.MachineIdentifier;
 import com.storrity.storrity.util.exception.ApiError;
 import com.storrity.storrity.util.exception.AuthenticationError;
-import com.storrity.storrity.util.exception.BadRequestAppException;
 import com.storrity.storrity.util.exception.ServerError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
