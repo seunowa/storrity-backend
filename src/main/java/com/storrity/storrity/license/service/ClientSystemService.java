@@ -24,5 +24,4 @@ public interface ClientSystemService {
     public CountDto count(ClientSystemQueryParams params);
     public ClientSystem update(UUID id, ClientSystemUpdateDto dto);
     public ClientSystem delete(UUID id);
-    public ClientSystem loggedIn(UUID id);
 }

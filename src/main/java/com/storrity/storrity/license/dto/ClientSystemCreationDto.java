@@ -20,5 +20,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class ClientSystemCreationDto {
     private String clientId;
+    private String name;
     private ClientSystemStatus status;
 }

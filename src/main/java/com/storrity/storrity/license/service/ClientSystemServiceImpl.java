@@ -7,55 +7,104 @@ package com.storrity.storrity.license.service;
 import com.storrity.storrity.license.dto.ClientSystemCreationDto;
 import com.storrity.storrity.license.dto.ClientSystemUpdateDto;
 import com.storrity.storrity.license.entity.ClientSystem;
+import com.storrity.storrity.license.entity.ClientSystemStatus;
+import com.storrity.storrity.license.event.ClientSystemCreatedEvent;
+import com.storrity.storrity.license.event.ClientSystemDeleteEvent;
+import com.storrity.storrity.license.event.ClientSystemUpdateEvent;
 import com.storrity.storrity.license.repository.ClientSystemQueryParams;
+import com.storrity.storrity.license.repository.ClientSystemRepository;
 import com.storrity.storrity.util.dto.CountDto;
+import com.storrity.storrity.util.exception.ResourceNotFoundAppException;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author Seun Owa
  */
+@Service
 public class ClientSystemServiceImpl implements ClientSystemService{
+    
+    private final ClientSystemRepository clientSystemRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    public ClientSystemServiceImpl(ClientSystemRepository clientSystemRepository, ApplicationEventPublisher eventPublisher) {
+        this.clientSystemRepository = clientSystemRepository;
+        this.eventPublisher = eventPublisher;
+    }    
+
+    @Transactional
     @Override
     public ClientSystem create(ClientSystemCreationDto dto) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        ClientSystem cs = ClientSystem
+                .builder()
+                .clientId(dto.getClientId())
+                .name(dto.getName())
+                .status(dto.getStatus()!=null ? dto.getStatus() : ClientSystemStatus.INACTIVE)
+                .build();
+        
+        clientSystemRepository.save(cs);
+        eventPublisher.publishEvent(new ClientSystemCreatedEvent(cs));
+        return cs;
     }
 
     @Override
     public ClientSystem fetch(UUID id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return clientSystemRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundAppException("Client system not found with id: " + id));
     }
 
     @Override
     public ClientSystem fetchByClientId(String clientId) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return clientSystemRepository.findByClientId(clientId)
+                .orElseThrow(()-> new ResourceNotFoundAppException("Client system not found with clientId: " + clientId));
     }
 
     @Override
     public List<ClientSystem> list(ClientSystemQueryParams params) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return clientSystemRepository.list(params);
     }
 
     @Override
     public CountDto count(ClientSystemQueryParams params) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return CountDto
+                .builder()
+                .count(clientSystemRepository.countRecords(params))
+                .build();
     }
 
+    @Transactional
     @Override
     public ClientSystem update(UUID id, ClientSystemUpdateDto dto) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        ClientSystem cs = clientSystemRepository.findByIdForUpdate(id)
+                .orElseThrow(()-> new ResourceNotFoundAppException("Client system not found with id: " + id));
+        ClientSystem beforeSave = cs.copy();
+        
+        if(dto.getName()!= null){
+            cs.setName(dto.getName());
+        }
+        
+        if(dto.getStatus() != null){
+            cs.setStatus(dto.getStatus());
+        }
+        
+        ClientSystem savedCs = clientSystemRepository.save(cs);
+        eventPublisher.publishEvent(new ClientSystemUpdateEvent(savedCs, beforeSave));
+        return savedCs;
     }
 
+    @Transactional
     @Override
-    public ClientSystem delete(UUID id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public ClientSystem loggedIn(UUID id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public ClientSystem delete(UUID id) {        
+        ClientSystem cs = fetch(id);
+        clientSystemRepository.delete(cs);
+        eventPublisher.publishEvent(new ClientSystemDeleteEvent(cs));
+        return cs;
     }
     
 }

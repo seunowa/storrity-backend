@@ -45,7 +45,9 @@ public class ClientSystem {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     @Column(name = "client_id")
-    private String clientId;
+    private String clientId;    
+    @Column(name = "name")
+    private String name;
     @NotNull
     @Column(name = "client_system_status")
     @Enumerated(EnumType.STRING)
@@ -68,5 +70,18 @@ public class ClientSystem {
     public void preUpdate(){
         LocalDateTime now = LocalDateTime.now();
         updatedAt = now;
+    }
+    
+    public ClientSystem copy(){
+        return ClientSystem
+                .builder()
+                .id(id)
+                .clientId(clientId)
+                .name(name)
+                .status(status)
+                .lastLogingAt(lastLogingAt)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
+                .build();
     }
 }

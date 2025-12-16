@@ -20,4 +20,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class ClientSystemUpdateDto {    
     private ClientSystemStatus status;
+    private String name;
 }

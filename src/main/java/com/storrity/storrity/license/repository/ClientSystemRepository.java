@@ -5,7 +5,6 @@
 package com.storrity.storrity.license.repository;
 
 import com.storrity.storrity.license.entity.ClientSystem;
-import com.storrity.storrity.product.entity.Product;
 import jakarta.persistence.LockModeType;
 import java.util.Collection;
 import java.util.List;
@@ -23,12 +22,19 @@ import org.springframework.data.repository.query.Param;
 public interface ClientSystemRepository extends JpaRepository<ClientSystem, UUID>, ClientSystemRepositoryCustom{
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT c FROM ClientSystem c WHERE c.id = :id")
-    Optional<Product> findByIdForUpdate(@Param("id") UUID id);
+    Optional<ClientSystem> findByIdForUpdate(@Param("id") UUID id);
     
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT c FROM ClientSystem c WHERE c.id IN :ids")
-        List<Product> findAllByIdForUpdate(@Param("ids") Collection<UUID> ids);
+        List<ClientSystem> findAllByIdForUpdate(@Param("ids") Collection<UUID> ids);
         
     @Query("SELECT c FROM ClientSystem c WHERE c.id IN :ids")
-        List<Product> findAllById(@Param("ids") Collection<UUID> ids);
+        List<ClientSystem> findAllById(@Param("ids") Collection<UUID> ids);
+        
+    @Query("SELECT c FROM ClientSystem c WHERE c.clientId = :clientId")
+    Optional<ClientSystem> findByClientId(@Param("clientId") String clientId);
+        
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT c FROM ClientSystem c WHERE c.clientId = :clientId")
+    Optional<ClientSystem> findByClientIdForUpdate(@Param("clientId") String clientId);
 }
