@@ -5,6 +5,8 @@
 package com.storrity.storrity.security.controller;
 
 import com.storrity.storrity.security.dto.LoginRequestDto;
+import com.storrity.storrity.security.dto.LoginSuccessDto;
+import com.storrity.storrity.security.dto.RootUserInitSuccessDto;
 import com.storrity.storrity.security.dto.UserCreationDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,6 +20,7 @@ import com.storrity.storrity.security.repository.UserRepository;
 import com.storrity.storrity.security.repository.UserRoleRepository;
 import com.storrity.storrity.security.service.AppUserService;
 import com.storrity.storrity.security.service.JwtUtil;
+import com.storrity.storrity.util.exception.BadRequestAppException;
 import com.storrity.storrity.util.exception.ServerError;
 import com.storrity.storrity.util.exception.ValidationError;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -84,6 +87,9 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto request) {
+        
+//        @Todo check if clientId is registered (is licensed)
+        
         AppUser user = userRepo.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -95,11 +101,61 @@ public class AuthController {
                 .map(p -> "PERM_" + p.name())
                 .toList();
 
-        String token = jwtUtil.generateToken(user.getUsername(), authorities);
+        String token = jwtUtil.generateToken(user.getUsername(), request.getClientId(), authorities);
         return ResponseEntity.ok(Map.of("token", token));
+//        return LoginSuccessDto.builder().build();
+    }
+    
+    @Operation(
+        operationId = "init",
+        description = "initialize root user",
+        summary = "Initialize root user"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Root user initialization successful",
+            content = @Content(schema = @Schema(implementation = RootUserInitSuccessDto.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Validation error",
+            content = @Content(schema = @Schema(implementation = ValidationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected error",
+            content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })
+    @PostMapping("/init")
+    public RootUserInitSuccessDto init(@Valid @RequestBody LoginRequestDto request) {
+        
+//        @Todo check if the system has at least one and user is activated... consider other steps to take
+        long noOfUsers = userRepo.count();
+        if(noOfUsers > 0){
+            throw new BadRequestAppException("You are not allowed to reinitialize root user");
+        }
+        
+        // Create admin role with all permissions
+        Set<UserPermission> allPerms = EnumSet.allOf(UserPermission.class);
+        UserRole adminRole = new UserRole();
+        adminRole.setId("ADMIN");
+        adminRole.setPermissions(allPerms);
+        roleRepo.save(adminRole);
+
+        UserCreationDto dto = new UserCreationDto();
+        dto.setUsername(request.getUsername());
+        dto.setPassword(request.getPassword());
+        dto.setRole(adminRole.getId());
+        appUserService.create(dto);
+
+        System.out.println("✅ Added admin user with username");
+        
+        return RootUserInitSuccessDto.builder().message("Root user added succefully").build();
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void seedAdmin() {
         if (userRepo.findByUsername("admin").isPresent()) return;
 

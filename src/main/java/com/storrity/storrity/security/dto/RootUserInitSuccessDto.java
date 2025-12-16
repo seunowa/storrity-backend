@@ -4,15 +4,14 @@
  */
 package com.storrity.storrity.security.dto;
 
-
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+
 /**
  *
  * @author Seun Owa
@@ -23,18 +22,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
-public class LoginRequestDto {
-
-    @Schema(description = "Username of the user", example = "admin", required = true)
-    @NotBlank(message = "Username is required")
-    private String username;
-
-    @Schema(description = "Password of the user", example = "password123", required = true)
-    @NotBlank(message = "Password is required")
-    private String password;
-
-    @Schema(description = "Client Id", example = "your-client-id", required = true)
-    @NotBlank(message = "clientId is required")
-    private String clientId;
-
+@Schema(description = "Init root user response object")
+public class RootUserInitSuccessDto {
+    private String message;
 }

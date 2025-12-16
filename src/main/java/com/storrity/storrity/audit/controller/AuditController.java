@@ -7,7 +7,6 @@ package com.storrity.storrity.audit.controller;
 import com.storrity.storrity.audit.entity.Audit;
 import com.storrity.storrity.audit.entity.AuditQueryParam;
 import com.storrity.storrity.audit.service.AuditService;
-import com.storrity.storrity.store.entity.Store;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.ApiError;
 import com.storrity.storrity.util.exception.AuthenticationError;

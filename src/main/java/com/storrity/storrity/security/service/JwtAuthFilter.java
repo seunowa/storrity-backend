@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.io.IOException;
 import java.util.stream.Collectors;
+import org.apache.catalina.realm.AuthenticatedUserRealm;
 
 /**
  *
@@ -33,11 +34,15 @@ public class JwtAuthFilter extends GenericFilter {
             String token = header.substring(7);
             if (jwtUtil.isValid(token)) {
                 var username = jwtUtil.extractUsername(token);
+                String clientId = jwtUtil.extractClientId(token);
+                
                 var authorities = jwtUtil.extractAuthorities(token).stream()
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
+                
+                var principal = new AuthenticatedUser(username, clientId);
 
-                var auth = new UsernamePasswordAuthenticationToken(username, null, authorities);
+                var auth = new UsernamePasswordAuthenticationToken(principal, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
