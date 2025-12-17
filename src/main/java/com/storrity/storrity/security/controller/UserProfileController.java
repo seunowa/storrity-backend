@@ -10,7 +10,7 @@ import com.storrity.storrity.security.entity.UserProfileQueryParams;
 import com.storrity.storrity.security.service.UserProfileService;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.ApiError;
-import com.storrity.storrity.util.exception.AuthenticationError;
+import com.storrity.storrity.util.exception.AuthorizationError;
 import com.storrity.storrity.util.exception.ServerError;
 import com.storrity.storrity.util.exception.ValidationError;
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,7 +71,7 @@ public class UserProfileController {
         @ApiResponse(
             responseCode = "403", 
             description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",
@@ -102,7 +102,7 @@ public class UserProfileController {
         @ApiResponse(
             responseCode = "403", 
             description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",
@@ -134,7 +134,7 @@ public class UserProfileController {
         @ApiResponse(
             responseCode = "403", 
             description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",
@@ -166,7 +166,7 @@ public class UserProfileController {
         @ApiResponse(
             responseCode = "403", 
             description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",

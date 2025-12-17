@@ -21,20 +21,20 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
-@Schema(description = "Authentication error response")
-public class AuthenticationError {
+@Schema(description = "Autnentication error response")
+public class AuthorizationError {
     
-    @Schema(example = "401")
+    @Schema(example = "403")
     private int status;
 
-    @Schema(example = "Authentication error")
+    @Schema(example = "Authorization error")
     private String error;
 
-    @Schema(example = "Invalid credential or license")
+    @Schema(example = "Access denied - you not authorized to access this resource")
     private String message;
 
-    public AuthenticationError(String message) {
-        this.status = 401;
+    public AuthorizationError(String message) {
+        this.status = 403;
         this.error = "Authentication error";
         this.message = message;
     }

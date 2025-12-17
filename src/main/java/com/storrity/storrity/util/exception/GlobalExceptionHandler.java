@@ -69,16 +69,23 @@ public class GlobalExceptionHandler {
         return new ApiError(404, "Not Found", ex.getMessage());
     }
     
-// handleAuthenticationException below is not working as Spring security filter chain interceps the flow before it reaches this point
+//    @Todo
+// handleAuthorizationException below is not working as Spring security filter chain interceps the flow before it reaches this point
 //    to customize the paylod on response implement CustomAccessDeniedHandler implements AccessDeniedHandler
 //    I have ingored this issue as it is not priority at the moment
-    @ExceptionHandler(AuthenticationException.class)
+    @ExceptionHandler(AuthenticationException.class)//the exception class here appears to be the wrong exception class to trap
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public AuthenticationError handleAuthenticationException(AuthenticationException ex) {
+    public AuthorizationError handleAuthorizationException(AuthenticationException ex) {
         System.err.println(ex);
         String message = "Access denied - you do not have permission to access this resource";
-        return new AuthenticationError(message);
-//        return new ApiError(403, "Access denied - you do not have permission to access this resource", ex.getMessage());
+        return new AuthorizationError(message);
+    }    
+    
+    @ExceptionHandler(AuthenticationAppException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public AuthenticationError handleAuthenticationException(AuthenticationAppException ex) {
+        System.err.println(ex);
+        return new AuthenticationError(ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

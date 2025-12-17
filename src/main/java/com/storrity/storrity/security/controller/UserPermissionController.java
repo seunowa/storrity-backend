@@ -6,7 +6,7 @@ package com.storrity.storrity.security.controller;
 
 import com.storrity.storrity.security.entity.UserPermission;
 import com.storrity.storrity.security.service.UserPermissionsService;
-import com.storrity.storrity.util.exception.AuthenticationError;
+import com.storrity.storrity.util.exception.AuthorizationError;
 import com.storrity.storrity.util.exception.ServerError;
 import com.storrity.storrity.util.exception.ValidationError;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,7 +62,7 @@ public class UserPermissionController {
         @ApiResponse(
             responseCode = "403", 
             description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",

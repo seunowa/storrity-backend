@@ -16,7 +16,7 @@ import com.storrity.storrity.license.service.LicenseJwtUtil;
 import com.storrity.storrity.license.service.LicenseService;
 import com.storrity.storrity.license.service.MachineIdentifier;
 import com.storrity.storrity.util.exception.ApiError;
-import com.storrity.storrity.util.exception.AuthenticationError;
+import com.storrity.storrity.util.exception.AuthorizationError;
 import com.storrity.storrity.util.exception.ServerError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

@@ -11,7 +11,7 @@ import com.storrity.storrity.cart.service.CheckoutService;
 import com.storrity.storrity.store.entity.Store;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.ApiError;
-import com.storrity.storrity.util.exception.AuthenticationError;
+import com.storrity.storrity.util.exception.AuthorizationError;
 import com.storrity.storrity.util.exception.ServerError;
 import com.storrity.storrity.util.exception.ValidationError;
 import io.swagger.v3.oas.annotations.Operation;
@@ -70,7 +70,7 @@ public class CheckoutController {
         @ApiResponse(
             responseCode = "403", 
             description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",
@@ -103,7 +103,7 @@ public class CheckoutController {
         @ApiResponse(
             responseCode = "403", 
             description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",
@@ -134,7 +134,7 @@ public class CheckoutController {
         @ApiResponse(
             responseCode = "403", 
             description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",
@@ -166,7 +166,7 @@ public class CheckoutController {
         @ApiResponse(
             responseCode = "403", 
             description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",

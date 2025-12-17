@@ -24,6 +24,7 @@ import com.storrity.storrity.security.repository.UserRepository;
 import com.storrity.storrity.security.repository.UserRoleRepository;
 import com.storrity.storrity.security.service.AppUserService;
 import com.storrity.storrity.security.service.JwtUtil;
+import com.storrity.storrity.util.exception.AuthenticationAppException;
 import com.storrity.storrity.util.exception.BadRequestAppException;
 import com.storrity.storrity.util.exception.ServerError;
 import com.storrity.storrity.util.exception.ValidationError;
@@ -77,13 +78,17 @@ public class AuthController {
     @ApiResponses({
         @ApiResponse(
             responseCode = "200",
-            description = "Login successful"
-//            content = @Content(schema = @Schema(implementation = Store.class))
+            description = "Login successful",
+            content = @Content(schema = @Schema(implementation = LoginSuccessDto.class))
         ),
         @ApiResponse(
             responseCode = "400",
             description = "Validation error",
             content = @Content(schema = @Schema(implementation = ValidationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Client system is not licensed"
         ),
         @ApiResponse(
             responseCode = "401",
@@ -96,16 +101,17 @@ public class AuthController {
         )
     })
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto request) {
+    public LoginSuccessDto login(@Valid @RequestBody LoginRequestDto request) {
         
 //        @Todo check if clientId is registered (is licensed)
         licenseService.isClientSystemLicensed(request.getClientId());
         
         AppUser user = userRepo.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new AuthenticationAppException("Invalid credentials"));
 
         if (!encoder.matches(request.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid credentials"));
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid credentials"));
+            throw new AuthenticationAppException("Invalid credentials");
         }
 
         var authorities = user.getRole().getPermissions().stream()
@@ -113,9 +119,28 @@ public class AuthController {
                 .toList();
 
         String token = jwtUtil.generateToken(user.getUsername(), request.getClientId(), authorities);
-        return ResponseEntity.ok(Map.of("token", token));
-//        return LoginSuccessDto.builder().build();
+        return LoginSuccessDto.builder().token(token).build();
     }
+//    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto request) {
+//        
+////        @Todo check if clientId is registered (is licensed)
+//        licenseService.isClientSystemLicensed(request.getClientId());
+//        
+//        AppUser user = userRepo.findByUsername(request.getUsername())
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        if (!encoder.matches(request.getPassword(), user.getPassword())) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid credentials"));
+//        }
+//
+//        var authorities = user.getRole().getPermissions().stream()
+//                .map(p -> "PERM_" + p.name())
+//                .toList();
+//
+//        String token = jwtUtil.generateToken(user.getUsername(), request.getClientId(), authorities);
+//        return ResponseEntity.ok(Map.of("token", token));
+////        return LoginSuccessDto.builder().build();
+//    }
     
     @Operation(
         operationId = "init",
