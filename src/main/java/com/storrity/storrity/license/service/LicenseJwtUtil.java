@@ -62,7 +62,7 @@ public class LicenseJwtUtil {
         }
     }
 
-    public String extractUsername(String token) {
+    public String extractSubject(String token) {
         return getClaims(token).getSubject();
     }
 
@@ -81,7 +81,7 @@ public class LicenseJwtUtil {
                 .getBody();
     }
     
-    public LicenseDto getInstalledLicense(){
+    public LicenseDto getInstalledLicenseDetails(){
         String token = fetchLicense();
         Claims claims = getClaims(token);
         return LicenseDto.builder()
@@ -139,7 +139,7 @@ public class LicenseJwtUtil {
     
     public LicenseDto validateLicense(String token){
         if (!StringUtils.hasText(token)) {
-            throw new BadRequestAppException("License file is empty or invalid.");
+            throw new BadRequestAppException("License provided is empty or invalid.");
          }
 
         // Parse and validate token

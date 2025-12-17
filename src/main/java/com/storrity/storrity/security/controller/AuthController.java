@@ -4,6 +4,10 @@
  */
 package com.storrity.storrity.security.controller;
 
+import com.storrity.storrity.license.dto.ClientSystemCreationDto;
+import com.storrity.storrity.license.entity.ClientSystemStatus;
+import com.storrity.storrity.license.service.ClientSystemService;
+import com.storrity.storrity.license.service.LicenseService;
 import com.storrity.storrity.security.dto.LoginRequestDto;
 import com.storrity.storrity.security.dto.LoginSuccessDto;
 import com.storrity.storrity.security.dto.RootUserInitSuccessDto;
@@ -50,13 +54,19 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder encoder;
     private final AppUserService appUserService;
+    private final ClientSystemService clientSystemService;
+    private final LicenseService licenseService;
 
-    public AuthController(UserRepository userRepo, UserRoleRepository roleRepo, JwtUtil jwtUtil, PasswordEncoder encoder, AppUserService appUserService) {
+    public AuthController(UserRepository userRepo, UserRoleRepository roleRepo
+            , JwtUtil jwtUtil, PasswordEncoder encoder, AppUserService appUserService
+            , ClientSystemService clientSystemService, LicenseService licenseService) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
         this.jwtUtil = jwtUtil;
         this.encoder = encoder;
         this.appUserService = appUserService;
+        this.clientSystemService = clientSystemService;
+        this.licenseService = licenseService;
     }
     
     @Operation(
@@ -89,6 +99,7 @@ public class AuthController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto request) {
         
 //        @Todo check if clientId is registered (is licensed)
+        licenseService.isClientSystemLicensed(request.getClientId());
         
         AppUser user = userRepo.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -143,7 +154,8 @@ public class AuthController {
         adminRole.setId("ADMIN");
         adminRole.setPermissions(allPerms);
         roleRepo.save(adminRole);
-
+        
+        // Create user
         UserCreationDto dto = new UserCreationDto();
         dto.setUsername(request.getUsername());
         dto.setPassword(request.getPassword());
@@ -151,6 +163,17 @@ public class AuthController {
         appUserService.create(dto);
 
         System.out.println("✅ Added admin user with username");
+        
+        //Create Create client system
+        ClientSystemCreationDto cscDto = ClientSystemCreationDto
+                .builder()
+                .clientId(request.getClientId())
+                .name("Client1")
+                .status(ClientSystemStatus.ACTIVE)
+                .build();
+                clientSystemService.create(cscDto);
+                
+        System.out.println("✅ Added client system: Client1");
         
         return RootUserInitSuccessDto.builder().message("Root user added succefully").build();
     }

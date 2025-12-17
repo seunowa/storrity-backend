@@ -9,8 +9,11 @@ package com.storrity.storrity.licernse.controller;
  * @author Seun Owa
  */
 
+import com.storrity.storrity.license.dto.IsAddClientSystemAllowedDto;
+import com.storrity.storrity.license.dto.IsClientSystemLicensedDto;
 import com.storrity.storrity.license.dto.LicenseDto;
 import com.storrity.storrity.license.service.LicenseJwtUtil;
+import com.storrity.storrity.license.service.LicenseService;
 import com.storrity.storrity.license.service.MachineIdentifier;
 import com.storrity.storrity.util.exception.ApiError;
 import com.storrity.storrity.util.exception.AuthenticationError;
@@ -23,14 +26,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,22 +46,18 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "License", description = "Operations related to license management")
 public class LicenseController {
     
-    private final LicenseJwtUtil licenseJwtUtil;
-    private final Path licenseDirectory;
-    private final Path licenseFilePath;
+    private final LicenseService licenseService;
+    
 
     @Autowired
-    public LicenseController(LicenseJwtUtil licenseJwtUtil) {
-        this.licenseJwtUtil = licenseJwtUtil;
-        this.licenseDirectory = Paths.get(System.getProperty("user.home"), ".storrity", "lic");
-        this.licenseFilePath = licenseDirectory.resolve("license.txt");
+    public LicenseController(LicenseService licenseService) {
+        this.licenseService = licenseService;      
     }
     
     @Operation(
             operationId = "createLicense",
             description = "Create a license",
-            summary = "Create a license", 
-            security = @SecurityRequirement(name = "bearerAuth")
+            summary = "Create a license"
     )
     @ApiResponses({
         @ApiResponse(
@@ -72,10 +71,6 @@ public class LicenseController {
             content = @Content(schema = @Schema(implementation = ApiError.class))
         ),
         @ApiResponse(
-            responseCode = "403", 
-            description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
-        @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",
             content = @Content(schema = @Schema(implementation = ServerError.class))
@@ -83,19 +78,18 @@ public class LicenseController {
     })    
     @GetMapping("new")
     public String create(){
-        return licenseJwtUtil.generateToken("sample");
+        return licenseService.generateToken("sample");
     }
     
     @Operation(
-            operationId = "getLicense",
+            operationId = "getLicenseDetails",
             description = "Get details of license installed on system",
-            summary = "Get details of license installed on system", 
-            security = @SecurityRequirement(name = "bearerAuth")
+            summary = "Get details of license installed on system"
     )
     @ApiResponses({
         @ApiResponse(
             responseCode = "200",
-            description = "Installed license retrieved successfully",
+            description = "Installed license details retrieved successfully",
             content = @Content(schema = @Schema(implementation = Integer.class))
         ),
         @ApiResponse(
@@ -104,27 +98,22 @@ public class LicenseController {
             content = @Content(schema = @Schema(implementation = ApiError.class))
         ),
         @ApiResponse(
-            responseCode = "403", 
-            description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
-        @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",
             content = @Content(schema = @Schema(implementation = ServerError.class))
         )
     })    
     @GetMapping
-    public LicenseDto fetchInstalledLicense(){
-        String token = licenseJwtUtil.fetchLicense();
-        return licenseJwtUtil.getInstalledLicense();
+    public LicenseDto getInstalledLicenseDetails(){
+//        String token = licenseService.fetchLicense();
+        return licenseService.getInstalledLicenseDetails();
     }
     
     
     @Operation(
         operationId = "getSystemIdentifier",
         description = "Retrieve the unique hardware identifier of this system.",
-        summary = "Get system identifier",
-        security = @SecurityRequirement(name = "bearerAuth")
+        summary = "Get system identifier"
     )
     @ApiResponses({
             @ApiResponse(
@@ -136,11 +125,6 @@ public class LicenseController {
                     )
             ),
             @ApiResponse(
-                    responseCode = "403",
-                    description = "Authentication Error",
-                    content = @Content(schema = @Schema(implementation = AuthenticationError.class))
-            ),
-            @ApiResponse(
                     responseCode = "500",
                     description = "Unexpected error",
                     content = @Content(schema = @Schema(implementation = ServerError.class))
@@ -148,9 +132,9 @@ public class LicenseController {
     })
     @GetMapping("/identifier")
     public ResponseEntity<byte[]> getSystemIdentifier() {
-
         
-        String identifier = MachineIdentifier.getMachineUUID();
+//        String identifier = MachineIdentifier.getMachineUUID();
+        String identifier = licenseService.getSystemIdentifier();
 
         String content = identifier + "\n";
 
@@ -165,8 +149,7 @@ public class LicenseController {
     @Operation(
             operationId = "importLicense",
             summary = "Import a license file",
-            description = "Uploads and validates a license file and installs it into the system",
-            security = @SecurityRequirement(name = "bearerAuth")
+            description = "Uploads and validates a license file and installs it into the system"
     )
     @ApiResponses({
         @ApiResponse(
@@ -178,10 +161,6 @@ public class LicenseController {
             responseCode = "400", 
             description = "Bad request",
             content = @Content(schema = @Schema(implementation = ApiError.class))),
-        @ApiResponse(
-            responseCode = "403", 
-            description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",
@@ -196,14 +175,13 @@ public class LicenseController {
                     content = @Content(mediaType = "multipart/form-data")
             )
             @RequestParam("file") MultipartFile file) {
-        return licenseJwtUtil.importLicense(file);
+        return licenseService.importLicense(file);
     }       
     
     @Operation(
             operationId = "validateLicense",
             summary = "Validate a license file",
-            description = "Uploads and validates a license file",
-            security = @SecurityRequirement(name = "bearerAuth")
+            description = "Uploads and validates a license file"
     )
     @ApiResponses({
         @ApiResponse(
@@ -215,10 +193,6 @@ public class LicenseController {
             responseCode = "400", 
             description = "Bad request",
             content = @Content(schema = @Schema(implementation = ApiError.class))),
-        @ApiResponse(
-            responseCode = "403", 
-            description = "Authentication Error",
-            content = @Content(schema = @Schema(implementation = AuthenticationError.class))),
         @ApiResponse(
             responseCode = "500",
             description = "Unexpected error",
@@ -233,6 +207,60 @@ public class LicenseController {
                     content = @Content(mediaType = "multipart/form-data")
             )
             @RequestParam("file") MultipartFile file) {
-        return licenseJwtUtil.validateLicense(file);
+        return licenseService.validateLicense(file);
+    }
+    
+    @Operation(
+            operationId = "isAddClientSystemAllowed",
+            description = "Is add client system allowed",
+            summary = "Is add client system allowed"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Add client system is allowed",
+            content = @Content(schema = @Schema(implementation = IsAddClientSystemAllowedDto.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Bad request",
+            content = @Content(schema = @Schema(implementation = ApiError.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected error",
+            content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })    
+    @GetMapping("is_add_client_system_allowed")
+    public IsAddClientSystemAllowedDto isAddClientSystemAllowed(){
+        return licenseService.isAddClientSystemAllowed();
+    }
+    
+    @Operation(
+            operationId = "isClientSystemLicensed",
+            description = "Is client system licensed",
+            summary = "Is client system licensed"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Client system is licensed",
+            content = @Content(schema = @Schema(implementation = IsClientSystemLicensedDto.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Bad request",
+            content = @Content(schema = @Schema(implementation = ApiError.class))
+        ),        
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected error",
+            content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })    
+    @GetMapping("is_client_system_licensed/{clientId}")
+    public IsClientSystemLicensedDto isClientSystemLicensed(@PathVariable(name = "clientId") String clientId){
+        return licenseService.isClientSystemLicensed(clientId);
     }
 }
