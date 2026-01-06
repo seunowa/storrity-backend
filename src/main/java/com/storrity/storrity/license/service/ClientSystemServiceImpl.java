@@ -6,6 +6,7 @@ package com.storrity.storrity.license.service;
 
 import com.storrity.storrity.license.dto.ClientSystemCreationDto;
 import com.storrity.storrity.license.dto.ClientSystemUpdateDto;
+import com.storrity.storrity.license.dto.IsAddClientSystemAllowedDto;
 import com.storrity.storrity.license.entity.ClientSystem;
 import com.storrity.storrity.license.entity.ClientSystemStatus;
 import com.storrity.storrity.license.event.ClientSystemCreatedEvent;
@@ -14,6 +15,7 @@ import com.storrity.storrity.license.event.ClientSystemUpdateEvent;
 import com.storrity.storrity.license.repository.ClientSystemQueryParams;
 import com.storrity.storrity.license.repository.ClientSystemRepository;
 import com.storrity.storrity.util.dto.CountDto;
+import com.storrity.storrity.util.exception.BadRequestAppException;
 import com.storrity.storrity.util.exception.ResourceNotFoundAppException;
 import java.util.List;
 import java.util.UUID;
@@ -31,16 +33,26 @@ public class ClientSystemServiceImpl implements ClientSystemService{
     
     private final ClientSystemRepository clientSystemRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final LicenseService licenseService;
 
     @Autowired
-    public ClientSystemServiceImpl(ClientSystemRepository clientSystemRepository, ApplicationEventPublisher eventPublisher) {
+    public ClientSystemServiceImpl(ClientSystemRepository clientSystemRepository
+            , ApplicationEventPublisher eventPublisher, LicenseService licenseService) {
         this.clientSystemRepository = clientSystemRepository;
         this.eventPublisher = eventPublisher;
+        this.licenseService = licenseService;
     }    
 
     @Transactional
     @Override
     public ClientSystem create(ClientSystemCreationDto dto) {
+        
+        Boolean isAddAllowed = licenseService.isAddClientSystemAllowed().getIsAddClientSystemAllowed();
+        
+        if(!isAddAllowed){
+            throw new BadRequestAppException("Number of client systems in licence exceeded");
+        }
+        
         ClientSystem cs = ClientSystem
                 .builder()
                 .clientId(dto.getClientId())

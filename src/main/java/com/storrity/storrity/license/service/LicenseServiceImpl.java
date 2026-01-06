@@ -10,6 +10,7 @@ import com.storrity.storrity.license.dto.LicenseDto;
 import com.storrity.storrity.license.entity.ClientSystem;
 import com.storrity.storrity.license.entity.ClientSystemStatus;
 import com.storrity.storrity.license.repository.ClientSystemQueryParams;
+import com.storrity.storrity.license.repository.ClientSystemRepository;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.BadRequestAppException;
 import com.storrity.storrity.util.exception.ResourceNotFoundAppException;
@@ -25,12 +26,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class LicenseServiceImpl implements LicenseService{
     
     private final LicenseJwtUtil licenseJwtUtil;
-    private final ClientSystemService clientSystemService;
+    private final ClientSystemRepository clientSystemRepository;
 
     @Autowired
-    public LicenseServiceImpl(LicenseJwtUtil licenseJwtUtil, ClientSystemService clientSystemService) {
+    public LicenseServiceImpl(LicenseJwtUtil licenseJwtUtil, ClientSystemRepository clientSystemRepository) {
         this.licenseJwtUtil = licenseJwtUtil;
-        this.clientSystemService = clientSystemService;
+        this.clientSystemRepository = clientSystemRepository;
     }
     
     @Override
@@ -76,7 +77,10 @@ public class LicenseServiceImpl implements LicenseService{
     @Override
     public IsClientSystemLicensedDto  isClientSystemLicensed(String clientId) {
         try{
-            ClientSystem cs = clientSystemService.fetchByClientId(clientId);
+            
+            ClientSystem cs = clientSystemRepository.findByClientId(clientId)
+                .orElseThrow(()-> new ResourceNotFoundAppException("Client system not found with clientId: " + clientId));
+            
             if(ClientSystemStatus.INACTIVE.equals(cs.getStatus())){
                 throw new BadRequestAppException("Client system is not licensed");
             }
@@ -96,11 +100,11 @@ public class LicenseServiceImpl implements LicenseService{
 
     @Override
     public IsAddClientSystemAllowedDto isAddClientSystemAllowed() {
-        CountDto countDto = clientSystemService.count(new ClientSystemQueryParams());
+        Long count = clientSystemRepository.countRecords(new ClientSystemQueryParams());
         
         String token = fetchLicense();
         LicenseDto licenseDto = validateLicense(token);
-        Boolean isLicensed = licenseDto.getNoOfClients() > countDto.getCount();        
+        Boolean isLicensed = licenseDto.getNoOfClients() > count;        
         
         return IsAddClientSystemAllowedDto
                 .builder()
