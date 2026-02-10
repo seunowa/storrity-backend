@@ -10,6 +10,7 @@ import com.storrity.storrity.license.service.ClientSystemService;
 import com.storrity.storrity.license.service.LicenseService;
 import com.storrity.storrity.security.dto.LoginRequestDto;
 import com.storrity.storrity.security.dto.LoginSuccessDto;
+import com.storrity.storrity.security.dto.RootUserCreationStatus;
 import com.storrity.storrity.security.dto.RootUserInitSuccessDto;
 import com.storrity.storrity.security.dto.UserCreationDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -202,6 +203,42 @@ public class AuthController {
         
         return RootUserInitSuccessDto.builder().message("Root user added succefully").build();
     }
+    
+    
+    @Operation(
+        operationId = "createRootUserAllowed",
+        description = "Determine if root user creation is allowed",
+        summary = "Determine if root root user creation is allowed"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Root root user creation is allowed",
+            content = @Content(schema = @Schema(implementation = RootUserCreationStatus.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Validation error",
+            content = @Content(schema = @Schema(implementation = ValidationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected error",
+            content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })
+    @GetMapping("/root_user_creation_status")
+    public RootUserCreationStatus rootUserCtreationStatus() {        
+//        @Todo check if the system has at least one and user is activated... consider other steps to take
+        long noOfUsers = userRepo.count();
+        if(noOfUsers > 0){
+            return RootUserCreationStatus.builder().createRootUserAllowed(false).build();
+        }          
+        
+        return RootUserCreationStatus.builder().createRootUserAllowed(true).build();
+    }
+    
+    
 
 //    @PostConstruct
     public void seedAdmin() {
