@@ -6,7 +6,6 @@ package com.storrity.storrity.license.service;
 
 import com.storrity.storrity.license.dto.ClientSystemCreationDto;
 import com.storrity.storrity.license.dto.ClientSystemUpdateDto;
-import com.storrity.storrity.license.dto.IsAddClientSystemAllowedDto;
 import com.storrity.storrity.license.entity.ClientSystem;
 import com.storrity.storrity.license.entity.ClientSystemStatus;
 import com.storrity.storrity.license.event.ClientSystemCreatedEvent;

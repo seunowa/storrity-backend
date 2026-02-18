@@ -27,4 +27,5 @@ public class LicenseDto {
     private String systemIdentifier;
     private Date issuedAt;
     private Date expiration;
+    private Boolean isExpired;
 }

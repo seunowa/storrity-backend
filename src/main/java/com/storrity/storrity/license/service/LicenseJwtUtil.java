@@ -17,6 +17,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.Key;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -89,6 +91,7 @@ public class LicenseJwtUtil {
                 .issuedAt(claims.getIssuedAt())
                 .noOfClients((Integer) claims.get("noOfClients"))
                 .systemIdentifier((String)claims.get("systemIdentifier"))
+                .isExpired(Instant.now().isAfter(claims.getExpiration().toInstant()))
                 .build();
     }
     

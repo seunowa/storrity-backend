@@ -12,11 +12,8 @@ package com.storrity.storrity.licernse.controller;
 import com.storrity.storrity.license.dto.IsAddClientSystemAllowedDto;
 import com.storrity.storrity.license.dto.IsClientSystemLicensedDto;
 import com.storrity.storrity.license.dto.LicenseDto;
-import com.storrity.storrity.license.service.LicenseJwtUtil;
 import com.storrity.storrity.license.service.LicenseService;
-import com.storrity.storrity.license.service.MachineIdentifier;
 import com.storrity.storrity.util.exception.ApiError;
-import com.storrity.storrity.util.exception.AuthorizationError;
 import com.storrity.storrity.util.exception.ServerError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,9 +21,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -90,7 +85,7 @@ public class LicenseController {
         @ApiResponse(
             responseCode = "200",
             description = "Installed license details retrieved successfully",
-            content = @Content(schema = @Schema(implementation = Integer.class))
+            content = @Content(schema = @Schema(implementation = LicenseDto.class))
         ),
         @ApiResponse(
             responseCode = "404",
