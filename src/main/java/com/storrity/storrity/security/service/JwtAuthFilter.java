@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.io.IOException;
 import java.util.stream.Collectors;
-import org.apache.catalina.realm.AuthenticatedUserRealm;
 
 /**
  *

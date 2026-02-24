@@ -85,9 +85,12 @@ public class AppUserServiceImpl implements AppUserService{
     @Transactional
     public UserDetailDto changePassword(PasswordChangeDto dto) {
         // Get the currently authenticated username from SecurityContext
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//        System.out.println("Username: " + username);
         
-        AppUser user = userRepo.findByUsername(username)
+        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        AppUser user = userRepo.findByUsername(principal.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if (!encoder.matches(dto.getOldPassword(), user.getPassword())) {

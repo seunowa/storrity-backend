@@ -6,11 +6,16 @@ package com.storrity.storrity.license.service;
 
 import com.storrity.storrity.license.dto.LicenseDto;
 import com.storrity.storrity.util.exception.BadRequestAppException;
+import com.storrity.storrity.util.exception.InvalidLicenseAppException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -78,21 +83,26 @@ public class LicenseJwtUtil {
     }
 
     private Claims getClaims(String token) {
+        try{
         return Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(token)
                 .getBody();
+        }catch(ExpiredJwtException | MalformedJwtException | UnsupportedJwtException | SignatureException | IllegalArgumentException e){
+            throw new InvalidLicenseAppException(e.getMessage());
+        }
     }
     
     public LicenseDto getInstalledLicenseDetails(){
         String token = fetchLicense();
         Claims claims = getClaims(token);
-        return LicenseDto.builder()
-                .expiration(claims.getExpiration())
-                .issuedAt(claims.getIssuedAt())
-                .noOfClients((Integer) claims.get("noOfClients"))
-                .systemIdentifier((String)claims.get("systemIdentifier"))
-                .isExpired(Instant.now().isAfter(claims.getExpiration().toInstant()))
-                .build();
+        return LicenseDto.from(claims);
+//        return LicenseDto.builder()
+//                .expiration(claims.getExpiration())
+//                .issuedAt(claims.getIssuedAt())
+//                .noOfClients((Integer) claims.get("noOfClients"))
+//                .systemIdentifier((String)claims.get("systemIdentifier"))
+//                .isExpired(Instant.now().isAfter(claims.getExpiration().toInstant()))
+//                .build();
     }
     
     public LicenseDto importLicense(MultipartFile file) {
@@ -162,11 +172,12 @@ public class LicenseJwtUtil {
             throw new BadRequestAppException("License has expired.");
         }
         
-        return LicenseDto.builder()
-                .expiration(expiry)
-                .issuedAt(claims.getIssuedAt())
-                .noOfClients((Integer) claims.get("noOfClients"))
-                .systemIdentifier(systemIdentifier)
-                .build();
+        return LicenseDto.from(claims);
+//        return LicenseDto.builder()
+//                .expiration(expiry)
+//                .issuedAt(claims.getIssuedAt())
+//                .noOfClients((Integer) claims.get("noOfClients"))
+//                .systemIdentifier(systemIdentifier)
+//                .build();
     }
 }

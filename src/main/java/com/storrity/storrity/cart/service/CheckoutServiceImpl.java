@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.storrity.storrity.sales.service.SalesService;
 import com.storrity.storrity.salesattendant.entity.SalesAttendant;
 import com.storrity.storrity.salesattendant.service.SalesAttendantService;
+import com.storrity.storrity.security.service.AuthenticatedUser;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,7 +62,9 @@ public class CheckoutServiceImpl implements CheckoutService{
     public Checkout create(CheckoutCreationDto dto) {
         Cart cart = cartRepositry.findByIdForUpdate(dto.getCartId()).orElseThrow(()->new ResourceNotFoundAppException("Cart not found with id: " + dto.getCartId()));
         // Get the currently authenticated username from SecurityContext
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = principal.getUsername();
         SalesAttendant attendant = salesAttendantService.fetchByUsername(username);
         
 //        update care status to paid
@@ -80,7 +83,7 @@ public class CheckoutServiceImpl implements CheckoutService{
                 .stream()
                 .map((i)-> SaleCreationDto.builder()
                         .pckQty(i.getPckQty())
-                        .performedBy(username)
+                        .performedBy(principal.getUsername())
                         .productId(i.getProduct().getId())
                         .quantity(i.getQuantity())
                         .taxRate(0.075d)

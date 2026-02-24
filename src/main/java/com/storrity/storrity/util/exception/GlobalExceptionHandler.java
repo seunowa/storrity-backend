@@ -87,6 +87,13 @@ public class GlobalExceptionHandler {
         System.err.println(ex);
         return new AuthenticationError(ex.getMessage());
     }
+    
+    @ExceptionHandler(InvalidLicenseAppException.class)//the exception class here appears to be the wrong exception class to trap
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiError handleInvalidLicenseAppException(InvalidLicenseAppException ex) {
+        System.err.println(ex);
+        return new ApiError(403, "Invalid license", ex.getMessage());
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -4,6 +4,8 @@
  */
 package com.storrity.storrity.license.dto;
 
+import io.jsonwebtoken.Claims;
+import java.time.Instant;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,4 +30,15 @@ public class LicenseDto {
     private Date issuedAt;
     private Date expiration;
     private Boolean isExpired;
+    
+    public static LicenseDto from(Claims claims){
+        Date expiry = claims.getExpiration();        
+        return LicenseDto.builder()
+                .expiration(expiry)
+                .issuedAt(claims.getIssuedAt())
+                .noOfClients((Integer) claims.get("noOfClients"))
+                .systemIdentifier((String)claims.get("systemIdentifier"))
+                .isExpired(Instant.now().isAfter(claims.getExpiration().toInstant()))
+                .build();
+    }
 }

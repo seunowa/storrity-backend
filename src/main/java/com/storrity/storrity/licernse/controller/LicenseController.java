@@ -9,9 +9,14 @@ package com.storrity.storrity.licernse.controller;
  * @author Seun Owa
  */
 
+import com.storrity.storrity.license.dto.ClientLicenseCreationDto;
+import com.storrity.storrity.license.dto.ClientSystemCreationDto;
 import com.storrity.storrity.license.dto.IsAddClientSystemAllowedDto;
 import com.storrity.storrity.license.dto.IsClientSystemLicensedDto;
 import com.storrity.storrity.license.dto.LicenseDto;
+import com.storrity.storrity.license.entity.ClientSystem;
+import com.storrity.storrity.license.entity.ClientSystemStatus;
+import com.storrity.storrity.license.service.ClientSystemService;
 import com.storrity.storrity.license.service.LicenseService;
 import com.storrity.storrity.util.exception.ApiError;
 import com.storrity.storrity.util.exception.ServerError;
@@ -22,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,6 +36,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,11 +49,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class LicenseController {
     
     private final LicenseService licenseService;
+    private final ClientSystemService clientSystemService;
     
 
     @Autowired
-    public LicenseController(LicenseService licenseService) {
-        this.licenseService = licenseService;      
+    public LicenseController(LicenseService licenseService, ClientSystemService clientSystemService) {
+        this.licenseService = licenseService;
+        this.clientSystemService = clientSystemService;
     }
     
     @Operation(
@@ -254,8 +263,39 @@ public class LicenseController {
             content = @Content(schema = @Schema(implementation = ServerError.class))
         )
     })    
-    @GetMapping("is_client_system_licensed/{clientId}")
+    @GetMapping("clients/{clientId}")
     public IsClientSystemLicensedDto isClientSystemLicensed(@PathVariable(name = "clientId") String clientId){
         return licenseService.isClientSystemLicensed(clientId);
+    }       
+    
+    @Operation(
+            operationId = "License Client",
+            summary = "Request for client to be added (Licensed)",
+            description = "Request for client to be added, this takes up a slot in the license when the request is accepted"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "License client successfully",
+            content = @Content(schema = @Schema(implementation = LicenseDto.class))
+        ),
+        @ApiResponse(
+            responseCode = "400", 
+            description = "Bad request",
+            content = @Content(schema = @Schema(implementation = ApiError.class))),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected error",
+            content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })
+    @PostMapping(value = "/clients")
+    public ClientSystem LicesneClient(@RequestBody @Valid  ClientLicenseCreationDto dto) {
+        return clientSystemService.create(ClientSystemCreationDto
+                .builder()
+                .clientId(dto.getName())
+                .name(dto.getName())
+                .status(ClientSystemStatus.INACTIVE)
+                .build());
     }
 }
