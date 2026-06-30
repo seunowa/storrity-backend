@@ -32,12 +32,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import com.storrity.storrity.sales.service.SalesService;
+import org.springframework.context.annotation.Profile;
 
 /**
  *
  * @author Seun Owa
  */
 @Component
+@Profile("dev")
 public class DataInitializer implements CommandLineRunner{
     
     private final StoreRepository storeRepository;

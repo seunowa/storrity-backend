@@ -58,32 +58,32 @@ public class LicenseController {
         this.clientSystemService = clientSystemService;
     }
     
-    @Operation(
-            operationId = "createLicense",
-            description = "Create a license",
-            summary = "Create a license"
-    )
-    @ApiResponses({
-        @ApiResponse(
-            responseCode = "200",
-            description = "License created successfully",
-            content = @Content(schema = @Schema(implementation = String.class))
-        ),
-        @ApiResponse(
-            responseCode = "404",
-            description = "token not found",
-            content = @Content(schema = @Schema(implementation = ApiError.class))
-        ),
-        @ApiResponse(
-            responseCode = "500",
-            description = "Unexpected error",
-            content = @Content(schema = @Schema(implementation = ServerError.class))
-        )
-    })    
-    @GetMapping("new")
-    public String create(){
-        return licenseService.generateToken("sample");
-    }
+//    @Operation(
+//            operationId = "createLicense",
+//            description = "Create a license",
+//            summary = "Create a license"
+//    )
+//    @ApiResponses({
+//        @ApiResponse(
+//            responseCode = "200",
+//            description = "License created successfully",
+//            content = @Content(schema = @Schema(implementation = String.class))
+//        ),
+//        @ApiResponse(
+//            responseCode = "404",
+//            description = "token not found",
+//            content = @Content(schema = @Schema(implementation = ApiError.class))
+//        ),
+//        @ApiResponse(
+//            responseCode = "500",
+//            description = "Unexpected error",
+//            content = @Content(schema = @Schema(implementation = ServerError.class))
+//        )
+//    })    
+//    @GetMapping("new")
+//    public String create(){
+//        return licenseService.generateToken("sample");
+//    }
     
     @Operation(
             operationId = "getLicenseDetails",
