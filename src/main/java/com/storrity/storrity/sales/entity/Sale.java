@@ -57,7 +57,7 @@ public class Sale {
     private String performedBy;
     private Double quantity;
     private String sku;
-    @Convert(converter = PckQtyConverter.class)
+    @Convert(converter = PckQtyWithSellingPriceConverter.class)
     private List<PckQtyWithSellinPrice> pckQty;
     @AttributeOverrides({
         @AttributeOverride(name = "valueInMicroNaira", column = @Column(name = "unit_price_in_micro_naira"))

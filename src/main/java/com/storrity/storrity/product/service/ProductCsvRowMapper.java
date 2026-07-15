@@ -5,18 +5,16 @@
 
 package com.storrity.storrity.product.service;
 
-import com.storrity.storrity.cashaccounts.entity.Money;
 import com.storrity.storrity.product.dto.ProductCreationDto;
 import com.storrity.storrity.product.dto.ProductPackageDto;
 import com.storrity.storrity.product.entity.Product;
 import com.storrity.storrity.product.entity.ProductPackage;
+import com.storrity.storrity.util.csv.AbstractCsvRowMapper;
+import com.storrity.storrity.util.csv.CsvContext;
 import com.storrity.storrity.util.exception.InputValidationAppException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  *
@@ -44,19 +42,10 @@ import java.util.UUID;
  * naira decimals (e.g. "3500.00"), converted via Money.fromNaira/Money.toNaira —
  * see com.storrity.storrity.cashaccounts.entity.Money.
  */
-@Deprecated
-public class ProductCsvMapper {
-    public static final String[] HEADER = {
-        "name", "code", "qtyInStock", "category", "subcategory", "stockKeepingUnit", "unitPrice",
-        "store", "brand", "description", "barCode", "location",
-        "reorderLevel", "reorderQuantity", "packages"
-    };
-
+public class ProductCsvRowMapper extends AbstractCsvRowMapper<ProductCreationDto, Product>{
+    
     private static final String PKG_SEP = ";";
     private static final String FIELD_SEP = ":";
-
-    private ProductCsvMapper() {
-    }
 
     // ---------------------------------------------------------------
     // Import: CSV row -> ProductCreationDto
@@ -67,20 +56,19 @@ public class ProductCsvMapper {
      * have to be in exactly the order declared in HEADER (only the header names
      * have to match, case-insensitively).
      */
-    public static Map<String, Integer> indexHeader(String[] header) {
-        Map<String, Integer> index = new LinkedHashMap<>();
-        for (int i = 0; i < header.length; i++) {
-            index.put(header[i].trim().toLowerCase(), i);
-        }
-        for (String required : HEADER) {
-            if (!index.containsKey(required.toLowerCase())) {
-                throw new InputValidationAppException("CSV is missing required column: " + required);
-            }
-        }
-        return index;
+
+    @Override
+    protected String[] headers() {
+        String[] headers = {
+            "name", "code", "qtyInStock", "category", "subcategory", "stockKeepingUnit", "unitPrice",
+            "store", "brand", "description", "barCode", "location",
+            "reorderLevel", "reorderQuantity", "packages"
+        };
+        return headers;
     }
 
-    public static ProductCreationDto fromCsvRow(Map<String, Integer> headerIndex, String[] row, UUID storeId) {
+    @Override
+    public ProductCreationDto fromCsvRow(Map<String, Integer> headerIndex, String[] row, CsvContext context) {
         ProductCreationDto dto = new ProductCreationDto();
         dto.setName(field(row, headerIndex, "name"));
         dto.setCode(field(row, headerIndex, "code"));        
@@ -89,7 +77,7 @@ public class ProductCsvMapper {
         dto.setStockKeepingUnit(field(row, headerIndex, "stockKeepingUnit"));
         dto.setUnitPrice(csvToMoney(field(row, headerIndex, "unitPrice")));
 //        dto.setStoreId(parseUuid(field(row, headerIndex, "storeId")));
-        dto.setStoreId(storeId);
+        dto.setStoreId(context.getStoreId());
         dto.setBrand(blankToNull(field(row, headerIndex, "brand")));
         dto.setDescription(blankToNull(field(row, headerIndex, "description")));
         dto.setBarCode(blankToNull(field(row, headerIndex, "barCode")));
@@ -113,8 +101,8 @@ public class ProductCsvMapper {
 
         return dto;
     }
-
-    private static List<ProductPackageDto> parsePackages(String raw) {
+    
+    private List<ProductPackageDto> parsePackages(String raw) {
         List<ProductPackageDto> packages = new ArrayList<>();
         if (raw == null || raw.isBlank()) {
             return packages;
@@ -143,27 +131,28 @@ public class ProductCsvMapper {
     // Export: Product -> CSV row
     // ---------------------------------------------------------------
 
-    public static String[] toCsvRow(Product p) {
+    @Override
+    public String[] toCsvRow(Product entity) {
         return new String[] {
-            nullToBlank(p.getName()),
-            nullToBlank(p.getCode()),
-            p.getQtyInStock()!= null ? String.valueOf(p.getQtyInStock()) : "",
-            nullToBlank(p.getCategory()),
-            nullToBlank(p.getSubcategory()),
-            nullToBlank(p.getStockKeepingUnit()),
-            moneyToCsv(p.getUnitPrice()),
-            p.getStore() != null && p.getStore().getName()!= null ? p.getStore().getName().toString() : "",
-            nullToBlank(p.getBrand()),
-            nullToBlank(p.getDescription()),
-            nullToBlank(p.getBarCode()),
-            nullToBlank(p.getLocation()),
-            p.getReorderLevel() != null ? String.valueOf(p.getReorderLevel()) : "",
-            p.getReorderQuantity() != null ? String.valueOf(p.getReorderQuantity()) : "",
-            packagesToCsv(p.getPackages())
+            nullToBlank(entity.getName()),
+            nullToBlank(entity.getCode()),
+            entity.getQtyInStock()!= null ? String.valueOf(entity.getQtyInStock()) : "",
+            nullToBlank(entity.getCategory()),
+            nullToBlank(entity.getSubcategory()),
+            nullToBlank(entity.getStockKeepingUnit()),
+            moneyToCsv(entity.getUnitPrice()),
+            entity.getStore() != null && entity.getStore().getName()!= null ? entity.getStore().getName() : "",
+            nullToBlank(entity.getBrand()),
+            nullToBlank(entity.getDescription()),
+            nullToBlank(entity.getBarCode()),
+            nullToBlank(entity.getLocation()),
+            entity.getReorderLevel() != null ? String.valueOf(entity.getReorderLevel()) : "",
+            entity.getReorderQuantity() != null ? String.valueOf(entity.getReorderQuantity()) : "",
+            packagesToCsv(entity.getPackages())
         };
     }
 
-    private static String packagesToCsv(java.util.Collection<ProductPackage> packages) {
+    private String packagesToCsv(java.util.Collection<ProductPackage> packages) {
         if (packages == null || packages.isEmpty()) {
             return "";
         }
@@ -179,77 +168,5 @@ public class ProductCsvMapper {
                     .append(moneyToCsv(pkg.getSellingPrice()));
         }
         return sb.toString();
-    }
-
-    // ---------------------------------------------------------------
-    // Helpers
-    // ---------------------------------------------------------------
-
-    private static String field(String[] row, Map<String, Integer> headerIndex, String name) {
-        Integer idx = headerIndex.get(name.toLowerCase());
-        if (idx == null || idx >= row.length) {
-            return "";
-        }
-        String v = row[idx];
-        return v == null ? "" : v.trim();
-    }
-
-    private static String blankToNull(String s) {
-        return (s == null || s.isBlank()) ? null : s;
-    }
-
-    private static String nullToBlank(String s) {
-        return s == null ? "" : s;
-    }
-
-    private static Double parseDouble(String s) {
-        if (s == null || s.isBlank()) {
-            return null;
-        }
-        try {
-            return Double.valueOf(s.trim());
-        } catch (NumberFormatException e) {
-            throw new InputValidationAppException("Invalid number: '" + s + "'");
-        }
-    }
-
-    private static String formatDouble(Double d) {
-        if (d == null) {
-            return "";
-        }
-        // avoid "12.0" noise for whole numbers, e.g. multipliers
-        if (d == Math.floor(d) && !d.isInfinite()) {
-            return String.valueOf(d.longValue());
-        }
-        return String.valueOf(d);
-    }
-
-//    private static UUID parseUuid(String s) {
-//        if (s == null || s.isBlank()) {
-//            throw new InputValidationAppException("storeId is required");
-//        }
-//        try {
-//            return UUID.fromString(s.trim());
-//        } catch (IllegalArgumentException e) {
-//            throw new InputValidationAppException("Invalid storeId UUID: '" + s + "'");
-//        }
-//    }
-
-    private static Money csvToMoney(String s) {
-        if (s == null || s.isBlank()) {
-            return null;
-        }
-        try {
-            return Money.fromNaira(new BigDecimal(s.trim()));
-        } catch (ArithmeticException | NumberFormatException e) {
-            throw new InputValidationAppException("Invalid money value: '" + s + "'");
-        }
-    }
-
-    private static String moneyToCsv(Money money) {
-        if (money == null) {
-            return "";
-        }
-        return money.toNaira().stripTrailingZeros().toPlainString();
     }
 }

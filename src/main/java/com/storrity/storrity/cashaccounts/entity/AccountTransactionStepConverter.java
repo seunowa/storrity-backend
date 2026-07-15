@@ -5,9 +5,12 @@
 package com.storrity.storrity.cashaccounts.entity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.storrity.storrity.sales.entity.PckQtyWithSellinPrice;
 import jakarta.persistence.AttributeConverter;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,18 +27,38 @@ public class AccountTransactionStepConverter implements AttributeConverter<List<
     @Override
     public String convertToDatabaseColumn(List<AccountTransactionStep> attribute) {
         //Serialize list to json string
-        JsonNode jsonNode  = objectMapper.valueToTree(attribute);
-        return jsonNode.toString();
+//        JsonNode jsonNode  = objectMapper.valueToTree(attribute);
+//        return jsonNode.toString();
+        if (attribute == null) {
+            return null;
+        }
+
+        try {
+            return objectMapper.writeValueAsString(attribute);
+        } catch (JsonProcessingException ex) {
+            throw new RuntimeException("Error serializing account transaction.", ex);
+        }
     }
 
     @Override
     public List<AccountTransactionStep> convertToEntityAttribute(String dbData) {
+//        try {
+//            //deserialize json string to list
+//            JsonNode jsonNode = objectMapper.readTree(dbData);
+//            return objectMapper.treeToValue(jsonNode, List.class);
+//        } catch (JsonProcessingException ex) {
+//            throw new RuntimeException("Error deserializing metadata");
+//        }
+        if (dbData == null || dbData.isBlank()) {
+            return Collections.emptyList();
+        }
+
         try {
-            //deserialize json string to list
-            JsonNode jsonNode = objectMapper.readTree(dbData);
-            return objectMapper.treeToValue(jsonNode, List.class);
+            return objectMapper.readValue(
+                    dbData,
+                    new TypeReference<List<AccountTransactionStep>>() {});
         } catch (JsonProcessingException ex) {
-            throw new RuntimeException("Error deserializing metadata");
+            throw new RuntimeException("Error deserializing package quantities.", ex);
         }
     }
 }

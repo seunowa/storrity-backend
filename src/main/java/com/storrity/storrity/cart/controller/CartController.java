@@ -11,6 +11,7 @@ import com.storrity.storrity.cart.dto.CartUpdateDto;
 import com.storrity.storrity.cart.dto.PricedCartDto;
 import com.storrity.storrity.cart.entity.CartQueryParams;
 import com.storrity.storrity.cart.service.CartService;
+import com.storrity.storrity.product.entity.ProductQueryParams;
 import com.storrity.storrity.store.entity.Store;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.ApiError;
@@ -29,6 +30,10 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -86,6 +91,48 @@ public class CartController {
     @PostMapping
     public PricedCartDto create(@RequestBody @Valid CartCreationDto dto){
         return cartService.create(dto);
+    }
+    
+    @Operation(
+            operationId = "exportCarts",
+            description = "Exports carts matching the query params as a CSV file ",
+            summary = "Export carts to CSV",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "CSV file generated successfully",
+            content = @Content(mediaType = "text/csv")
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Validation Error",
+            content = @Content(schema = @Schema(implementation = ValidationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Authentication Error",
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected error",
+            content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })
+    @GetMapping(value = "/export", produces = "text/csv")
+    public ResponseEntity<byte[]> exportProducts(
+            @ModelAttribute @Valid @ParameterObject CartQueryParams params) {
+        
+        byte[] csvData = cartService.exportCarts(params);
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("text/csv"));
+        headers.setContentDispositionFormData("attachment", "carts_export.csv");
+        headers.setContentLength(csvData.length);
+        
+        return new ResponseEntity<>(csvData, headers, HttpStatus.OK);
     }
     
     @Operation(

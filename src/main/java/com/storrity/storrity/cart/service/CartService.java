@@ -27,4 +27,5 @@ public interface CartService {
     public PricedCartDto delete(UUID id);
     public PricedCartDto updateCartItems(UUID id, CartItemInsertDto dto);
     public PricedCartDto deleteCartItem(UUID id);
+    public byte[] exportCarts(CartQueryParams params);
 }

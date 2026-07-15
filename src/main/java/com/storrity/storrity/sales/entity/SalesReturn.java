@@ -48,7 +48,7 @@ public class SalesReturn {
     private Sale sale;
     private Double quantity;
     private String sku;
-    @Convert(converter = PckQtyConverter.class)
+    @Convert(converter = PckQtyWithSellingPriceConverter.class)
     private List<PckQty> pckQty;
     private String reason;
     private String performedBy;

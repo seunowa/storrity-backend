@@ -27,8 +27,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.storrity.storrity.cart.repository.CartItemRepository;
+import com.storrity.storrity.util.csv.CsvUtils;
+import com.storrity.storrity.util.exception.DataExportAppException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import org.springframework.context.ApplicationEventPublisher;
 
 /**
@@ -170,4 +174,22 @@ public class CartServiceImpl implements CartService{
                 .orElseThrow(()->new ResourceNotFoundAppException("Cart not found with id: " + cartId));        
         return PricedCartDto.from(cart);
     }
+
+    @Override
+    public byte[] exportCarts(CartQueryParams params) {
+        List<Cart> products = cartRepositry.list(params);
+ 
+        CartCsvRowMapper rowMapper = new CartCsvRowMapper();
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try (CsvUtils.RowWriter writer = new CsvUtils.RowWriter(buffer)) {
+            writer.writeRow(rowMapper.headers());
+            for (Cart p : products) {
+                writer.writeRow(rowMapper.toCsvRow(p));
+            }
+        } catch (IOException e) {
+            throw new DataExportAppException("Could not generate product export: " + e.getMessage(), e);
+        }
+ 
+        return buffer.toByteArray();
+    }    
 }

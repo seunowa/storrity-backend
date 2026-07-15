@@ -20,6 +20,7 @@ import com.storrity.storrity.product.repository.ProductPackageRepository;
 import com.storrity.storrity.product.repository.ProductRepository;
 import com.storrity.storrity.store.entity.Store;
 import com.storrity.storrity.store.service.StoreService;
+import com.storrity.storrity.util.csv.CsvContext;
 import com.storrity.storrity.util.csv.CsvUtils;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.DataExportAppException;
@@ -327,9 +328,10 @@ public class ProductServiceImpl implements ProductService{
             throw new DataImportAppException("CSV file is empty");
         }
  
+        ProductCsvRowMapper rowMapper = new ProductCsvRowMapper();
         Map<String, Integer> headerIndex;
         try {
-            headerIndex = ProductCsvMapper.indexHeader(rows.get(0));
+            headerIndex = rowMapper.indexHeader(rows.get(0));
         } catch (RuntimeException e) {
             throw new DataImportAppException(e.getMessage(), e);
         }
@@ -337,11 +339,12 @@ public class ProductServiceImpl implements ProductService{
         ProductImportResultDto result = new ProductImportResultDto();
         result.setTotalRows(rows.size() - 1);
  
+        CsvContext csvContext = CsvContext.builder().storeId(storeId).build();
         int success = 0;
         for (int i = 1; i < rows.size(); i++) {
             int lineNumber = i + 1; // 1-based, includes header, matches what a user sees in Excel
             try {
-                ProductCreationDto dto = ProductCsvMapper.fromCsvRow(headerIndex, rows.get(i), storeId);
+                ProductCreationDto dto = rowMapper.fromCsvRow(headerIndex, rows.get(i), csvContext);
                 productRowImportService.importRow(dto);
                 success++;
             } catch (Exception e) {
@@ -359,11 +362,12 @@ public class ProductServiceImpl implements ProductService{
     public byte[] exportProducts(ProductQueryParams params) {
         List<Product> products = productRepository.list(params);
  
+        ProductCsvRowMapper rowMapper = new ProductCsvRowMapper();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try (CsvUtils.RowWriter writer = new CsvUtils.RowWriter(buffer)) {
-            writer.writeRow(ProductCsvMapper.HEADER);
+            writer.writeRow(rowMapper.headers());
             for (Product p : products) {
-                writer.writeRow(ProductCsvMapper.toCsvRow(p));
+                writer.writeRow(rowMapper.toCsvRow(p));
             }
         } catch (IOException e) {
             throw new DataExportAppException("Could not generate product export: " + e.getMessage(), e);

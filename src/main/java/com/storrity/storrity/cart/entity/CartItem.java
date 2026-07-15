@@ -6,6 +6,7 @@ package com.storrity.storrity.cart.entity;
 
 import com.storrity.storrity.product.entity.Product;
 import com.storrity.storrity.sales.entity.PckQtyWithSellinPrice;
+import com.storrity.storrity.sales.entity.PckQtyWithSellingPriceConverter;
 import com.storrity.storrity.stockmovement.entity.PckQty;
 import com.storrity.storrity.stockmovement.entity.PckQtyConverter;
 import jakarta.persistence.Column;
@@ -55,7 +56,7 @@ public class CartItem {
     private Product product;
     private Double quantity;
     private String sku;
-    @Convert(converter = PckQtyConverter.class)
+    @Convert(converter = PckQtyWithSellingPriceConverter.class)
     private List<PckQtyWithSellinPrice> pckQty;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
