@@ -4,14 +4,17 @@
  */
 package com.storrity.storrity.product.controller;
 
+import com.storrity.storrity.product.dto.BatchProductCreationDto;
 import com.storrity.storrity.product.dto.ProductCreationDto;
 import com.storrity.storrity.product.dto.ProductDto;
+import com.storrity.storrity.product.dto.ProductImportResultDto;
 import com.storrity.storrity.product.dto.ProductUpdateDto;
 import com.storrity.storrity.product.entity.ProductQueryParams;
 import com.storrity.storrity.product.service.ProductService;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.ApiError;
 import com.storrity.storrity.util.exception.AuthorizationError;
+import com.storrity.storrity.util.exception.InputValidationAppException;
 import com.storrity.storrity.util.exception.ServerError;
 import com.storrity.storrity.util.exception.ValidationError;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,10 +26,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +45,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpStatus;
 
 /**
  *
@@ -84,6 +93,126 @@ public class ProductController {
     @PostMapping
     public ProductDto create(@RequestBody @Valid ProductCreationDto dto){
         return productService.create(dto);
+    }
+    
+    @Operation(
+            operationId = "createBatchProduct",
+            description = "Creates a batch of products, all belonging to the same store. "
+                    + "The operation is transactional: either all products are created, or none are.",
+            summary = "Create a batch of products",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Products created successfully",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProductDto.class)))
+        ),
+        @ApiResponse(
+            responseCode = "400", 
+            description = "Validation Error",
+            content = @Content(schema = @Schema(implementation = ValidationError.class))),
+        @ApiResponse(
+            responseCode = "403", 
+            description = "Authentication Error",
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected error",
+            content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })
+    @PostMapping("/batch")
+    public List<ProductDto> create(@RequestBody @Valid BatchProductCreationDto dto){
+        return productService.create(dto);
+    }
+    
+    @Operation(
+            operationId = "importProducts",
+            description = "Imports products from a CSV file. Each row is processed independently. " +
+                    "See ProductCsvMapper for the expected column format.",
+            summary = "Import products from CSV",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Import completed (some rows may have failed)",
+            content = @Content(schema = @Schema(implementation = ProductImportResultDto.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Validation Error or invalid CSV",
+            content = @Content(schema = @Schema(implementation = ValidationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Authentication Error",
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected error",
+            content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ProductImportResultDto importProducts(
+            @RequestParam(value = "file", required = true) MultipartFile file
+            , @RequestParam(value = "storeId", required = true) UUID storeId) throws IOException {
+        
+        if (file.isEmpty()) {
+            throw new InputValidationAppException("File is empty");
+        }
+        
+        if (!file.getOriginalFilename().toLowerCase().endsWith(".csv")) {
+            throw new InputValidationAppException("Only CSV files are supported");
+        }
+
+        return productService.importProducts(file.getInputStream(), storeId);
+    }
+
+    @Operation(
+            operationId = "exportProducts",
+            description = "Exports products matching the query params as a CSV file " +
+                    "in the same format accepted by the import endpoint.",
+            summary = "Export products to CSV",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "CSV file generated successfully",
+            content = @Content(mediaType = "text/csv")
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Validation Error",
+            content = @Content(schema = @Schema(implementation = ValidationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Authentication Error",
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected error",
+            content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })
+    @GetMapping(value = "/export", produces = "text/csv")
+    public ResponseEntity<byte[]> exportProducts(
+            @ModelAttribute @Valid @ParameterObject ProductQueryParams params) {
+        
+        byte[] csvData = productService.exportProducts(params);
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("text/csv"));
+        headers.setContentDispositionFormData("attachment", "products_export.csv");
+        headers.setContentLength(csvData.length);
+        
+        return new ResponseEntity<>(csvData, headers, HttpStatus.OK);
     }
     
     @Operation(

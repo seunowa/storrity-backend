@@ -11,6 +11,8 @@ import com.storrity.storrity.cashaccounts.entity.CashAccountStatus;
 import com.storrity.storrity.cashaccounts.entity.CashAccountType;
 import com.storrity.storrity.cashaccounts.entity.Money;
 import com.storrity.storrity.cashaccounts.service.CashAccountService;
+import com.storrity.storrity.license.dto.LicenseDto;
+import com.storrity.storrity.license.service.LicenseService;
 import com.storrity.storrity.product.entity.Product;
 import com.storrity.storrity.product.entity.ProductPackage;
 import com.storrity.storrity.product.entity.SupplyStatus;
@@ -32,6 +34,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import com.storrity.storrity.sales.service.SalesService;
+import com.storrity.storrity.security.dto.UserCreationDto;
+import com.storrity.storrity.security.entity.UserPermission;
+import com.storrity.storrity.security.entity.UserRole;
+import com.storrity.storrity.security.repository.UserRepository;
+import com.storrity.storrity.security.repository.UserRoleRepository;
+import com.storrity.storrity.security.service.AppUserService;
+import java.util.EnumSet;
+import java.util.Set;
 import org.springframework.context.annotation.Profile;
 
 /**
@@ -47,27 +57,65 @@ public class DataInitializer implements CommandLineRunner{
     private final ProductPackageRepository productPackageRepository;
     private final SupplyService supplyService;
     private final SalesService SaleService;
-    private final CashAccountService cashAccountService;
+    private final CashAccountService cashAccountService;    
+    private final UserRepository userRepo;
+    private final UserRoleRepository roleRepo;
+    private final AppUserService appUserService;
+    private final LicenseService licenseService;
 
     @Autowired
     public DataInitializer(StoreRepository storeRepository, ProductRepository productRepository
             , ProductPackageRepository productPackageRepository, SupplyService supplyService
-            , SalesService SaleService, CashAccountService cashAccountService) {
+            , SalesService SaleService, CashAccountService cashAccountService
+            , UserRepository userRepo, UserRoleRepository roleRepo, AppUserService appUserService
+            , LicenseService licenseService) {
         this.storeRepository = storeRepository;
         this.productRepository = productRepository;
         this.productPackageRepository = productPackageRepository;
         this.supplyService = supplyService;
         this.SaleService = SaleService;
         this.cashAccountService = cashAccountService;
+        this.userRepo = userRepo;
+        this.appUserService = appUserService;
+        this.roleRepo = roleRepo;
+        this.licenseService = licenseService;
     }
     
     @Override
     public void run(String... args) throws Exception {
+//        seedAdmin();
         List<Store> stores = storeRepository.findAll();
         if(stores.isEmpty()){
             init();
         }
+        installDevLicense();
     }
+    
+//    public void seedAdmin() {
+//        if (userRepo.findByUsername("admin").isPresent()) return;
+//
+//        // Create admin role with all permissions
+//        Set<UserPermission> allPerms = EnumSet.allOf(UserPermission.class);
+//        UserRole adminRole = new UserRole();
+//        adminRole.setId("ADMIN");
+//        adminRole.setPermissions(allPerms);
+//        roleRepo.save(adminRole);
+//
+//        String password = "password123";
+//        // Create admin user
+////        AppUser admin = new AppUser();
+////        admin.setUsername("admin");
+////        admin.setPassword(encoder.encode(password));
+////        admin.setRole(adminRole);
+////        userRepo.save(admin);
+//        UserCreationDto dto = new UserCreationDto();
+//        dto.setUsername("admin@admin.com");
+//        dto.setPassword(password);
+//        dto.setRole(adminRole.getId());
+//        appUserService.create(dto);
+//
+//        System.out.println("✅ Seeded admin user with username=admin and password=" + password);
+//    }
     
     public void init() {
         Store s = Store.builder()
@@ -84,6 +132,21 @@ public class DataInitializer implements CommandLineRunner{
                 .status(StoreStatus.OPEN)
                 .build();
         Store savedStore = storeRepository.save(s);
+        
+        Store s2 = Store.builder()
+                .city("Lagos")
+                .email("store2@store.com")
+                .managerAddress("Manager Address 2")
+                .managerEmail("manager2@email.com")
+                .managerName("Manager Name 2")
+                .managerPhone("08067893930")
+                .name("Sample Store 2")
+                .phone("070466585885")
+                .state("Lagos")
+                .street("Ikeja")
+                .status(StoreStatus.OPEN)
+                .build();
+        Store savedStore2 = storeRepository.save(s2);
         
         Product p = Product.builder()
                 .category("Category")
@@ -102,7 +165,7 @@ public class DataInitializer implements CommandLineRunner{
                 .category("Category")
                 .code("12345")
                 .name("Sound System")
-                .stockKeepingUnit("Small")
+                .stockKeepingUnit("Piece")
                 .qtyInStock(50.0)
                 .store(savedStore)
                 .subcategory("subcategory")
@@ -251,5 +314,12 @@ public class DataInitializer implements CommandLineRunner{
         cashAccountService.create(cashAccount);
         
         List<CashAccount> accounts = cashAccountService.list(CashAccountQueryParams.builder().build());
-    }    
+    }
+    
+    private void installDevLicense(){
+        String lic = licenseService.generateToken("Dev");
+        LicenseDto dto = licenseService.importLicense(lic);
+        System.out.println("Installed License /n" + dto);
+        
+    }
 }

@@ -94,6 +94,27 @@ public class GlobalExceptionHandler {
         System.err.println(ex);
         return new ApiError(403, "Invalid license", ex.getMessage());
     }
+    
+    @ExceptionHandler(InputValidationAppException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleInputValidationAppException(InputValidationAppException ex) {
+        System.err.println(ex);
+        return new ApiError(404, "Invalid Input", ex.getMessage());
+    }
+    
+    @ExceptionHandler(DataExportAppException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleDataExportAppException(DataExportAppException ex) {
+        System.err.println(ex);
+        return new ApiError(404, "Error exporting data", ex.getMessage());
+    }
+    
+    @ExceptionHandler(DataImportAppException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleDataImportAppException(DataImportAppException ex) {
+        System.err.println(ex);
+        return new ApiError(404, "Invalid Input", ex.getMessage());
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
