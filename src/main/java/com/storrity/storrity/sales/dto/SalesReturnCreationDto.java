@@ -28,7 +28,7 @@ public class SalesReturnCreationDto {
     private UUID saleId;
     private String transactionRef;
     private Double quantity;
-    private String sku;
+//    private String sku;
     private List<PckQty> pckQty;
     private String reason;
 }

@@ -6,8 +6,6 @@ package com.storrity.storrity.sales.entity;
 
 import com.storrity.storrity.cashaccounts.entity.Money;
 import com.storrity.storrity.product.entity.Product;
-import com.storrity.storrity.stockmovement.entity.PckQty;
-import com.storrity.storrity.stockmovement.entity.PckQtyConverter;
 import com.storrity.storrity.store.entity.Store;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;

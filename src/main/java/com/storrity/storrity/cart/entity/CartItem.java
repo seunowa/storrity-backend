@@ -7,8 +7,6 @@ package com.storrity.storrity.cart.entity;
 import com.storrity.storrity.product.entity.Product;
 import com.storrity.storrity.sales.entity.PckQtyWithSellinPrice;
 import com.storrity.storrity.sales.entity.PckQtyWithSellingPriceConverter;
-import com.storrity.storrity.stockmovement.entity.PckQty;
-import com.storrity.storrity.stockmovement.entity.PckQtyConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;

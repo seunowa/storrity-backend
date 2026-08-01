@@ -4,6 +4,10 @@
  */
 package com.storrity.storrity.stockmovement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.storrity.storrity.sales.entity.PckQtyWithSellinPrice;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,11 +26,12 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
+@JsonIgnoreProperties(ignoreUnknown = true)
+//@TOdo instead of @JsonIgnoreProperties use single class (PckQty) that define all the fields (including selling price)
+//in the entity and expose dto that have the required inheritance hierarchy in the api to prevent wrong use
 public class PckQty {
     @NotNull
     private String packageName;
     @NotNull
-    private Double quantity;
-    
-    
+    private Double quantity;  
 }

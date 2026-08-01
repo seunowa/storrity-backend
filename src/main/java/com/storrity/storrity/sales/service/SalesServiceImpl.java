@@ -95,7 +95,7 @@ public class SalesServiceImpl implements SalesService{
 //        Sale savedSale = saleRepository.save(sale);
 //        //create stock movement
 //        StockMovementInstruction smInstruction = StockMovementInstruction.builder()
-//                .description("sales")
+//                .description("salesItems")
 //                .instructionItems(List.of(new StockMovementInstructionItem(dto.getQuantity(), StockFlow.OUTFLOW, p.getId(), dto.getPckQty())))
 //                .performedBy(dto.getPerformedBy())
 //                .transactionRef(dto.getTransactionRef())                
@@ -108,7 +108,7 @@ public class SalesServiceImpl implements SalesService{
     @Transactional
     @Override
     public SalesCreationResponse create(SalesCreationDto dto) {
-        //@Todo refactor implementation such that cost price is not required to create sales
+        //@Todo refactor implementation such that cost price is not required to create salesItems
         //rather retrieve cost price from product package
         List<UUID> produtIds = dto.getItems()
                 .stream()
@@ -121,15 +121,15 @@ public class SalesServiceImpl implements SalesService{
                 .stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
         
-        List<Sale> sales = dto.getItems()
+        List<Sale> salesItems = dto.getItems()
                 .stream()
                 .map((s)->buildSale(s, productMap.get(s.getProductId())))
                 .collect(Collectors.toList());
         
-        List<Sale> savedSales = saleRepository.saveAll(sales);
+        List<Sale> savedSales = saleRepository.saveAll(salesItems);
         
         //create stock movement
-        StockMovementInstruction smInstruction = buildStockMovementInstruction(sales, dto);
+        StockMovementInstruction smInstruction = buildStockMovementInstruction(salesItems, dto);
         stockMovementService.create(smInstruction);
         
         List<SaleDto> responseItems = savedSales
@@ -142,7 +142,7 @@ public class SalesServiceImpl implements SalesService{
     @Override
     public SaleDto fetch(UUID id) {
         Sale s = saleRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundAppException("Product not found with id: " + id));
+                .orElseThrow(()->new ResourceNotFoundAppException("Sales not found with id: " + id));
         return SaleDto.from(s);
     }
 
@@ -195,8 +195,6 @@ public class SalesServiceImpl implements SalesService{
     }
     
     private StockMovementInstruction buildStockMovementInstruction(List<Sale> sales, SalesCreationDto dto){
-        
-        
         List<StockMovementInstructionItem> instructionItems = sales
                 .stream()
                 .map((s)->{

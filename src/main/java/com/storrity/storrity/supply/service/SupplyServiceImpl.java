@@ -126,22 +126,26 @@ public class SupplyServiceImpl implements SupplyService{
     @Override
     public SupplyDto update(UUID id, SupplyUpdateDto dto) {
         
-        Supply prevSsupply = supplyRepository.findByIdForUpdate(id)
+        Supply prevSupply = supplyRepository.findByIdForUpdate(id)
                 .orElseThrow(()->new ResourceNotFoundAppException("Supply not found with id: " + id));
-        // check prevSsupply status and determin if it can be updated to the new status in the update dto
-        checkIfMutationAllowed(prevSsupply);
+        // check prevSupply status and determin if it can be updated to the new status in the update dto
+        checkIfMutationAllowed(prevSupply);
         
         Store store = storeService.fetch(dto.getStoreId());
-        // update prevSsupply propoerties excluding prevSsupply items which will be updataed down the line
-        updateProperties(dto, prevSsupply, store);        
-        Supply savedSupply = supplyRepository.save(prevSsupply);
+        // update prevSupply propoerties excluding prevSupply items which will be updataed down the line
+        updateProperties(dto, prevSupply, store);
+//        prevSupply.getItems().clear();
         
-        // Delete previous prevSsupply items        
-        List<UUID> prevSupplyItemIds = prevSsupply.getItems().stream()
-                    .map((i)->i.getId()).collect(Collectors.toList());
-        supplyItemRepository.deleteAllById(prevSupplyItemIds);        
+        Supply savedSupply = supplyRepository.save(prevSupply);
         
-        // build and save new prevSsupply items
+        // Delete previous prevSupply items        
+//        List<UUID> prevSupplyItemIds = prevSupply.getItems().stream()
+//                    .map((i)->i.getId()).collect(Collectors.toList());
+//        supplyItemRepository.deleteAllById(prevSupplyItemIds);
+//        supplyItemRepository.flush();
+        supplyItemRepository.deleteBySupplyId(prevSupply.getId());
+        
+        // build and save new supply items
         Set<UUID> productIds = dto.getItems()
                 .stream()
                 .map(SupplyItemCreationDto::getProductId)  
@@ -150,7 +154,7 @@ public class SupplyServiceImpl implements SupplyService{
         Map<UUID, Product> productMap = productRepository.findAllById(productIds).stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
         
-        List<SupplyItem> supplyItems = buildSupplyItem(dto, prevSsupply, productMap);
+        List<SupplyItem> supplyItems = buildSupplyItem(dto, prevSupply, productMap);
         
         List<SupplyItem> savedSupplyItems = supplyItemRepository.saveAll(supplyItems);        
         
@@ -162,7 +166,7 @@ public class SupplyServiceImpl implements SupplyService{
             stockMovementService.create(smInstruction);
         }
         
-        eventPublisher.publishEvent(new SupplyUpdatedEvent(savedSupply, prevSsupply));
+        eventPublisher.publishEvent(new SupplyUpdatedEvent(savedSupply, prevSupply));
         return SupplyDto.from(savedSupply);
     }
 
@@ -172,7 +176,7 @@ public class SupplyServiceImpl implements SupplyService{
         Supply s = supplyRepository.findByIdForUpdate(id)
                 .orElseThrow(()->new ResourceNotFoundAppException("Supply not found with id: " + id));
         
-//      check prevSsupply status and determine if deleting prevSsupply is allowed
+//      check prevSupply status and determine if deleting prevSupply is allowed
 //      if delete is not allowed throw exception
         checkIfMutationAllowed(s);
         

@@ -4,6 +4,7 @@
  */
 package com.storrity.storrity.sales.dto;
 
+import com.storrity.storrity.sales.entity.SalesReturn;
 import com.storrity.storrity.stockmovement.entity.PckQty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
@@ -38,4 +39,19 @@ public class SalesReturnDto {
     private String performedBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt; 
+    
+    public static SalesReturnDto from(SalesReturn s){
+        return SalesReturnDto.builder()
+                .createdAt(s.getCreatedAt())
+                .id(s.getId())
+                .pckQty(s.getPckQty())
+                .performedBy(s.getPerformedBy())
+                .quantity(s.getQuantity())
+                .reason(s.getReason())
+                .saleId(s.getSale().getId())
+                .sku(s.getSku())
+                .transactionRef(s.getTransactionRef())
+                .updatedAt(s.getUpdatedAt())
+                .build();
+    }
 }
