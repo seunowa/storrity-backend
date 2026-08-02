@@ -12,10 +12,12 @@ public class AuthenticatedUser {
 
     private final String username;
     private final String clientId;
+    private final String clientName;
 
-    public AuthenticatedUser(String username, String clientId) {
+    public AuthenticatedUser(String username, String clientId, String clientName) {
         this.username = username;
         this.clientId = clientId;
+        this.clientName = clientName;
     }
 
     public String getUsername() {
@@ -25,4 +27,8 @@ public class AuthenticatedUser {
     public String getClientId() {
         return clientId;
     }
+
+    public String getClientName() {
+        return clientName;
+    }    
 }

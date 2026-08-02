@@ -25,6 +25,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class CheckoutCreationDto {
     private UUID cartId;
-    private String paymentMethod; 
+    private String paymentMethod;
     private Money amountPaid;
 }

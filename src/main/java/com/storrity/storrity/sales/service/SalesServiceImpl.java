@@ -123,7 +123,7 @@ public class SalesServiceImpl implements SalesService{
         
         List<Sale> salesItems = dto.getItems()
                 .stream()
-                .map((s)->buildSale(s, productMap.get(s.getProductId())))
+                .map((s)->buildSale(dto, s, productMap.get(s.getProductId())))
                 .collect(Collectors.toList());
         
         List<Sale> savedSales = saleRepository.saveAll(salesItems);
@@ -163,22 +163,24 @@ public class SalesServiceImpl implements SalesService{
                 .build();        
     }
     
-    private Sale buildSale(SaleCreationDto dto, Product p){
+    private Sale buildSale(SalesCreationDto sdto, SaleCreationDto dto, Product p){
         ItemPrice<SaleCreationDto> itemPrice = 
                 new ItemPrice<>(dto,
                         dto.getUnitPrice(),
                         dto.getDiscountRate(),
                         dto.getQuantity(),
-                        dto.getTaxRate());
+                        dto.getTaxRate());        
         
         Sale sale = Sale.builder()
                 .discountRate(dto.getDiscountRate())
                 .pckQty(dto.getPckQty())
-                .performedBy(dto.getPerformedBy())
                 .product(p)
                 .quantity(dto.getQuantity())
                 .sku(p.getStockKeepingUnit())
                 .store(p.getStore())
+                .customerId(sdto.getCustomerId())
+                .performedBy(sdto.getPerformedBy())
+                .pointOfSales(sdto.getPointOfSales())
                 .taxRate(dto.getTaxRate())
                 .transactionRef(dto.getTransactionRef())
                 .unitPrice(dto.getUnitPrice())

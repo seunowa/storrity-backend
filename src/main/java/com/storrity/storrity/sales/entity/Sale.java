@@ -53,6 +53,9 @@ public class Sale {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
     private String performedBy;
+    private String customerId;
+//    Client system name at the tme of sale
+    private String pointOfSales;
     private Double quantity;
     private String sku;
     @Convert(converter = PckQtyWithSellingPriceConverter.class)
@@ -65,6 +68,7 @@ public class Sale {
     @AttributeOverrides({
         @AttributeOverride(name = "valueInMicroNaira", column = @Column(name = "pre_discount_price_in_micro_naira"))
     })
+//    @Todo refactor preDiscountPrice to nonDiscountedPrice
     private Money preDiscountPrice;
     @AttributeOverrides({
         @AttributeOverride(name = "valueInMicroNaira", column = @Column(name = "discount_amount_in_micro_naira"))
@@ -73,6 +77,7 @@ public class Sale {
     @AttributeOverrides({
         @AttributeOverride(name = "valueInMicroNaira", column = @Column(name = "discounted_amount_in_micro_naira"))
     })
+//    @Todo refactor discountedAmount to discountedPrice
     private Money discountedAmount;
     @AttributeOverrides({
         @AttributeOverride(name = "valueInMicroNaira", column = @Column(name = "amount_in_micro_naira"))

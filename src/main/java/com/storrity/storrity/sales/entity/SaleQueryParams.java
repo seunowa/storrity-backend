@@ -31,6 +31,7 @@ public class SaleQueryParams {
     private List<UUID> productIds;
     private List<UUID> storeIds;
     private List<String> performedBy;
+    private List<String> pointOfSales;
     @Size(min = 2, max = 2, message = "createdAtRange must contain exactly two dates")
     private List<LocalDateTime> createdAtRange;
     @Size(min = 2, max = 2, message = "updatedAtRange must contain exactly two dates")

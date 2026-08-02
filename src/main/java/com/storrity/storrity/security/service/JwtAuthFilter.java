@@ -34,12 +34,13 @@ public class JwtAuthFilter extends GenericFilter {
             if (jwtUtil.isValid(token)) {
                 var username = jwtUtil.extractUsername(token);
                 String clientId = jwtUtil.extractClientId(token);
+                String clientName = jwtUtil.extractClientName(token);
                 
                 var authorities = jwtUtil.extractAuthorities(token).stream()
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
                 
-                var principal = new AuthenticatedUser(username, clientId);
+                var principal = new AuthenticatedUser(username, clientId, clientName);
 
                 var auth = new UsernamePasswordAuthenticationToken(principal, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);

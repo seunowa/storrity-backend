@@ -5,7 +5,9 @@
 package com.storrity.storrity.security.controller;
 
 import com.storrity.storrity.license.dto.ClientSystemCreationDto;
+import com.storrity.storrity.license.entity.ClientSystem;
 import com.storrity.storrity.license.entity.ClientSystemStatus;
+import com.storrity.storrity.license.repository.ClientSystemRepository;
 import com.storrity.storrity.license.service.ClientSystemService;
 import com.storrity.storrity.license.service.LicenseService;
 import com.storrity.storrity.security.dto.LoginRequestDto;
@@ -27,6 +29,7 @@ import com.storrity.storrity.security.service.AppUserService;
 import com.storrity.storrity.security.service.JwtUtil;
 import com.storrity.storrity.util.exception.AuthenticationAppException;
 import com.storrity.storrity.util.exception.BadRequestAppException;
+import com.storrity.storrity.util.exception.ResourceNotFoundAppException;
 import com.storrity.storrity.util.exception.ServerError;
 import com.storrity.storrity.util.exception.ValidationError;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,10 +61,12 @@ public class AuthController {
     private final AppUserService appUserService;
     private final ClientSystemService clientSystemService;
     private final LicenseService licenseService;
+    private final ClientSystemRepository clientSystemRepository;
 
     public AuthController(UserRepository userRepo, UserRoleRepository roleRepo
             , JwtUtil jwtUtil, PasswordEncoder encoder, AppUserService appUserService
-            , ClientSystemService clientSystemService, LicenseService licenseService) {
+            , ClientSystemService clientSystemService, LicenseService licenseService
+            , ClientSystemRepository clientSystemRepository) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
         this.jwtUtil = jwtUtil;
@@ -69,6 +74,7 @@ public class AuthController {
         this.appUserService = appUserService;
         this.clientSystemService = clientSystemService;
         this.licenseService = licenseService;
+        this.clientSystemRepository = clientSystemRepository;
     }
     
     @Operation(
@@ -105,7 +111,10 @@ public class AuthController {
     public LoginSuccessDto login(@Valid @RequestBody LoginRequestDto request) {
         
 //        @Todo check if clientId is registered (is licensed)
-        licenseService.isClientSystemLicensed(request.getClientId());
+        String clientId = request.getClientId();
+        ClientSystem cs = clientSystemRepository.findByClientId(clientId)
+                .orElseThrow(()-> new ResourceNotFoundAppException("Client system not found with clientId: " + clientId));
+        licenseService.isClientSystemLicensed(cs);
         
         AppUser user = userRepo.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AuthenticationAppException("Invalid credentials"));
@@ -119,7 +128,7 @@ public class AuthController {
                 .map(p -> "PERM_" + p.name())
                 .toList();
 
-        String token = jwtUtil.generateToken(user.getUsername(), request.getClientId(), authorities);
+        String token = jwtUtil.generateToken(user.getUsername(), request.getClientId(), cs.getName(), authorities);
         return LoginSuccessDto.builder().token(token).build();
     }
 //    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto request) {

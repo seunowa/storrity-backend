@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.storrity.storrity.sales.dto;
 
-import java.util.List;
+package com.storrity.storrity.country.dto;
+
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,10 +23,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
-public class SalesCreationDto {
-    private String transactionRef;
-    private String performedBy;
-    private String customerId;
-    private String pointOfSales;
-    private List<SaleCreationDto> items;
+public class SelectedCountryDto {
+
+    @NotBlank
+    private String countryName;
+
 }

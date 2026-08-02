@@ -66,6 +66,7 @@ public class CheckoutServiceImpl implements CheckoutService{
         AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = principal.getUsername();
         SalesAttendant attendant = salesAttendantService.fetchByUsername(username);
+        String pointOfSales = principal.getClientId();
         
 //        update care status to paid
         cart.setCartStatus(CartStatus.PAID);
@@ -83,7 +84,7 @@ public class CheckoutServiceImpl implements CheckoutService{
                 .stream()
                 .map((i)-> SaleCreationDto.builder()
                         .pckQty(i.getPckQty())
-                        .performedBy(principal.getUsername())
+//                        .performedBy(principal.getUsername())
                         .productId(i.getProduct().getId())
                         .quantity(i.getQuantity())
                         .taxRate(0.075d)
@@ -94,6 +95,8 @@ public class CheckoutServiceImpl implements CheckoutService{
                 .collect(Collectors.toList());
         SalesCreationDto salesCreationDto = SalesCreationDto.builder()
                 .performedBy(username)
+                .customerId(cart.getCustomerId())
+                .pointOfSales(pointOfSales)
                 .transactionRef(cart.getTransactionRef())
                 .items(items)
                 .build();

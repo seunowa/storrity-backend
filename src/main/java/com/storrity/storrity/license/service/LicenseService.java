@@ -7,6 +7,7 @@ package com.storrity.storrity.license.service;
 import com.storrity.storrity.license.dto.IsAddClientSystemAllowedDto;
 import com.storrity.storrity.license.dto.IsClientSystemLicensedDto;
 import com.storrity.storrity.license.dto.LicenseDto;
+import com.storrity.storrity.license.entity.ClientSystem;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -26,5 +27,6 @@ public interface LicenseService {
     public String getSystemIdentifier();
     
     public  IsClientSystemLicensedDto isClientSystemLicensed(String clientId);
+    public  IsClientSystemLicensedDto isClientSystemLicensed(ClientSystem cs);
     public IsAddClientSystemAllowedDto  isAddClientSystemAllowed();
 }

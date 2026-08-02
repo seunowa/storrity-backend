@@ -27,7 +27,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class SaleCreationDto {
     private UUID productId;
-    private String performedBy;
     private Double quantity;
     private List<PckQtyWithSellinPrice> pckQty;
     private Money unitPrice;

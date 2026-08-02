@@ -20,11 +20,12 @@ public class JwtUtil {
     private final long expiration = 86400000; // 1 day
     private final Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
-    public String generateToken(String username, String clientId, List<String> authorities) {
+    public String generateToken(String username, String clientId, String clientName, List<String> authorities) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("authorities", authorities)
                 .claim("clientId", clientId)
+                .claim("clientName", clientName)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -37,6 +38,10 @@ public class JwtUtil {
     
     public String extractClientId(String token){
         return getClaims(token).get("clientId", String.class);
+    }
+    
+    public String extractClientName(String token){
+        return getClaims(token).get("clientName", String.class);
     }
 
     public List<String> extractAuthorities(String token) {

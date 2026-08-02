@@ -37,6 +37,8 @@ public class SaleDto {
     private UUID storeId;
     private String storeName;
     private String performedBy;
+    private String customerId;
+    private String pointOfSales;
     private Double quantity;
     private String sku;
     private List<PckQtyWithSellinPrice> pckQty;
@@ -61,6 +63,8 @@ public class SaleDto {
                 .id(s.getId())
                 .pckQty(s.getPckQty())
                 .performedBy(s.getPerformedBy())
+                .customerId(s.getCustomerId())
+                .pointOfSales(s.getPointOfSales())
                 .preDiscountPrice(s.getPreDiscountPrice())
                 .productId(s.getProduct().getId())
                 .productName(s.getProduct().getName())

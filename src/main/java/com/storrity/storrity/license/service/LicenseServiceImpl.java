@@ -81,6 +81,16 @@ public class LicenseServiceImpl implements LicenseService{
             ClientSystem cs = clientSystemRepository.findByClientId(clientId)
                 .orElseThrow(()-> new ResourceNotFoundAppException("Client system not found with clientId: " + clientId));
             
+            return isClientSystemLicensed(cs);
+            
+        }catch(ResourceNotFoundAppException e){
+            throw new BadRequestAppException("Client system is not licensed");
+        }        
+    }
+
+    @Override
+    public IsClientSystemLicensedDto isClientSystemLicensed(ClientSystem cs) {
+        try{            
             if(ClientSystemStatus.INACTIVE.equals(cs.getStatus())){
                 throw new BadRequestAppException("Client system is not licensed");
             }
@@ -95,7 +105,7 @@ public class LicenseServiceImpl implements LicenseService{
             
         }catch(ResourceNotFoundAppException e){
             throw new BadRequestAppException("Client system is not licensed");
-        }        
+        }      
     }
 
     @Override

@@ -261,7 +261,7 @@ public class DataInitializer implements CommandLineRunner{
                         .quantity(10d)
                         .sellingPrice(new Money(1000000)).build()))
                 .productId(p.getId())
-                .performedBy("tester")
+//                .performedBy("tester")
                 .quantity(10d)
                 .taxRate(0.075d)
                 .transactionRef("sampletransref")
@@ -275,7 +275,7 @@ public class DataInitializer implements CommandLineRunner{
                         .quantity(5d)
                         .sellingPrice(new Money(500000)).build()))
                 .productId(p.getId())
-                .performedBy("tester")
+//                .performedBy("tester")
                 .quantity(5d)
                 .taxRate(0.075d)
                 .transactionRef("sampletransref")
@@ -285,6 +285,8 @@ public class DataInitializer implements CommandLineRunner{
         SalesCreationDto salesCreationDto = SalesCreationDto.builder()
                 .items(List.of(saleCreationDto1, saleCreationDto2))
                 .performedBy("tester")
+                .customerId("customerid")
+                .pointOfSales("posid")
                 .transactionRef("sampletransref")
                 .build();
         SaleService.create(salesCreationDto);
