@@ -15,7 +15,7 @@ import java.util.Objects;
  * @author Seun Owa
  */
 @Embeddable
-public class Money {
+public class Money implements Comparable<Money>{
 
     private long valueInMicroNaira; // 0.0001 NGN (4 decimal places)
 
@@ -23,6 +23,11 @@ public class Money {
 
     public Money(long valueInMicroNaira) {
         this.valueInMicroNaira = valueInMicroNaira;
+    }
+    
+//    Static factory method
+    public static Money ofMicroNaira(Long value) {
+        return new Money(value == null ? 0L : value);
     }
 
     public BigDecimal toNaira() {
@@ -93,6 +98,7 @@ public class Money {
         return toNaira().toPlainString() + " NGN";
     }
     
+    @Override
     public int compareTo(Money other) {
         return Long.compare(this.valueInMicroNaira, other.valueInMicroNaira);
     }
