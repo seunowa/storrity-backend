@@ -55,7 +55,7 @@ public class CartCsvRowMapper extends AbstractCsvRowMapper<CartCreationDto, Cart
             entity.getStore() != null
                     ? nullToBlank(entity.getStore().getName())
                     : "",
-            nullToBlank(entity.getCustomerId()),
+            nullToBlank(entity.getCustomerId().toString()),
             nullToBlank(entity.getCreatedBy()),
             entity.getCartStatus() != null
                     ? entity.getCartStatus().name()

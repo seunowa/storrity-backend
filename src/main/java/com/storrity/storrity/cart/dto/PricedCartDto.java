@@ -45,7 +45,7 @@ public class PricedCartDto {
     private UUID storeId;
     private String storeName;
     private Collection<PricedCartItemDto> items;
-    private String customerId;
+    private UUID customerId;
     private String createdBy;
     private Map<String, Object> metadata;
     private CartStatus cartStatus;

@@ -4,6 +4,8 @@
  */
 package com.storrity.storrity.security.service;
 
+import java.util.UUID;
+
 /**
  *
  * @author Seun Owa

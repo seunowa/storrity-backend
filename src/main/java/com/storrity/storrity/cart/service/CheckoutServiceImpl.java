@@ -66,7 +66,6 @@ public class CheckoutServiceImpl implements CheckoutService{
         AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = principal.getUsername();
         SalesAttendant attendant = salesAttendantService.fetchByUsername(username);
-        String pointOfSales = principal.getClientId();
         
 //        update care status to paid
         cart.setCartStatus(CartStatus.PAID);
@@ -90,13 +89,17 @@ public class CheckoutServiceImpl implements CheckoutService{
                         .taxRate(0.075d)
                         .transactionRef(cart.getTransactionRef())
                         .unitPrice(i.getProduct().getUnitPrice())
+//                        @Todo revisit the implementation for discount rate
+//                        consider when discound is applied on the product from the products settings and when
+//                        the discount is applied at the point of sales
 //                        .discountRate()
                         .build())
                 .collect(Collectors.toList());
         SalesCreationDto salesCreationDto = SalesCreationDto.builder()
                 .performedBy(username)
                 .customerId(cart.getCustomerId())
-                .pointOfSales(pointOfSales)
+                .clientSystemId(principal.getClientId())
+                .clientSystemName(principal.getClientName())
                 .transactionRef(cart.getTransactionRef())
                 .items(items)
                 .build();

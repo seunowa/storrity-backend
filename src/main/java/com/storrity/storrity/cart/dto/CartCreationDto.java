@@ -26,5 +26,5 @@ public class CartCreationDto {
     private String transactionRef;
     private String tag;
     private UUID storeId;
-    private String customerId;
+    private UUID customerId;
 }

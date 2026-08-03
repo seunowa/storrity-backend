@@ -29,6 +29,9 @@ public class SupplyItemDto {
     @NotNull
     private UUID productId;
     private String productName;
+    private String productCode;
+    private String productCategory;
+    private String productSubCategory;
     private String batchNumber;
     private LocalDate expiryDate;
     @Positive
@@ -44,9 +47,12 @@ public class SupplyItemDto {
         return SupplyItemDto.builder()
                 .batchNumber(item.getBatchNumber())
                 .expiryDate(item.getExpiryDate())
-                .pckQty(item.getPckQty())
-                .productId(item.getProduct().getId())
-                .productName(item.getProduct().getName())
+                .pckQty(item.getPckQty())                
+                .productId(item.getProductId())
+                .productName(item.getProductName())
+                .productCode(item.getProductCode())
+                .productCategory(item.getProductCategory())
+                .productSubCategory(item.getProductSubCategory())
                 .quantitySupplied(item.getQuantity())
                 .sku(item.getSku())
                 .costPrice(item.getCostPrice())

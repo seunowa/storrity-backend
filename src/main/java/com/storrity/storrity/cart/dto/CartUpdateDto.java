@@ -4,6 +4,7 @@
  */
 package com.storrity.storrity.cart.dto;
 
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,5 +25,5 @@ import lombok.experimental.SuperBuilder;
 @ToString
 @SuperBuilder
 public class CartUpdateDto {
-    private String customerId;
+    private UUID customerId;
 }

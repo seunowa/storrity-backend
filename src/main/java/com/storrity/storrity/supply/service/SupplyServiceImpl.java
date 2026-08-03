@@ -188,7 +188,9 @@ public class SupplyServiceImpl implements SupplyService{
     private Supply buildSupply(SupplyCreationDto dto, Store store){
         Supply supply = Supply.builder()
                 .transactionRef(dto.getTransactionRef())
-                .store(store)
+//                .store(store)
+                .storeId(store.getId())
+                .storeName(store.getName())
                 .supplyDate(dto.getSupplyDate())
                 .enteredByUserId(dto.getEnteredByUserId())
                 .receivedByUserId(dto.getReceivedByUserId())
@@ -220,7 +222,15 @@ public class SupplyServiceImpl implements SupplyService{
                         .batchNumber(i.getBatchNumber())
                         .expiryDate(i.getExpiryDate())
                         .pckQty(i.getPckQty())
-                        .product(p)
+//                        .product(p)
+                        .productId(p.getId())
+                        .productName(p.getName())
+                        .productCode(p.getCode())
+                        .productCategory(p.getCategory())
+                        .productSubCategory(p.getSubcategory())
+                        .storeId(p.getStore().getId())
+                        .storeName(p.getStore().getName())
+                        .performedBy(dto.getPerformedBy())
                         .quantity(computeQtyInSKU(i, p))
                         .sku(p.getStockKeepingUnit())
                         .costPrice(i.getCostPrice())
@@ -235,7 +245,9 @@ public class SupplyServiceImpl implements SupplyService{
     private Supply updateProperties(SupplyUpdateDto dto, Supply supply, Store store){
         
         supply.setTransactionRef(dto.getTransactionRef());
-        supply.setStore(store);
+        //supply.setStore(store);
+        supply.setStoreId(store.getId());
+        supply.setStoreName(store.getName());
         supply.setSupplyDate(dto.getSupplyDate());
         supply.setSupplyStatus(dto.getSupplyStatus());
         supply.setDeliveryNoteNumber(dto.getDeliveryNoteNumber());
@@ -298,7 +310,21 @@ public class SupplyServiceImpl implements SupplyService{
                 .stream()
                 .map((s)->{
                     List<PckQty> qtyList = new ArrayList<>(s.getPckQty());
-                    return new StockMovementInstructionItem(s.getQuantity(), StockFlow.INFLOW, s.getProduct().getId(), qtyList);})
+                    StockMovementInstructionItem item = StockMovementInstructionItem
+                            .builder()
+                            .flow(StockFlow.INFLOW)
+                            .quantity(s.getQuantity())
+                            .pckQty(qtyList)
+                            .productId(s.getProductId())
+                            .productName(s.getProductName())
+                            .productCode(s.getProductCode())
+                            .productCategory(s.getProductCategory())
+                            .productSubCategory(s.getProductSubCategory())
+                            .storeId(s.getStoreId())
+                            .storeName(s.getStoreName())
+                            .performedBy(s.getPerformedBy())
+                            .build();
+                    return item;})
                 .collect(Collectors.toList());
         
         StockMovementInstruction smInstruction = StockMovementInstruction.builder()

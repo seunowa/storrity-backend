@@ -29,5 +29,12 @@ public class StockMovementInstructionItem {
     private Double quantity;
     private StockFlow flow;
     private UUID productId;
+    private String productName;
+    private String productCode;
+    private String productCategory;
+    private String productSubCategory;
+    private UUID storeId;
+    private String storeName;
+    private String performedBy;
     private List<PckQty> pckQty;
 }

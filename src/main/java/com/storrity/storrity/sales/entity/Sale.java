@@ -46,16 +46,27 @@ public class Sale {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     private String transactionRef;
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "store_id", nullable = false)
-    private Store store;
+//    @Todo remove relationship to product and keep only productId as property in this entity
+//    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+//    @JoinColumn(name = "product_id", nullable = false)
+//    private Product product;
+    private UUID productId;
+    private String productName;
+    private String productCode;
+    private String productCategory;
+    private String productSubCategory;
+//    @Todo remove relationship to store and keep only storeId as property in this entity
+//    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+//    @JoinColumn(name = "store_id", nullable = false)
+//    private Store store;
+    private UUID storeId;
+    private String storeName;
     private String performedBy;
-    private String customerId;
-//    Client system name at the tme of sale
-    private String pointOfSales;
+    private UUID customerId;
+    private String customerName;
+//    Client system name at the time of sale
+    private String clientSystemId;
+    private String clientSystemName;
     private Double quantity;
     private String sku;
     @Convert(converter = PckQtyWithSellingPriceConverter.class)

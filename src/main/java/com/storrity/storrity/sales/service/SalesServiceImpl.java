@@ -174,13 +174,21 @@ public class SalesServiceImpl implements SalesService{
         Sale sale = Sale.builder()
                 .discountRate(dto.getDiscountRate())
                 .pckQty(dto.getPckQty())
-                .product(p)
+//                .product(p)
+                .productId(p.getId())
+                .productName(p.getName())
+                .productCode(p.getCode())
+                .productCategory(p.getCategory())
+                .productSubCategory(p.getSubcategory())
                 .quantity(dto.getQuantity())
                 .sku(p.getStockKeepingUnit())
-                .store(p.getStore())
+//                .store(p.getStore())
+                .storeId(p.getStore().getId())
+                .storeName(p.getStore().getName())
                 .customerId(sdto.getCustomerId())
                 .performedBy(sdto.getPerformedBy())
-                .pointOfSales(sdto.getPointOfSales())
+                .clientSystemId(sdto.getClientSystemId())
+                .clientSystemName(sdto.getClientSystemName())
                 .taxRate(dto.getTaxRate())
                 .transactionRef(dto.getTransactionRef())
                 .unitPrice(dto.getUnitPrice())
@@ -201,7 +209,23 @@ public class SalesServiceImpl implements SalesService{
                 .stream()
                 .map((s)->{
                     List<PckQty> qtyList = new ArrayList<>(s.getPckQty());
-                    return new StockMovementInstructionItem(s.getQuantity(), StockFlow.OUTFLOW, s.getProduct().getId(), qtyList);})
+                    StockMovementInstructionItem item = StockMovementInstructionItem
+                            .builder()
+                            .quantity(s.getQuantity())
+                            .flow(StockFlow.OUTFLOW)
+                            .pckQty(qtyList)
+                            .productCategory(s.getProductCategory())
+                            .productCode(s.getProductCode())
+                            .productId(s.getProductId())
+                            .productName(s.getProductName())
+                            .productSubCategory(s.getProductSubCategory())
+                            .storeId(s.getStoreId())
+                            .storeName(s.getStoreName())
+                            .performedBy(s.getPerformedBy())
+                            .build();
+                    return item;
+//                    return new StockMovementInstructionItem(s.getQuantity(), StockFlow.OUTFLOW, s.getP, qtyList);
+                })
                 .collect(Collectors.toList());
         
         StockMovementInstruction smInstruction = StockMovementInstruction.builder()

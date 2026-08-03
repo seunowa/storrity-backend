@@ -285,8 +285,9 @@ public class DataInitializer implements CommandLineRunner{
         SalesCreationDto salesCreationDto = SalesCreationDto.builder()
                 .items(List.of(saleCreationDto1, saleCreationDto2))
                 .performedBy("tester")
-                .customerId("customerid")
-                .pointOfSales("posid")
+//                .customerId("")
+                .clientSystemId("cs001")
+                .clientSystemName("Client system 1")
                 .transactionRef("sampletransref")
                 .build();
         SaleService.create(salesCreationDto);

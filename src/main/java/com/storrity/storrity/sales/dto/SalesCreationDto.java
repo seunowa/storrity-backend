@@ -5,6 +5,7 @@
 package com.storrity.storrity.sales.dto;
 
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,9 @@ import lombok.experimental.SuperBuilder;
 public class SalesCreationDto {
     private String transactionRef;
     private String performedBy;
-    private String customerId;
-    private String pointOfSales;
+    private UUID customerId;
+    private String customerName;
+    private String clientSystemId;
+    private String clientSystemName;
     private List<SaleCreationDto> items;
 }

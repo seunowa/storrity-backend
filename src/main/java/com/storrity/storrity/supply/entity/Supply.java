@@ -54,9 +54,11 @@ public class Supply {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     private String transactionRef;
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "store_id", nullable = false)
-    private Store store;
+//    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+//    @JoinColumn(name = "store_id", nullable = false)
+//    private Store store;
+    private UUID storeId;
+    private String storeName;
     private LocalDate supplyDate;
     private String enteredByUserId;
     private String receivedByUserId;
@@ -78,11 +80,15 @@ public class Supply {
     @AttributeOverrides({
         @AttributeOverride(name = "valueInMicroNaira", column = @Column(name = "delivery_fee_in_micro_naira"))
     })
-    private Money deliveryFee;
+    private Money deliveryFee;    
+//    @Todo remove properties the relate to payment from supply
+//    payment should be manage by a different abstraction
+    @Deprecated
     private String paymentMethod;    
     @AttributeOverrides({
         @AttributeOverride(name = "valueInMicroNaira", column = @Column(name = "amount_paid_in_micro_naira"))
     })
+    @Deprecated
     private Money amountPaid;
     private String notes;
     private String approvedByUserId;    

@@ -121,22 +121,28 @@ public class SalesReturnServiceImpl implements SalesReturnService{
     
     private StockMovementInstruction buildStockMovementInstruction(SalesReturn salesReturn) {
 
-    List<PckQty> qty = new ArrayList<>(salesReturn.getPckQty());
+        Sale s = salesReturn.getSale();
+        List<PckQty> qty = new ArrayList<>(salesReturn.getPckQty());
+    
+        StockMovementInstructionItem item = StockMovementInstructionItem
+                            .builder()
+                            .flow(StockFlow.INFLOW)
+                            .pckQty(qty)
+                            .productCategory(s.getProductCategory())
+                            .productCode(s.getProductCode())
+                            .productId(s.getProductId())
+                            .productName(s.getProductName())
+                            .productSubCategory(s.getProductSubCategory())
+                            .storeId(s.getStoreId())
+                            .storeName(s.getStoreName())
+                            .performedBy(s.getPerformedBy())
+                            .build();
 
-        StockMovementInstructionItem item =
-            new StockMovementInstructionItem(
-                    salesReturn.getQuantity(),
-                        StockFlow.INFLOW,
-                    salesReturn.getSale()
-                               .getProduct()
-                               .getId(),
-                    qty);
-
-    return StockMovementInstruction.builder()
-            .description("sales return")
-            .performedBy(salesReturn.getPerformedBy())
-            .transactionRef(salesReturn.getTransactionRef())
-            .instructionItems(List.of(item))
-            .build();
-}
+        return StockMovementInstruction.builder()
+                .description("sales return")
+                .performedBy(salesReturn.getPerformedBy())
+                .transactionRef(salesReturn.getTransactionRef())
+                .instructionItems(List.of(item))
+                .build();
+    }
 }

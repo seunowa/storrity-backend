@@ -60,7 +60,7 @@ public class Cart {
     private Store store;
     @OneToMany(mappedBy = "cartId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Collection<CartItem> items;
-    private String customerId;
+    private UUID customerId;
     private String createdBy;
     @Convert(converter = MetadataConverter.class)
     private Map<String, Object> metadata;

@@ -48,9 +48,17 @@ public class SupplyItem {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     private UUID supplyId;
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+//    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+//    @JoinColumn(name = "product_id", nullable = false)
+//    private Product product;
+    private UUID productId;
+    private String productName;
+    private String productCode;
+    private String productCategory;
+    private String productSubCategory;
+    private UUID storeId;
+    private String storeName;
+    private String performedBy;
     private String batchNumber;
     private LocalDate expiryDate;
     private Double quantity;

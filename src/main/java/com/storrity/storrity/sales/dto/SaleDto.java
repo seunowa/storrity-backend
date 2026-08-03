@@ -34,11 +34,16 @@ public class SaleDto {
     private String transactionRef;
     private UUID productId;
     private String productName;
+    private String productCode;
+    private String productCategory;
+    private String productSubCategory;
     private UUID storeId;
     private String storeName;
     private String performedBy;
-    private String customerId;
-    private String pointOfSales;
+    private UUID customerId;
+    private String customerName;
+    private String clientSystemId;
+    private String clientSystemName;
     private Double quantity;
     private String sku;
     private List<PckQtyWithSellinPrice> pckQty;
@@ -64,14 +69,19 @@ public class SaleDto {
                 .pckQty(s.getPckQty())
                 .performedBy(s.getPerformedBy())
                 .customerId(s.getCustomerId())
-                .pointOfSales(s.getPointOfSales())
+                .customerName(s.getCustomerName())
+                .clientSystemId(s.getClientSystemId())
+                .clientSystemName(s.getClientSystemName())
                 .preDiscountPrice(s.getPreDiscountPrice())
-                .productId(s.getProduct().getId())
-                .productName(s.getProduct().getName())
+                .productId(s.getProductId())
+                .productName(s.getProductName())
+                .productCode(s.getProductCode())
+                .productCategory(s.getProductCategory())
+                .productSubCategory(s.getProductSubCategory())
                 .quantity(s.getQuantity())
                 .sku(s.getSku())
-                .storeId(s.getStore().getId())
-                .storeName(s.getStore().getName())
+                .storeId(s.getStoreId())
+                .storeName(s.getStoreName())
                 .taxAmount(s.getTaxAmount())
                 .taxRate(s.getTaxRate())
                 .transactionRef(s.getTransactionRef())

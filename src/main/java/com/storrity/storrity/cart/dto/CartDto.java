@@ -40,7 +40,7 @@ public class CartDto {
     private UUID storeId;
     private String storeName;
     private Collection<CartItemDto> items;
-    private String customerId;
+    private UUID customerId;
     private String createdBy;
     private Map<String, Object> metadata;
     private CartStatus cartStatus;

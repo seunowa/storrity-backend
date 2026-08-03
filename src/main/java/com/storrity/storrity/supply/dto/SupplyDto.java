@@ -44,7 +44,11 @@ public class SupplyDto {
     private Map<String, Object> metadata;
     private Money grandTotal;
     private Money deliveryFee;
-    private String paymentMethod; 
+//    @Todo remove properties the relate to payment from supply
+//    payment should be manage by a different abstraction
+    @Deprecated
+    private String paymentMethod;
+    @Deprecated
     private Money amountPaid;
     private String notes;
     private String approvedByUserId;
@@ -57,8 +61,8 @@ public class SupplyDto {
         return SupplyDto.builder()
                 .id(s.getId())
                 .transactionRef(s.getTransactionRef())
-                .storeId(s.getStore().getId())
-                .storeName(s.getStore().getName())
+                .storeId(s.getStoreId())
+                .storeName(s.getStoreName())
                 .supplyDate(s.getSupplyDate())
                 .enteredByUserId(s.getEnteredByUserId())
                 .receivedByUserId(s.getReceivedByUserId())
