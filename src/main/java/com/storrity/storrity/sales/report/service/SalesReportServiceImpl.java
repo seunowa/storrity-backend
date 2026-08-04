@@ -5,13 +5,23 @@
 
 package com.storrity.storrity.sales.report.service;
 
+import com.storrity.storrity.sales.report.dto.AverageBasketDto;
 import com.storrity.storrity.sales.report.dto.DailySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.MonthlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.QuarterlySalesSummaryDto;
+import com.storrity.storrity.sales.report.dto.SalesByBrandDto;
+import com.storrity.storrity.sales.report.dto.SalesByCashierDto;
+import com.storrity.storrity.sales.report.dto.SalesByCategoryDto;
+import com.storrity.storrity.sales.report.dto.SalesByClientSystemDto;
+import com.storrity.storrity.sales.report.dto.SalesByCustomerDto;
+import com.storrity.storrity.sales.report.dto.SalesByHourDto;
+import com.storrity.storrity.sales.report.dto.SalesByProductDto;
+import com.storrity.storrity.sales.report.dto.SalesByStoreDto;
+import com.storrity.storrity.sales.report.dto.SalesByWeekdayDto;
 import com.storrity.storrity.sales.report.dto.SalesReportQueryParams;
 import com.storrity.storrity.sales.report.dto.WeeklySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.YearlySalesSummaryDto;
-import com.storrity.storrity.sales.report.reposiitory.SalesReportRepository;
+import com.storrity.storrity.sales.report.repository.SalesReportRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,6 +63,56 @@ public class SalesReportServiceImpl implements SalesReportService{
     @Override
     public List<YearlySalesSummaryDto> yearlySalesSummary(SalesReportQueryParams params) {
         return salesReportRepository.yearlySalesSummary(params);
+    }
+
+    @Override
+    public List<SalesByStoreDto> salesByStore(SalesReportQueryParams params) {
+        return salesReportRepository.salesByStore(params);
+    }
+
+    @Override
+    public List<SalesByProductDto> salesByProduct(SalesReportQueryParams params) {
+        return salesReportRepository.salesByProduct(params);
+    }
+
+    @Override
+    public List<SalesByCategoryDto> salesByCategory(SalesReportQueryParams params) {
+        return salesReportRepository.salesByCategory(params);
+    }
+
+    @Override
+    public List<SalesByBrandDto> salesByBrand(SalesReportQueryParams params) {
+        return salesReportRepository.salesByBrand(params);
+    }
+
+    @Override
+    public List<SalesByCashierDto> salesByCashier(SalesReportQueryParams params) {
+        return salesReportRepository.salesByCashier(params);
+    }
+
+    @Override
+    public List<SalesByClientSystemDto> salesByClientSystem(SalesReportQueryParams params) {
+        return salesReportRepository.salesByClientSystem(params);
+    }
+
+    @Override
+    public List<SalesByCustomerDto> salesByCustomer(SalesReportQueryParams params) {
+        return salesReportRepository.salesByCustomer(params);
+    }
+
+    @Override
+    public List<SalesByHourDto> salesByHour(SalesReportQueryParams params) {
+        return salesReportRepository.salesByHour(params);
+    }
+
+    @Override
+    public List<SalesByWeekdayDto> salesByWeekday(SalesReportQueryParams params) {
+        return salesReportRepository.salesByWeekday(params);
+    }
+
+    @Override
+    public AverageBasketDto averageBasket(SalesReportQueryParams params) {
+        return salesReportRepository.averageBasket(params);
     }
 
 }

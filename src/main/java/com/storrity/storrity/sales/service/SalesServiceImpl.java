@@ -180,6 +180,7 @@ public class SalesServiceImpl implements SalesService{
                 .productCode(p.getCode())
                 .productCategory(p.getCategory())
                 .productSubCategory(p.getSubcategory())
+                .productBrand(p.getBrand())
                 .quantity(dto.getQuantity())
                 .sku(p.getStockKeepingUnit())
 //                .store(p.getStore())

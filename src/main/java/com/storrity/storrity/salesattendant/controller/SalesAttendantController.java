@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/sales_attendance")
 @Tag(name = "Sales Attendant", description = "Operations related to sales attendance management")
 public class SalesAttendantController {
+//    @Todo refactor the name attendant to cashier as cashier is more accurate
     private final SalesAttendantService salesAttendantService;
 
     @Autowired

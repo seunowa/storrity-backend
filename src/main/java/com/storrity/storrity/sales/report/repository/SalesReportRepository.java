@@ -1,8 +1,9 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.storrity.storrity.sales.report.service;
+
+package com.storrity.storrity.sales.report.repository;
 
 import com.storrity.storrity.sales.report.dto.AverageBasketDto;
 import com.storrity.storrity.sales.report.dto.DailySalesSummaryDto;
@@ -26,8 +27,8 @@ import java.util.List;
  *
  * @author Seun Owa
  */
-public interface SalesReportService {
-    List<DailySalesSummaryDto> dailySalesSummary(SalesReportQueryParams params);    
+public interface SalesReportRepository {
+    List<DailySalesSummaryDto> dailySalesSummary(SalesReportQueryParams params);
     List<WeeklySalesSummaryDto> weeklySalesSummary(SalesReportQueryParams params);
     List<MonthlySalesSummaryDto> monthlySalesSummary(SalesReportQueryParams params);
     List<QuarterlySalesSummaryDto> quarterlySalesSummary(SalesReportQueryParams params);

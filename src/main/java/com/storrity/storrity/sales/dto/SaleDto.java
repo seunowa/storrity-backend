@@ -37,6 +37,7 @@ public class SaleDto {
     private String productCode;
     private String productCategory;
     private String productSubCategory;
+    private String productBrand;
     private UUID storeId;
     private String storeName;
     private String performedBy;
@@ -78,6 +79,7 @@ public class SaleDto {
                 .productCode(s.getProductCode())
                 .productCategory(s.getProductCategory())
                 .productSubCategory(s.getProductSubCategory())
+                .productBrand(s.getProductBrand())
                 .quantity(s.getQuantity())
                 .sku(s.getSku())
                 .storeId(s.getStoreId())

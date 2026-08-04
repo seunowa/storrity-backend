@@ -56,7 +56,8 @@ public class Sale {
     private String productName;
     private String productCode;
     private String productCategory;
-    private String productSubCategory;
+    private String productSubCategory;    
+    private String productBrand;
 //    @Todo remove relationship to store and keep only storeId as property in this entity
 //    @ManyToOne(fetch = FetchType.EAGER, optional = false)
 //    @JoinColumn(name = "store_id", nullable = false)
