@@ -90,7 +90,8 @@ public class SupplyRepositoryImpl implements SupplyRepositoryCustom{
         
         if (params.getStoreIds()!= null && !params.getStoreIds().isEmpty()) {
 //            predicates.add(root.get("store").in(params.getStoreIds()));
-            predicates.add(root.get("store").get("id").in(params.getStoreIds()));
+//            predicates.add(root.get("store").get("id").in(params.getStoreIds()));
+              predicates.add(root.get("storeId").in(params.getStoreIds()));
         }
 
         // Conditionally add date range filter

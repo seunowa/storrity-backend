@@ -90,11 +90,13 @@ public class SaleRepositoryImpl implements SaleRepositoryCustom{
         }
         
         if (params.getProductIds() != null && !params.getProductIds().isEmpty()) {
-            predicates.add(root.get("product").get("id").in(params.getProductIds()));
+//            predicates.add(root.get("product").get("id").in(params.getProductIds()));
+            predicates.add(root.get("productId").in(params.getProductIds()));
         }
         
         if (params.getStoreIds()!= null && !params.getStoreIds().isEmpty()) {
-            predicates.add(root.get("store").get("id").in(params.getStoreIds()));
+//            predicates.add(root.get("store").get("id").in(params.getStoreIds()));
+            predicates.add(root.get("storeId").in(params.getStoreIds()));
         }       
                 
         if (params.getPerformedBy()!= null && !params.getPerformedBy().isEmpty()) {
