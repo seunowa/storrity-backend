@@ -6,8 +6,8 @@
 package com.storrity.storrity.sales.report.controller;
 
 
-import com.storrity.storrity.sales.report.service.AiReportService;
-import com.storrity.storrity.util.reports.ai.AiReportResponse;
+import com.storrity.storrity.sales.report.service.AiReportServiceStale;
+import com.storrity.storrity.util.ai.reports.dto.AiReportResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,16 +18,16 @@ import org.springframework.web.bind.annotation.*;
  *
  * @author Seun Owa
  */
-@RestController
-@RequestMapping("/api/v1/ai/reports")
+//@RestController
+//@RequestMapping("/api/v1/ai/reports")
 @Tag(name = "AI Reports", description = "AI-powered sales report generation")
 @CrossOrigin
-public class AiReportController {
+public class AiReportControllerStale {
 
-    private final AiReportService aiReportService;
+    private final AiReportServiceStale aiReportService;
 
     @Autowired
-    public AiReportController(AiReportService aiReportService) {
+    public AiReportControllerStale(AiReportServiceStale aiReportService) {
         this.aiReportService = aiReportService;
     }
 

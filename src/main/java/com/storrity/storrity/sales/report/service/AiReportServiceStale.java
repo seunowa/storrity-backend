@@ -5,7 +5,7 @@
 
 package com.storrity.storrity.sales.report.service;
 
-import com.storrity.storrity.util.reports.ai.AiReportResponse;
+import com.storrity.storrity.util.ai.reports.dto.AiReportResponse;
 import java.time.LocalDate;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
  *
  * @author Seun Owa
  */
-@Service
-public class AiReportService {
+//@Service
+public class AiReportServiceStale {
 
     private final ChatClient chatClient;
 
     @Autowired
-    public AiReportService(ChatClient.Builder chatClientBuilder,
+    public AiReportServiceStale(ChatClient.Builder chatClientBuilder,
                            SalesReportTools salesReportTools) {
         this.chatClient = chatClientBuilder
                 .defaultSystem(buildSystemPrompt())

@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.storrity.storrity.util.reports.ai;
+package com.storrity.storrity.util.ai.reports.dto;
 
 import java.util.List;
 
