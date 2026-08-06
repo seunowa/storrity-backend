@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package com.storrity.storrity.util.ai.settings.repository;
+package com.storrity.storrity.ai.settings.repository;
 
-import com.storrity.storrity.util.ai.settings.entity.AiActiveConfig;
+import com.storrity.storrity.ai.settings.entity.AiActiveConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

@@ -3,11 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.storrity.storrity.util.ai.settings.controller;
+package com.storrity.storrity.ai.settings.controller;
 
-import com.storrity.storrity.util.ai.settings.dto.AiProvider;
-import com.storrity.storrity.util.ai.settings.dto.ProviderInfo;
-import com.storrity.storrity.util.ai.settings.service.AiConfigService;
+import com.storrity.storrity.ai.settings.dto.AiProvider;
+import com.storrity.storrity.ai.settings.dto.ProviderInfo;
+import com.storrity.storrity.ai.settings.service.AiConfigService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

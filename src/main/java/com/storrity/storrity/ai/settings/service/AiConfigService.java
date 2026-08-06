@@ -3,12 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.storrity.storrity.util.ai.settings.service;
+package com.storrity.storrity.ai.settings.service;
 
-import com.storrity.storrity.util.ai.settings.entity.AiActiveConfig;
-import com.storrity.storrity.util.ai.settings.entity.AiProviderSettings;
-import com.storrity.storrity.util.ai.settings.repository.AiActiveConfigRepository;
-import com.storrity.storrity.util.ai.settings.repository.AiProviderSettingsRepository;
+import com.storrity.storrity.ai.settings.entity.AiActiveConfig;
+import com.storrity.storrity.ai.settings.entity.AiProviderSettings;
+import com.storrity.storrity.ai.settings.repository.AiActiveConfigRepository;
+import com.storrity.storrity.ai.settings.repository.AiProviderSettingsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

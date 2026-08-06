@@ -3,9 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.storrity.storrity.util.ai.settings.service;
+package com.storrity.storrity.ai.settings.service;
 
-import com.storrity.storrity.util.ai.reports.dto.AiReportResponse;
+import com.storrity.storrity.ai.reports.dto.AiReportResponse;
 import com.storrity.storrity.util.exception.BadRequestAppException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;

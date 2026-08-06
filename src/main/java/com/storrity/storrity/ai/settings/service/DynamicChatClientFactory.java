@@ -3,10 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.storrity.storrity.util.ai.settings.service;
+package com.storrity.storrity.ai.settings.service;
 
 import com.storrity.storrity.sales.report.service.SalesReportTools;
-import com.storrity.storrity.util.ai.settings.entity.AiProviderSettings;
+import com.storrity.storrity.ai.settings.entity.AiProviderSettings;
 import java.time.LocalDate;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;

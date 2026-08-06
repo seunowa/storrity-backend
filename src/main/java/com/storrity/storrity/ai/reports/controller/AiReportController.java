@@ -3,11 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.storrity.storrity.sales.report.controller;
+package com.storrity.storrity.ai.reports.controller;
 
-
-import com.storrity.storrity.sales.report.service.AiReportServiceStale;
-import com.storrity.storrity.util.ai.reports.dto.AiReportResponse;
+import com.storrity.storrity.ai.reports.dto.AiReportResponse;
+import com.storrity.storrity.ai.settings.service.AiReportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,21 +17,21 @@ import org.springframework.web.bind.annotation.*;
  *
  * @author Seun Owa
  */
-//@RestController
-//@RequestMapping("/api/v1/ai/reports")
-@Tag(name = "AI Reports", description = "AI-powered sales report generation")
+@RestController
+@RequestMapping("/api/v1/ai/reports")
+@Tag(name = "AI Reports", description = "AI-powered report generation")
 @CrossOrigin
-public class AiReportControllerStale {
+public class AiReportController {
 
-    private final AiReportServiceStale aiReportService;
+    private final AiReportService aiReportService;
 
     @Autowired
-    public AiReportControllerStale(AiReportServiceStale aiReportService) {
+    public AiReportController(AiReportService aiReportService) {
         this.aiReportService = aiReportService;
     }
 
     @Operation(
-            summary = "Generate an AI sales report",
+            summary = "Generate an AI report",
             description = "Accepts a natural language request and returns a structured report containing narrative text and chart-ready data.",
             security = @SecurityRequirement(name = "bearerAuth")
     )

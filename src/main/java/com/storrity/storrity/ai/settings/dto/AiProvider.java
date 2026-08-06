@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Enum.java to edit this template
  */
-package com.storrity.storrity.util.ai.settings.dto;
+package com.storrity.storrity.ai.settings.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
