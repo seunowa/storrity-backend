@@ -84,6 +84,7 @@ public class Product {
     private String location;
     private Double reorderLevel;
     private Double reorderQuantity;
+    private Double highStockLevel;
        
     @PrePersist
     public void prePersist(){        

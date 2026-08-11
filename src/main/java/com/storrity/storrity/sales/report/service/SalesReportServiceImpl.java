@@ -7,6 +7,7 @@ package com.storrity.storrity.sales.report.service;
 
 import com.storrity.storrity.sales.report.dto.AverageBasketDto;
 import com.storrity.storrity.sales.report.dto.DailySalesSummaryDto;
+import com.storrity.storrity.sales.report.dto.HourlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.MonthlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.QuarterlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.SalesByBrandDto;
@@ -15,6 +16,7 @@ import com.storrity.storrity.sales.report.dto.SalesByCategoryDto;
 import com.storrity.storrity.sales.report.dto.SalesByClientSystemDto;
 import com.storrity.storrity.sales.report.dto.SalesByCustomerDto;
 import com.storrity.storrity.sales.report.dto.SalesByHourDto;
+import com.storrity.storrity.sales.report.dto.SalesByMonthDto;
 import com.storrity.storrity.sales.report.dto.SalesByProductDto;
 import com.storrity.storrity.sales.report.dto.SalesByStoreDto;
 import com.storrity.storrity.sales.report.dto.SalesByWeekdayDto;
@@ -34,6 +36,11 @@ import org.springframework.stereotype.Service;
 public class SalesReportServiceImpl implements SalesReportService{
     
     private final SalesReportRepository salesReportRepository;
+
+    @Override
+    public List<HourlySalesSummaryDto> hourlySalesSummary(SalesReportQueryParams params) {
+        return salesReportRepository.hourlySalesSummary(params);
+    }   
 
     @Autowired
     public SalesReportServiceImpl(SalesReportRepository salesReportRepository) {
@@ -103,6 +110,11 @@ public class SalesReportServiceImpl implements SalesReportService{
     @Override
     public List<SalesByHourDto> salesByHour(SalesReportQueryParams params) {
         return salesReportRepository.salesByHour(params);
+    }
+
+    @Override
+    public List<SalesByMonthDto> salesByMonth(SalesReportQueryParams params) {
+        return salesReportRepository.salesByMonth(params);
     }
 
     @Override

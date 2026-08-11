@@ -61,7 +61,9 @@ public class StockMovementController {
         @ApiResponse(
             responseCode = "200",
             description = "Stock movements created successfully",
-            content = @Content(schema = @Schema(implementation = StockMovementResult.class))
+            content = @Content(
+                array = @ArraySchema(schema = @Schema(implementation = StockMovementDto.class))
+            )
         ),
         @ApiResponse(
             responseCode = "400", 
@@ -74,7 +76,7 @@ public class StockMovementController {
         )
     })
     @PostMapping
-    public StockMovementResult create(@RequestBody @Valid StockMovementInstruction dto){
+    public List<StockMovementDto> create(@RequestBody @Valid StockMovementInstruction dto){
         return stockMovementService.create(dto);
     }
     
@@ -144,7 +146,7 @@ public class StockMovementController {
         @ApiResponse(
             responseCode = "200",
             description = "Stock movement retrieved successfully",
-            content = @Content(schema = @Schema(implementation = StockMovementResult.class))
+            content = @Content(schema = @Schema(implementation = StockMovementDto.class))
         ),
         @ApiResponse(
             responseCode = "404",

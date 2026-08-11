@@ -37,6 +37,16 @@ public class SalesReturnDto {
     private List<PckQty> pckQty;
     private String reason;
     private String performedBy;
+    private UUID productId;
+    private String productName;
+    private String productCode;
+    private String productCategory;
+    private String productSubCategory;    
+    private String productBrand;
+    private UUID storeId;
+    private String storeName;
+    private UUID customerId;
+    private String customerName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt; 
     
@@ -46,6 +56,17 @@ public class SalesReturnDto {
                 .id(s.getId())
                 .pckQty(s.getPckQty())
                 .performedBy(s.getPerformedBy())
+                .productId(s.getProductId())
+                .productName(s.getProductName())
+                .productCode(s.getProductCode())
+                .productCategory(s.getProductCategory())
+                .productSubCategory(s.getProductSubCategory())
+                .productBrand(s.getProductBrand())
+                .storeId(s.getStoreId())
+                .storeName(s.getStoreName())
+                .customerId(s.getCustomerId())
+                .customerName(s.getCustomerName())
+                .reason(s.getReason())
                 .quantity(s.getQuantity())
                 .reason(s.getReason())
                 .saleId(s.getSale().getId())

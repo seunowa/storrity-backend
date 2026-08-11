@@ -1,0 +1,289 @@
+STORRITY RELEASE NOTES
+
+Version: 1.3.2
+
+## MODULE: AI sales report
+
+Features:
+* Enhance system prompt for better insight and recommendations
+* Business context
+
+## MODULE: Sales Report
+
+Features:
+* Route for hourlySalesSummary and sales_by_month
+
+
+## MODULE: Sales Return
+
+Bug Fixes:
+* Fix error in creating sales return
+
+
+Version: 1.3.1
+
+## MODULE: AI sales report
+
+Features:
+* Dynamic ai model api key management
+
+Version: 1.3
+
+## MODULE: AI sales report
+
+Features:
+* Open AI report generation integration
+* Chat based sales report generation
+
+## MODULE: Supply
+
+Bug Fix:
+* Fix bug in list supplies repository method
+
+Version: 1.2
+
+## MODULE: Countriest
+
+Features:
+* List countries
+* get country by country name
+* select country - sets the selected country the system operates with the currency of the selected country
+* get selected country
+* get selected country details
+
+## MODULE: Sales Report
+
+Features:
+
+* Daily sales report
+* Weekly sales report
+* Monthly sales report
+* Quarterly sales report
+* Yearly sales report
+*Sales report by store
+* Sales report by customer
+* Sales report by cashier
+* Sales report by category
+* Sales report by product
+* Sales report by hour
+* Sales report by brand
+* Sales report by client system
+* Average basket
+
+
+Version: 1.1
+
+## MODULE: Product Management
+
+Features:
+
+* Export products
+
+## MODULE: Shopping Cart
+
+Features:
+
+* Export cart
+
+## MODULE: Sales Returns
+
+Features:
+
+* Process product returns
+* View sales return history
+* Search returns
+* Link returns to original sales
+* Transaction reference tracking
+
+
+STORRITY RELEASE NOTES
+Version: 1.0
+
+## MODULE: Authentication & Authorization
+
+Features:
+
+* JWT Bearer authentication
+* Role-based access control
+* User permission management
+* Protected API endpoints
+* Standardized authorization and authentication responses
+
+## MODULE: User Management
+
+Features:
+
+* Create users
+* List users
+* Search users
+* Filter users by role
+* Filter by creation and update date
+* Pagination and sorting
+
+## MODULE: User Roles
+
+Features:
+
+* Create user roles
+* List user roles
+* Assign permissions to roles
+* Search and filter roles
+
+## MODULE: Store Management
+
+Features:
+
+* Create stores
+* View stores
+* Search by name
+* Search by location
+* Store status management
+* Store manager information
+* Pagination and sorting
+
+## MODULE: Product Management
+
+Features:
+
+* Create products
+* List products
+* Search by product name
+* Search by product code
+* Search by SKU
+* Filter by category and sub-category
+* Filter by store
+* Pagination and sorting
+
+## MODULE: Point of Sale (POS)
+
+Features:
+
+* Register POS terminals
+* List POS terminals
+* Search by POS identifier
+* Search by store
+* POS status management
+* Pagination and sorting
+
+## MODULE: Shopping Cart
+
+Features:
+
+* Add items to cart
+* Update cart items
+* Automatic cart pricing
+* Cart recalculation
+
+## MODULE: Checkout
+
+Features:
+
+* Checkout support
+* Integration with shopping cart
+* Sales processing
+
+## MODULE: Sales Management
+
+Features:
+
+* Create sales
+* View sales history
+* Search by transaction reference
+* Search by product
+* Search by store
+* Search by sales attendant
+* Date range filtering
+* Pagination and sorting
+
+## MODULE: Stock Management
+
+Features:
+
+* Record stock movements
+* View stock movement history
+* Product-based inventory tracking
+* Inventory movement logging
+
+## MODULE: Supply Management
+
+Features:
+
+* Record supplies
+* Supplier management
+* Delivery note tracking
+* Invoice tracking
+* Payment status tracking
+* Supply approval workflow
+* Supply status management
+* Supplier contact information
+* Date range filtering
+
+## MODULE: Customer Management
+
+Features:
+
+* Register customers
+* View customer records
+* Search customers
+* Customer contact management
+* Customer cash account linkage
+* Pagination and filtering
+
+## MODULE: Sales Attendant Management
+
+Features:
+
+* Register sales attendants
+* Sales wallet assignment
+* View sales attendants
+* Search sales attendants
+
+## MODULE: Cash Accounts
+
+Features:
+
+* Cash account management
+* Cash account transactions
+* Account statements
+
+## MODULE: Licensing
+
+Features:
+
+* Validate license files
+* Import license files
+* Install licenses
+* Register licensed clients
+* License verification
+
+## MODULE: Client System Management
+
+Features:
+
+* Register client systems
+* View client systems
+* Client activation/deactivation
+* Client status management
+
+## MODULE: Audit Management
+
+Features:
+
+* Audit logging
+* Activity tracking
+* Administrative audit support
+
+## MODULE: Platform Services
+
+Features:
+
+* Health check (Ping) endpoint
+* Standardized validation responses
+* Standardized API error responses
+* UUID resource identifiers
+* Pagination support
+* Sorting support
+* Flexible filtering
+* Date range filtering
+* OpenAPI 3.1 documentation
+

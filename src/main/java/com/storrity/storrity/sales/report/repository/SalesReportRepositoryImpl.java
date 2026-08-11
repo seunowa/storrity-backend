@@ -8,6 +8,7 @@ package com.storrity.storrity.sales.report.repository;
 import com.storrity.storrity.cashaccounts.entity.Money;
 import com.storrity.storrity.sales.report.dto.AverageBasketDto;
 import com.storrity.storrity.sales.report.dto.DailySalesSummaryDto;
+import com.storrity.storrity.sales.report.dto.HourlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.MonthlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.QuarterlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.SalesByBrandDto;
@@ -16,6 +17,7 @@ import com.storrity.storrity.sales.report.dto.SalesByCategoryDto;
 import com.storrity.storrity.sales.report.dto.SalesByClientSystemDto;
 import com.storrity.storrity.sales.report.dto.SalesByCustomerDto;
 import com.storrity.storrity.sales.report.dto.SalesByHourDto;
+import com.storrity.storrity.sales.report.dto.SalesByMonthDto;
 import com.storrity.storrity.sales.report.dto.SalesByProductDto;
 import com.storrity.storrity.sales.report.dto.SalesByStoreDto;
 import com.storrity.storrity.sales.report.dto.SalesByWeekdayDto;
@@ -46,6 +48,72 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
     
     @Autowired
     private Environment environment;
+    
+    @Override
+    public List<HourlySalesSummaryDto> hourlySalesSummary(SalesReportQueryParams params) {
+
+        StringBuilder sql = new StringBuilder();
+
+        Map<String, Object> parameters = new HashMap<>();
+
+        sql.append("""
+            SELECT
+                reporting_hour,
+                reporting_date,
+                COUNT(*)                               AS transactions,
+                SUM(quantity)                          AS quantity_sold,
+                SUM(pre_discount_price_in_micro_naira) AS gross_sales,
+                SUM(discount_amount_in_micro_naira)    AS discount,
+                SUM(tax_amount_in_micro_naira)         AS tax,
+                SUM(amount_in_micro_naira)             AS net_sales
+            FROM sale
+            WHERE 1 = 1
+            """);
+
+        appendFilters(sql, parameters, params);
+
+        sql.append("""
+            GROUP BY
+                reporting_date,
+                reporting_hour
+            ORDER BY
+                reporting_date,
+                reporting_hour
+            """);
+
+        Query query = em.createNativeQuery(sql.toString());
+
+        parameters.forEach(query::setParameter);
+
+        if (params.getOffset() != null) {
+            query.setFirstResult(params.getOffset());
+        }
+
+        if (params.getLimit() != null) {
+            query.setMaxResults(params.getLimit());
+        }
+
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows = query.getResultList();
+
+        List<HourlySalesSummaryDto> result = new ArrayList<>();
+
+        for (Object[] row : rows) {
+
+            result.add(new HourlySalesSummaryDto(
+                    row[0] == null ? 0 : ((Number) row[0]).intValue(),
+                    (java.sql.Date) row[1],
+                    ((Number) row[2]).longValue(),
+                    row[3] == null ? 0D : ((Number) row[3]).doubleValue(),
+                    row[4] == null ? 0L : ((Number) row[4]).longValue(),
+                    row[5] == null ? 0L : ((Number) row[5]).longValue(),
+                    row[6] == null ? 0L : ((Number) row[6]).longValue(),
+                    row[7] == null ? 0L : ((Number) row[7]).longValue()
+            ));
+        }
+
+        return result;
+    }
 
     @Override
     public List<DailySalesSummaryDto> dailySalesSummary(
@@ -876,6 +944,68 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
         for (Object[] row : rows) {
 
             result.add(new SalesByHourDto(
+                    row[0] == null ? 0 : ((Number) row[0]).intValue(),
+                    ((Number) row[1]).longValue(),
+                    row[2] == null ? 0D : ((Number) row[2]).doubleValue(),
+                    row[3] == null ? 0L : ((Number) row[3]).longValue(),
+                    row[4] == null ? 0L : ((Number) row[4]).longValue(),
+                    row[5] == null ? 0L : ((Number) row[5]).longValue(),
+                    row[6] == null ? 0L : ((Number) row[6]).longValue()
+            ));
+        }
+
+        return result;
+    }
+    
+    @Override
+    public List<SalesByMonthDto> salesByMonth(SalesReportQueryParams params) {
+
+        StringBuilder sql = new StringBuilder();
+
+        Map<String, Object> parameters = new HashMap<>();
+
+        sql.append("""
+            SELECT
+                reporting_month,
+                COUNT(*)                               AS transactions,
+                SUM(quantity)                          AS quantity_sold,
+                SUM(pre_discount_price_in_micro_naira) AS gross_sales,
+                SUM(discount_amount_in_micro_naira)    AS discount,
+                SUM(tax_amount_in_micro_naira)         AS tax,
+                SUM(amount_in_micro_naira)             AS net_sales
+            FROM sale
+            WHERE 1 = 1
+            """);
+
+        appendFilters(sql, parameters, params);
+
+        sql.append("""
+            GROUP BY
+                reporting_month
+            ORDER BY
+                reporting_month
+            """);
+
+        Query query = em.createNativeQuery(sql.toString());
+
+        parameters.forEach(query::setParameter);
+
+        if (params.getOffset() != null) {
+            query.setFirstResult(params.getOffset());
+        }
+
+        if (params.getLimit() != null) {
+            query.setMaxResults(params.getLimit());
+        }
+
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows = query.getResultList();
+
+        List<SalesByMonthDto> result = new ArrayList<>();
+
+        for (Object[] row : rows) {
+
+            result.add(new SalesByMonthDto(
                     row[0] == null ? 0 : ((Number) row[0]).intValue(),
                     ((Number) row[1]).longValue(),
                     row[2] == null ? 0D : ((Number) row[2]).doubleValue(),

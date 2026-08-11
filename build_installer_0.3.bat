@@ -11,13 +11,12 @@ echo =========================================
          --win-shortcut ^
          --win-menu ^
 		 --java-options "-Dspring.profiles.active=prod" ^
-         --dest "C:\Users\Prov-Soft-Dev-1\Documents\NetBeansProjects\storrity\dist" ^
-		 --vendor "Storrity"
+         --dest "C:\Users\Prov-Soft-Dev-1\Documents\NetBeansProjects\storrity\dist"
+		 --vendor "Storrity" ^
 
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Failed to create installer.
-    pause
-	exit /b %ERRORLEVEL%
+    exit /b %ERRORLEVEL%
 )
 
 echo =========================================

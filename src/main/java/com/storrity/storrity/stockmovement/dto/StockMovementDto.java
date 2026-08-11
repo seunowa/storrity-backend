@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -62,5 +63,12 @@ public class StockMovementDto {
                 .pckQty(sm.getPckQty())
                 .metadata(sm.getMetadata())
                 .build();
+    }
+    
+    public static List<StockMovementDto> from(StockMovementResult smr) {
+        if (smr == null || smr.getStockMovements() == null) {
+        return java.util.Collections.emptyList();
+        }
+        return smr.getStockMovements();
     }
 }

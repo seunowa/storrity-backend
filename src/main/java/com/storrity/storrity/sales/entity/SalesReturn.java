@@ -17,7 +17,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.WeekFields;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -52,21 +54,86 @@ public class SalesReturn {
     private List<PckQty> pckQty;
     private String reason;
     private String performedBy;
+    private UUID productId;
+    private String productName;
+    private String productCode;
+    private String productCategory;
+    private String productSubCategory;    
+    private String productBrand;
+    private UUID storeId;
+    private String storeName;
+    private UUID customerId;
+    private String customerName;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt; 
+    
+    //    Fields included to aid reporting
+    private LocalDate reportingDate;
+    private Integer reportingHour;
+    private Integer reportingDayOfWeek;
+    private Integer reportingDayOfMonth;
+    private Integer reportingWeek;
+    private LocalDate reportingWeekStartDate;
+    private Integer reportingMonth;
+    private LocalDate reportingMonthStartDate;
+    private Integer reportingQuarter;
+    private LocalDate reportingQuarterStartDate;
+    private Integer reportingYear;
+    private Integer reportingDayOfYear;
        
     @PrePersist
     public void prePersist(){        
         LocalDateTime now = LocalDateTime.now();
         createdAt = now;
         updatedAt = now;
+
+        populateReportingFields(now); 
     }
     
     @PreUpdate
     public void preUpdate(){
         LocalDateTime now = LocalDateTime.now();
         updatedAt = now;
+    }
+    
+    private void populateReportingFields(LocalDateTime dateTime) {
+
+        LocalDate date = dateTime.toLocalDate();
+        int year = date.getYear();
+        int month = date.getMonthValue();
+        int quarter = ((month - 1) / 3) + 1;
+
+        reportingDate = date;
+        reportingHour = dateTime.getHour();
+
+        reportingDayOfWeek = dateTime.getDayOfWeek().getValue();
+        reportingDayOfMonth = dateTime.getDayOfMonth();
+
+        reportingWeek = dateTime.get(WeekFields.ISO.weekOfWeekBasedYear());
+        
+//        @Todo consider ways to make start of week configurable
+        reportingWeekStartDate = date.with(java.time.DayOfWeek.MONDAY);
+
+        reportingMonth = dateTime.getMonthValue();
+
+        reportingMonthStartDate = date.withDayOfMonth(1);
+
+        reportingQuarter = quarter;
+
+//        @Todo consider ways to make start of quarter configurable such that it may not follow the calendar year
+        reportingQuarterStartDate = switch (quarter) {
+            case 1 -> LocalDate.of(year, 1, 1);
+            case 2 -> LocalDate.of(year, 4, 1);
+            case 3 -> LocalDate.of(year, 7, 1);
+            case 4 -> LocalDate.of(year, 10, 1);
+            default -> throw new IllegalStateException(
+                    "Unexpected quarter: " + reportingQuarter);
+        };
+        
+        reportingYear = year;
+
+        reportingDayOfYear = reportingDate.getDayOfYear();
     }
 }

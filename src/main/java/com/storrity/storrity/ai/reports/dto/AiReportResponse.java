@@ -15,7 +15,7 @@ public record AiReportResponse(
         String executiveSummary,
         List<KeyMetric> keyMetrics,
         List<ReportSection> sections,
-        List<ChartDefinition> charts,
+        ChartData charts,
         List<String> insights,
         List<String> recommendations
 ) {}

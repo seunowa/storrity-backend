@@ -187,6 +187,8 @@ public class SalesServiceImpl implements SalesService{
                 .storeId(p.getStore().getId())
                 .storeName(p.getStore().getName())
                 .customerId(sdto.getCustomerId())
+//                @Todo derive customer name from customer id
+                //.customerName(customerName)
                 .performedBy(sdto.getPerformedBy())
                 .clientSystemId(sdto.getClientSystemId())
                 .clientSystemName(sdto.getClientSystemName())

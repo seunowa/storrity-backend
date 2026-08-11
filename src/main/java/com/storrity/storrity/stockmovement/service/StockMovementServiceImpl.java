@@ -52,7 +52,7 @@ public class StockMovementServiceImpl implements StockMovementService{
 
     @Transactional
     @Override
-    public StockMovementResult create(StockMovementInstruction instruction) {
+    public List<StockMovementDto> create(StockMovementInstruction instruction) {
         Set<UUID> productIds = instruction.getInstructionItems()
                 .stream()
                 .map((i)->i.getProductId())
@@ -95,7 +95,7 @@ public class StockMovementServiceImpl implements StockMovementService{
                 .build();
         
         eventPublisher.publishEvent(new StockMovementCreatedEvent(result));
-        return result;
+        return StockMovementDto.from(result);
     }
 
     @Override

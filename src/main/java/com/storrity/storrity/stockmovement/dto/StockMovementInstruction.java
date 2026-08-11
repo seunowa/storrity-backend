@@ -22,7 +22,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
-public class StockMovementInstruction {    
+public class StockMovementInstruction {
     private String description;
     private String transactionRef; 
     private String performedBy;

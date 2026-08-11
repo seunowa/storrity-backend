@@ -8,6 +8,7 @@ package com.storrity.storrity.sales.report.controller;
 
 import com.storrity.storrity.sales.report.dto.AverageBasketDto;
 import com.storrity.storrity.sales.report.dto.DailySalesSummaryDto;
+import com.storrity.storrity.sales.report.dto.HourlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.MonthlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.QuarterlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.SalesByBrandDto;
@@ -16,6 +17,7 @@ import com.storrity.storrity.sales.report.dto.SalesByCategoryDto;
 import com.storrity.storrity.sales.report.dto.SalesByClientSystemDto;
 import com.storrity.storrity.sales.report.dto.SalesByCustomerDto;
 import com.storrity.storrity.sales.report.dto.SalesByHourDto;
+import com.storrity.storrity.sales.report.dto.SalesByMonthDto;
 import com.storrity.storrity.sales.report.dto.SalesByProductDto;
 import com.storrity.storrity.sales.report.dto.SalesByStoreDto;
 import com.storrity.storrity.sales.report.dto.SalesByWeekdayDto;
@@ -58,6 +60,50 @@ private final SalesReportService salesReportService;
     @Autowired
     public SalesReportController(SalesReportService salesReportService) {
         this.salesReportService = salesReportService;
+    }
+    
+    @Operation(
+            operationId = "hourlySalesSummary",
+            summary = "Hourly Sales Summary",
+            description = "Returns aggregated sales statistics grouped by hour of the day. "
+                    + "Supports filtering by date range, store, product, customer, "
+                    + "cashier, client system and other report query parameters.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(
+                responseCode = "200",
+                description = "Hourly sales summary retrieved successfully",
+                content = @Content(
+                        array = @ArraySchema(
+                                schema = @Schema(implementation = HourlySalesSummaryDto.class)
+                        )
+                )
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                description = "Validation Error",
+                content = @Content(schema = @Schema(implementation = ValidationError.class))
+        ),
+        @ApiResponse(
+                responseCode = "403",
+                description = "Authentication Error",
+                content = @Content(schema = @Schema(implementation = AuthorizationError.class))
+        ),
+        @ApiResponse(
+                responseCode = "500",
+                description = "Unexpected Error",
+                content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })
+    @GetMapping("hourly_summary")
+    public List<HourlySalesSummaryDto> hourlySalesSummary(
+            @ModelAttribute
+            @Valid
+            @ParameterObject
+            SalesReportQueryParams params) {
+
+        return salesReportService.hourlySalesSummary(params);
     }
 
     @Operation(
@@ -588,6 +634,50 @@ private final SalesReportService salesReportService;
 
         return salesReportService.salesByCustomer(params);
     }
+    
+    @Operation(
+            operationId = "salesByMonth",
+            summary = "Sales by Month",
+            description = "Returns aggregated sales statistics grouped by month. "
+                    + "Supports filtering by date range, store, product, customer, "
+                    + "cashier, client system and other report query parameters.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(
+                responseCode = "200",
+                description = "Sales by month retrieved successfully",
+                content = @Content(
+                        array = @ArraySchema(
+                                schema = @Schema(implementation = SalesByMonthDto.class)
+                        )
+                )
+        ),
+        @ApiResponse(
+                responseCode = "400",
+                description = "Validation Error",
+                content = @Content(schema = @Schema(implementation = ValidationError.class))
+        ),
+        @ApiResponse(
+                responseCode = "403",
+                description = "Authentication Error",
+                content = @Content(schema = @Schema(implementation = AuthorizationError.class))
+        ),
+        @ApiResponse(
+                responseCode = "500",
+                description = "Unexpected Error",
+                content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })
+    @GetMapping("sales_by_month")
+    public List<SalesByMonthDto> salesByMonth(
+            @ModelAttribute
+            @Valid
+            @ParameterObject
+            SalesReportQueryParams params) {
+
+        return salesReportService.salesByMonth(params);
+    }    
     
     
     @Operation(

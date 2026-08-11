@@ -12,6 +12,7 @@ import com.storrity.storrity.sales.entity.SalesReturn;
 import com.storrity.storrity.sales.entity.SalesReturnQueryParams;
 import com.storrity.storrity.sales.repository.SaleRepository;
 import com.storrity.storrity.sales.repository.SalesReturnRepository;
+import com.storrity.storrity.security.service.AuthenticatedUser;
 import com.storrity.storrity.stockmovement.dto.StockMovementInstruction;
 import com.storrity.storrity.stockmovement.dto.StockMovementInstructionItem;
 import com.storrity.storrity.stockmovement.entity.PckQty;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -58,7 +60,8 @@ public class SalesReturnServiceImpl implements SalesReturnService{
         validateReturnQuantity(sale, dto);
         
 //        @TOdo use security principal as performed by
-        String permedBy = "";
+        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String permedBy = principal.getUsername();
 
         SalesReturn salesReturn = SalesReturn.builder()
                 .transactionRef(dto.getTransactionRef())
@@ -66,6 +69,16 @@ public class SalesReturnServiceImpl implements SalesReturnService{
                 .quantity(dto.getQuantity())
                 .sku(sale.getSku())
                 .performedBy(permedBy)
+                .productId(sale.getProductId())
+                .productName(sale.getProductName())
+                .productCode(sale.getProductCode())
+                .productCategory(sale.getProductCategory())
+                .productSubCategory(sale.getProductSubCategory())
+                .productBrand(sale.getProductBrand())
+                .storeId(sale.getStoreId())
+                .storeName(sale.getStoreName())
+                .customerId(sale.getCustomerId())
+                .customerName(sale.getCustomerName())
                 .reason(dto.getReason())
                 .pckQty(dto.getPckQty())
                 .build();
@@ -136,6 +149,7 @@ public class SalesReturnServiceImpl implements SalesReturnService{
                             .storeId(s.getStoreId())
                             .storeName(s.getStoreName())
                             .performedBy(s.getPerformedBy())
+                            .quantity(s.getQuantity())
                             .build();
 
         return StockMovementInstruction.builder()

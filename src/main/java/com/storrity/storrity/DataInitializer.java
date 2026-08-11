@@ -149,27 +149,27 @@ public class DataInitializer implements CommandLineRunner{
         Store savedStore2 = storeRepository.save(s2);
         
         Product p = Product.builder()
-                .category("Category")
+                .category("Category X")
                 .code("12345")
                 .name("Sample Product")
                 .stockKeepingUnit("Small")
                 .qtyInStock(50.0)
                 .store(savedStore)
-                .subcategory("subcategory")
-                .unitPrice(new Money(10000))
+                .subcategory("subcategory Y")
+                .unitPrice(new Money(1000000))
                 .build();
         
         Product savedProduct = productRepository.save(p);
         
         Product p2 = Product.builder()
-                .category("Category")
+                .category("Category B")
                 .code("12345")
                 .name("Sound System")
                 .stockKeepingUnit("Piece")
                 .qtyInStock(50.0)
                 .store(savedStore)
-                .subcategory("subcategory")
-                .unitPrice(new Money(5000))
+                .subcategory("subcategory A")
+                .unitPrice(new Money(2000000))
                 .build();
         
         Product savedProduct2 = productRepository.save(p2);
@@ -186,14 +186,14 @@ public class DataInitializer implements CommandLineRunner{
                 .name("Medium")
                 .multiplier(2.0)
                 .productId(savedProduct.getId())
-                .sellingPrice(new Money(5000000))
+                .sellingPrice(new Money(2000000))
                 .build();
 
         ProductPackage largePack = ProductPackage.builder()
                 .name("Large")
                 .multiplier(5.0)
                 .productId(savedProduct.getId())
-                .sellingPrice(new Money(10000000))
+                .sellingPrice(new Money(5000000))
                 .build();
 
         // Save packages (assuming you have a ProductPackageRepository)
@@ -206,14 +206,14 @@ public class DataInitializer implements CommandLineRunner{
                 .name("Piece")
                 .multiplier(1.0)
                 .productId(savedProduct2.getId())
-                .sellingPrice(new Money(1000000))
+                .sellingPrice(new Money(2000000))
                 .build();
 
         ProductPackage doublePck = ProductPackage.builder()
                 .name("Double Comb")
                 .multiplier(2.0)
                 .productId(savedProduct2.getId())
-                .sellingPrice(new Money(5000000))
+                .sellingPrice(new Money(4000000))
                 .build();
 
         // Save packages (assuming you have a ProductPackageRepository)

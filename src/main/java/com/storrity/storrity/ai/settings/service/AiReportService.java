@@ -7,6 +7,7 @@ package com.storrity.storrity.ai.settings.service;
 
 import com.storrity.storrity.ai.reports.dto.AiReportResponse;
 import com.storrity.storrity.util.exception.BadRequestAppException;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,15 @@ public class AiReportService {
 
     private final AiConfigService aiConfigService;
     private final DynamicChatClientFactory chatClientFactory;
+    private final BusinessContextService businessContextService;
 
     public AiReportResponse generateReport(String userPrompt) {
         
         if (!aiConfigService.isAnyProviderConfigured()) {
             throw new BadRequestAppException("No AI provider has been configured. Please set an API key first.");
         }
+        
+        
         
         ChatClient chatClient = chatClientFactory.createChatClient();
 

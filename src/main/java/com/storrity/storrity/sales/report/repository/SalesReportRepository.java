@@ -7,6 +7,7 @@ package com.storrity.storrity.sales.report.repository;
 
 import com.storrity.storrity.sales.report.dto.AverageBasketDto;
 import com.storrity.storrity.sales.report.dto.DailySalesSummaryDto;
+import com.storrity.storrity.sales.report.dto.HourlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.MonthlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.QuarterlySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.SalesByBrandDto;
@@ -15,6 +16,7 @@ import com.storrity.storrity.sales.report.dto.SalesByCategoryDto;
 import com.storrity.storrity.sales.report.dto.SalesByClientSystemDto;
 import com.storrity.storrity.sales.report.dto.SalesByCustomerDto;
 import com.storrity.storrity.sales.report.dto.SalesByHourDto;
+import com.storrity.storrity.sales.report.dto.SalesByMonthDto;
 import com.storrity.storrity.sales.report.dto.SalesByProductDto;
 import com.storrity.storrity.sales.report.dto.SalesByStoreDto;
 import com.storrity.storrity.sales.report.dto.SalesByWeekdayDto;
@@ -28,11 +30,13 @@ import java.util.List;
  * @author Seun Owa
  */
 public interface SalesReportRepository {
+    List<HourlySalesSummaryDto> hourlySalesSummary(SalesReportQueryParams params);
     List<DailySalesSummaryDto> dailySalesSummary(SalesReportQueryParams params);
     List<WeeklySalesSummaryDto> weeklySalesSummary(SalesReportQueryParams params);
     List<MonthlySalesSummaryDto> monthlySalesSummary(SalesReportQueryParams params);
     List<QuarterlySalesSummaryDto> quarterlySalesSummary(SalesReportQueryParams params);
     List<YearlySalesSummaryDto> yearlySalesSummary(SalesReportQueryParams params);
+    
     List<SalesByStoreDto> salesByStore(SalesReportQueryParams params);
     List<SalesByProductDto> salesByProduct(SalesReportQueryParams params);
     List<SalesByCategoryDto> salesByCategory(SalesReportQueryParams params);
@@ -41,6 +45,7 @@ public interface SalesReportRepository {
     List<SalesByClientSystemDto> salesByClientSystem(SalesReportQueryParams params);
     List<SalesByCustomerDto> salesByCustomer(SalesReportQueryParams params);
     List<SalesByHourDto> salesByHour(SalesReportQueryParams params);
+    List<SalesByMonthDto> salesByMonth(SalesReportQueryParams params);
     List<SalesByWeekdayDto> salesByWeekday(SalesReportQueryParams params);
 //
 //    DiscountReportDto discountReport(SalesReportQueryParams params);
