@@ -4,6 +4,7 @@
  */
 package com.storrity.storrity.product.service;
 
+import com.storrity.storrity.cashaccounts.entity.Money;
 import com.storrity.storrity.product.dto.BatchProductCreationDto;
 import com.storrity.storrity.product.dto.ProductCreationDto;
 import com.storrity.storrity.product.dto.ProductDto;
@@ -138,6 +139,9 @@ public class ProductServiceImpl implements ProductService{
         
         if(dto.getUnitPrice()!= null){
             p.setUnitPrice(dto.getUnitPrice());
+            Double qtyInStock = p.getQtyInStock() == null ? 0d : p.getQtyInStock();
+            Money inventoryValue = p.getUnitPrice().multiply(qtyInStock);
+            p.setInventoryValue(inventoryValue);
         }
         
         if(dto.getBrand()!= null){
@@ -156,12 +160,20 @@ public class ProductServiceImpl implements ProductService{
             p.setLocation(dto.getLocation());
         }
         
+        if(dto.getMinimumStockLevel()!= null){
+            p.setMinimumStockLevel(dto.getMinimumStockLevel());
+        }
+        
         if(dto.getReorderLevel()!= null){
             p.setReorderLevel(dto.getReorderLevel());
         }
         
         if(dto.getReorderQuantity()!= null){
             p.setReorderQuantity(dto.getReorderQuantity());
+        }
+        
+        if(dto.getMaximumStockLevel()!= null){
+            p.setMaximumStockLevel(dto.getMaximumStockLevel());
         }
         
         Product savedProduct = productRepository.save(p);
@@ -182,6 +194,10 @@ public class ProductServiceImpl implements ProductService{
             
             List<ProductPackage> savedProdPackages = productPackageRepository.saveAll(prodPackages);
             savedProduct.setPackages(savedProdPackages);
+        }
+        
+        if(dto.getProductType() != null){
+            p.setProductType(dto.getProductType());
         }
         
         eventPublisher.publishEvent(new ProductUpdatedEvent(savedProduct, p));

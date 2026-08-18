@@ -4,7 +4,7 @@
  */
 package com.storrity.storrity.sales.service;
 
-import com.storrity.storrity.product.dto.StockFlow;
+import com.storrity.storrity.stockmovement.entity.StockMoevmentDirection;
 import com.storrity.storrity.sales.dto.SalesReturnCreationDto;
 import com.storrity.storrity.sales.dto.SalesReturnDto;
 import com.storrity.storrity.sales.entity.Sale;
@@ -16,6 +16,7 @@ import com.storrity.storrity.security.service.AuthenticatedUser;
 import com.storrity.storrity.stockmovement.dto.StockMovementInstruction;
 import com.storrity.storrity.stockmovement.dto.StockMovementInstructionItem;
 import com.storrity.storrity.stockmovement.entity.PckQty;
+import com.storrity.storrity.stockmovement.entity.StockMovementType;
 import com.storrity.storrity.stockmovement.service.StockMovementService;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.ResourceNotFoundAppException;
@@ -139,7 +140,7 @@ public class SalesReturnServiceImpl implements SalesReturnService{
     
         StockMovementInstructionItem item = StockMovementInstructionItem
                             .builder()
-                            .flow(StockFlow.INFLOW)
+                            .flow(StockMoevmentDirection.INFLOW)
                             .pckQty(qty)
                             .productCategory(s.getProductCategory())
                             .productCode(s.getProductCode())
@@ -157,6 +158,7 @@ public class SalesReturnServiceImpl implements SalesReturnService{
                 .performedBy(salesReturn.getPerformedBy())
                 .transactionRef(salesReturn.getTransactionRef())
                 .instructionItems(List.of(item))
+                .movementType(StockMovementType.SALE_RETURN)
                 .build();
     }
 }

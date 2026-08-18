@@ -4,6 +4,10 @@
  */
 package com.storrity.storrity.security.controller;
 
+import com.storrity.storrity.country.dto.SelectedCountryDto;
+import com.storrity.storrity.country.entity.Country;
+import com.storrity.storrity.country.entity.CountryQueryParams;
+import com.storrity.storrity.country.service.CountryService;
 import com.storrity.storrity.license.dto.ClientSystemCreationDto;
 import com.storrity.storrity.license.entity.ClientSystem;
 import com.storrity.storrity.license.entity.ClientSystemStatus;
@@ -13,6 +17,7 @@ import com.storrity.storrity.license.service.LicenseService;
 import com.storrity.storrity.security.dto.LoginRequestDto;
 import com.storrity.storrity.security.dto.LoginSuccessDto;
 import com.storrity.storrity.security.dto.RootUserCreationStatus;
+import com.storrity.storrity.security.dto.RootUserInitRequestDto;
 import com.storrity.storrity.security.dto.RootUserInitSuccessDto;
 import com.storrity.storrity.security.dto.UserCreationDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,6 +37,8 @@ import com.storrity.storrity.util.exception.BadRequestAppException;
 import com.storrity.storrity.util.exception.ResourceNotFoundAppException;
 import com.storrity.storrity.util.exception.ServerError;
 import com.storrity.storrity.util.exception.ValidationError;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +50,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import org.springdoc.core.annotations.ParameterObject;
 
 /**
  *
@@ -62,11 +70,12 @@ public class AuthController {
     private final ClientSystemService clientSystemService;
     private final LicenseService licenseService;
     private final ClientSystemRepository clientSystemRepository;
+    private final CountryService countryService;
 
     public AuthController(UserRepository userRepo, UserRoleRepository roleRepo
             , JwtUtil jwtUtil, PasswordEncoder encoder, AppUserService appUserService
             , ClientSystemService clientSystemService, LicenseService licenseService
-            , ClientSystemRepository clientSystemRepository) {
+            , ClientSystemRepository clientSystemRepository, CountryService countryService) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
         this.jwtUtil = jwtUtil;
@@ -75,6 +84,7 @@ public class AuthController {
         this.clientSystemService = clientSystemService;
         this.licenseService = licenseService;
         this.clientSystemRepository = clientSystemRepository;
+        this.countryService = countryService;
     }
     
     @Operation(
@@ -149,7 +159,7 @@ public class AuthController {
 //
 //        String token = jwtUtil.generateToken(user.getUsername(), request.getClientId(), authorities);
 //        return ResponseEntity.ok(Map.of("token", token));
-////        return LoginSuccessDto.builder().build();
+////        return LoginSuccessDto.builder().build()
 //    }
     
     @Operation(
@@ -175,7 +185,7 @@ public class AuthController {
         )
     })
     @PostMapping("/init")
-    public RootUserInitSuccessDto init(@Valid @RequestBody LoginRequestDto request) {
+    public RootUserInitSuccessDto init(@Valid @RequestBody RootUserInitRequestDto request) {
         
 //        @Todo check if the system has at least one and user is activated... consider other steps to take
         long noOfUsers = userRepo.count();
@@ -208,6 +218,12 @@ public class AuthController {
                 .build();
                 clientSystemService.create(cscDto);
                 
+        if(request.getCountryName() != null){
+            countryService.updateSelectedCountry(SelectedCountryDto
+                    .builder()
+                    .countryName(request.getCountryName())
+                    .build());
+        }
         System.out.println("✅ Added client system: Client1");
         
         return RootUserInitSuccessDto.builder().message("Root user added succefully").build();
@@ -246,8 +262,38 @@ public class AuthController {
         
         return RootUserCreationStatus.builder().createRootUserAllowed(true).build();
     }
-    
-    
+
+    @Operation(
+            operationId = "listCountries",
+            summary = "List countries",
+            description = "Returns countries matching supplied filters."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Countries retrieved successfully",
+            content = @Content(
+                array = @ArraySchema(schema = @Schema(implementation = Country.class))
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Validation Error",
+            content = @Content(schema = @Schema(implementation = ValidationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected error",
+            content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })
+    @GetMapping("/countries")
+    public List<Country> listCountries(
+            @ModelAttribute @Valid @ParameterObject CountryQueryParams params) {
+
+        return countryService.list(params);
+
+    }    
 
 //    @PostConstruct
     public void seedAdmin() {

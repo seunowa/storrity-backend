@@ -2,6 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+
 package com.storrity.storrity.supply.dto;
 
 import com.storrity.storrity.cashaccounts.entity.Money;
@@ -31,5 +32,4 @@ public class SupplyItemCreationDto {
     @NotNull(message = "pckQty is required")
     private List<PckQty> pckQty;
     private Money costPrice;
-    
 }

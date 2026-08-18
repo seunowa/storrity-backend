@@ -4,6 +4,7 @@
  */
 package com.storrity.storrity.stockmovement.dto;
 
+import com.storrity.storrity.stockmovement.entity.StockMovementType;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +25,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class StockMovementInstruction {
     private String description;
-    private String transactionRef; 
+    private String transactionRef;
     private String performedBy;
+    private StockMovementType movementType;
     private List<StockMovementInstructionItem> instructionItems;
 }

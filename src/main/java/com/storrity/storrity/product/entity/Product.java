@@ -11,6 +11,8 @@ import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -72,19 +74,32 @@ public class Product {
     @OneToMany(mappedBy = "productId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Collection<ProductPackage> packages;
     private LocalDateTime lastMovementAt;
+    private LocalDateTime lastStockInAt;
+    private LocalDateTime lastStockOutAt;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt; 
     
-    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "product_type")
+    private ProductType productType;
     private String brand;
     private String description;
     private String barCode;
     private String location;
+    private Double minimumStockLevel;
     private Double reorderLevel;
     private Double reorderQuantity;
-    private Double highStockLevel;
+    private Double maximumStockLevel;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "stock_status")
+    private StockStatus stockStatus;
+    @AttributeOverrides({
+        @AttributeOverride(name = "valueInMicroNaira", column = @Column(name = "inventory_value_in_micro_naira"))
+    })
+    private Money inventoryValue;
        
     @PrePersist
     public void prePersist(){        
@@ -98,4 +113,6 @@ public class Product {
         LocalDateTime now = LocalDateTime.now();
         updatedAt = now;
     }
+    
+    
 }

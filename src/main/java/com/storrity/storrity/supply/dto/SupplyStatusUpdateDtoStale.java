@@ -4,9 +4,16 @@
  */
 package com.storrity.storrity.supply.dto;
 
+import com.storrity.storrity.supply.entity.SupplyStatus;
+import lombok.Data;
+import lombok.experimental.SuperBuilder;
+
 /**
  *
  * @author Seun Owa
  */
-public class SupplyUpdateDto extends SupplyCreationDto{
+@Data
+@SuperBuilder
+public class SupplyStatusUpdateDtoStale{
+    private SupplyStatus supplyStatus;
 }

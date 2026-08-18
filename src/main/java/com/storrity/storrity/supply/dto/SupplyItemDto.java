@@ -27,6 +27,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class SupplyItemDto {
     @NotNull
+    private UUID id;
     private UUID productId;
     private String productName;
     private String productCode;
@@ -34,9 +35,10 @@ public class SupplyItemDto {
     private String productSubCategory;
     private String batchNumber;
     private LocalDate expiryDate;
-    @Positive
-    private Double quantitySupplied;
-    private String sku;
+    
+    private Double quantityReceived;
+    private Double quantityVariance;
+    private String baseUnit;
     private List<PckQty> pckQty;
     private Money unitPrice;
     private Double discountRate;
@@ -45,6 +47,7 @@ public class SupplyItemDto {
     
     public static SupplyItemDto from(SupplyItem item){
         return SupplyItemDto.builder()
+                .id(item.getId())
                 .batchNumber(item.getBatchNumber())
                 .expiryDate(item.getExpiryDate())
                 .pckQty(item.getPckQty())                
@@ -52,9 +55,10 @@ public class SupplyItemDto {
                 .productName(item.getProductName())
                 .productCode(item.getProductCode())
                 .productCategory(item.getProductCategory())
-                .productSubCategory(item.getProductSubCategory())
-                .quantitySupplied(item.getQuantity())
-                .sku(item.getSku())
+                .productSubCategory(item.getProductSubCategory())           
+                .quantityReceived(item.getQuantityReceived())
+                .quantityVariance(item.getQuantityVariance())
+                .baseUnit(item.getBaseUnit())
                 .costPrice(item.getCostPrice())
                 .build();
     }

@@ -5,7 +5,8 @@
 package com.storrity.storrity.stockmovement.dto;
 
 import com.storrity.storrity.stockmovement.entity.PckQty;
-import com.storrity.storrity.product.dto.StockFlow;
+import com.storrity.storrity.stockmovement.entity.StockMoevmentDirection;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -27,14 +28,22 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class StockMovementInstructionItem {
     private Double quantity;
-    private StockFlow flow;
+    private StockMoevmentDirection flow;
     private UUID productId;
+    @Deprecated
     private String productName;
+    @Deprecated
     private String productCode;
+    @Deprecated
     private String productCategory;
+    @Deprecated
     private String productSubCategory;
+    @Deprecated
     private UUID storeId;
+    @Deprecated
     private String storeName;
     private String performedBy;
     private List<PckQty> pckQty;
+    private String batchNumber;
+    private LocalDate expiryDate;
 }

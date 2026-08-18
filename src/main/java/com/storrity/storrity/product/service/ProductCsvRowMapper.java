@@ -55,6 +55,7 @@ public class ProductCsvRowMapper extends AbstractCsvRowMapper<ProductCreationDto
      * Builds the header-name -> column-index lookup once per file so rows don't
      * have to be in exactly the order declared in HEADER (only the header names
      * have to match, case-insensitively).
+     * @return 
      */
 
     @Override
@@ -64,6 +65,13 @@ public class ProductCsvRowMapper extends AbstractCsvRowMapper<ProductCreationDto
             "store", "brand", "description", "barCode", "location",
             "reorderLevel", "reorderQuantity", "packages"
         };
+
+//        @Todo uncomment and remove line above when high stock level is added to csv template
+//        String[] headers = {
+//            "name", "code", "qtyInStock", "category", "subcategory", "stockKeepingUnit", "unitPrice",
+//            "store", "brand", "description", "barCode", "location",
+//            "reorderLevel", "reorderQuantity", "highStockLevel", "packages"
+//        };
         return headers;
     }
 
@@ -85,6 +93,8 @@ public class ProductCsvRowMapper extends AbstractCsvRowMapper<ProductCreationDto
         dto.setReorderLevel(parseDouble(field(row, headerIndex, "reorderLevel")));
         dto.setReorderQuantity(parseDouble(field(row, headerIndex, "reorderQuantity")));
         dto.setPackages(parsePackages(field(row, headerIndex, "packages")));
+//        @Todo uncomment when csv template is refactored to include HighStockLevel
+//        dto.setHighStockLevel(parseDouble(field(row, headerIndex, "highStockLevel")));
 
         if (dto.getName() == null || dto.getName().isBlank()) {
             throw new InputValidationAppException("name is required");

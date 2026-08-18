@@ -4,7 +4,7 @@
  */
 package com.storrity.storrity.sales.service;
 
-import com.storrity.storrity.product.dto.StockFlow;
+import com.storrity.storrity.stockmovement.entity.StockMoevmentDirection;
 import com.storrity.storrity.product.entity.Product;
 import com.storrity.storrity.product.repository.ProductRepository;
 import com.storrity.storrity.product.service.ProductService;
@@ -18,6 +18,7 @@ import com.storrity.storrity.sales.repository.SaleRepository;
 import com.storrity.storrity.stockmovement.dto.StockMovementInstruction;
 import com.storrity.storrity.stockmovement.dto.StockMovementInstructionItem;
 import com.storrity.storrity.stockmovement.entity.PckQty;
+import com.storrity.storrity.stockmovement.entity.StockMovementType;
 import com.storrity.storrity.stockmovement.service.StockMovementService;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.dto.ItemPrice;
@@ -96,7 +97,7 @@ public class SalesServiceImpl implements SalesService{
 //        //create stock movement
 //        StockMovementInstruction smInstruction = StockMovementInstruction.builder()
 //                .description("salesItems")
-//                .instructionItems(List.of(new StockMovementInstructionItem(dto.getQuantity(), StockFlow.OUTFLOW, p.getId(), dto.getPckQty())))
+//                .instructionItems(List.of(new StockMovementInstructionItem(dto.getQuantity(), StockMoevmentDirection.OUTFLOW, p.getId(), dto.getPckQty())))
 //                .performedBy(dto.getPerformedBy())
 //                .transactionRef(dto.getTransactionRef())                
 //                .build();
@@ -215,7 +216,7 @@ public class SalesServiceImpl implements SalesService{
                     StockMovementInstructionItem item = StockMovementInstructionItem
                             .builder()
                             .quantity(s.getQuantity())
-                            .flow(StockFlow.OUTFLOW)
+                            .flow(StockMoevmentDirection.OUTFLOW)
                             .pckQty(qtyList)
                             .productCategory(s.getProductCategory())
                             .productCode(s.getProductCode())
@@ -227,7 +228,7 @@ public class SalesServiceImpl implements SalesService{
                             .performedBy(s.getPerformedBy())
                             .build();
                     return item;
-//                    return new StockMovementInstructionItem(s.getQuantity(), StockFlow.OUTFLOW, s.getP, qtyList);
+//                    return new StockMovementInstructionItem(s.getQuantity(), StockMoevmentDirection.OUTFLOW, s.getP, qtyList);
                 })
                 .collect(Collectors.toList());
         
@@ -235,7 +236,8 @@ public class SalesServiceImpl implements SalesService{
                 .description("sales")
                 .instructionItems(instructionItems)
                 .performedBy(dto.getPerformedBy())
-                .transactionRef(dto.getTransactionRef())                
+                .transactionRef(dto.getTransactionRef())
+                .movementType(StockMovementType.SALE)
                 .build();
         
         return smInstruction;

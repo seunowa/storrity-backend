@@ -5,6 +5,7 @@
 package com.storrity.storrity.product.dto;
 
 import com.storrity.storrity.cashaccounts.entity.Money;
+import com.storrity.storrity.product.entity.ProductType;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +45,9 @@ public class ProductCreationDto {
     private String description;
     private String barCode;
     private String location;
+    private Double minimumStockLevel;
     private Double reorderLevel;
     private Double reorderQuantity;
+    private Double highStockLevel;
+    private ProductType productType;
 }

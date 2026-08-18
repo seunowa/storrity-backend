@@ -12,6 +12,7 @@ import com.storrity.storrity.country.entity.Country;
 import com.storrity.storrity.country.entity.CountryQueryParams;
 import com.storrity.storrity.country.entity.SelectedCountry;
 import com.storrity.storrity.country.repository.SelectedCountryRepository;
+import com.storrity.storrity.util.exception.ResourceNotFoundAppException;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,7 +79,7 @@ public class CountryServiceImpl implements CountryService{
                 .filter(c -> c.getCountryName().equalsIgnoreCase(countryName))
                 .findFirst()
                 .orElseThrow(() ->
-                        new RuntimeException("Country not found"));
+                        new ResourceNotFoundAppException("Country not found"));
 
     }
 
@@ -115,7 +116,7 @@ public class CountryServiceImpl implements CountryService{
     public SelectedCountryDto getSelectedCountry() {
         SelectedCountry selectedCountry = repository.findById(SELECTED_COUNTRY_ID)
                 .orElseThrow(() ->
-                        new RuntimeException("Selected country has not been configured"));
+                        new ResourceNotFoundAppException("Selected country has not been configured"));
         
         return SelectedCountryDto.builder().countryName(selectedCountry.getCountryName()).build();
     }
@@ -124,7 +125,7 @@ public class CountryServiceImpl implements CountryService{
     public Country getSelectedCountryDetails() {
         SelectedCountry selectedCountry = repository.findById(SELECTED_COUNTRY_ID)
                 .orElseThrow(() ->
-                        new RuntimeException("Selected country has not been configured"));
+                        new ResourceNotFoundAppException("Selected country has not been configured"));
         
         return get(selectedCountry.getCountryName());
 

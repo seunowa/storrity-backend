@@ -4,8 +4,8 @@
  */
 package com.storrity.storrity.supply.dto;
 
-import com.storrity.storrity.product.entity.SupplyPaymentStatus;
-import com.storrity.storrity.product.entity.SupplyStatus;
+import com.storrity.storrity.supply.entity.SupplyPaymentStatus;
+import com.storrity.storrity.supply.entity.SupplyStatus;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

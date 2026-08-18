@@ -9,6 +9,7 @@ import com.storrity.storrity.product.dto.ProductCreationDto;
 import com.storrity.storrity.product.dto.ProductDto;
 import com.storrity.storrity.product.entity.Product;
 import com.storrity.storrity.product.entity.ProductPackage;
+import com.storrity.storrity.product.entity.ProductType;
 import com.storrity.storrity.product.event.ProductCreatedEvent;
 import com.storrity.storrity.product.repository.ProductPackageRepository;
 import com.storrity.storrity.product.repository.ProductRepository;
@@ -79,8 +80,11 @@ public class ProductCreator {
                 .description(dto.getDescription())
                 .barCode(dto.getBarCode())
                 .location(dto.getLocation())
+                .minimumStockLevel(dto.getMinimumStockLevel())
                 .reorderLevel(dto.getReorderLevel())
                 .reorderQuantity(dto.getReorderQuantity())
+                .maximumStockLevel(dto.getHighStockLevel())
+                .productType(dto.getProductType() != null ? dto.getProductType() : ProductType.MERCHANDISE)
                 .build();
 
         Product savedProduct = productRepository.save(newProd);

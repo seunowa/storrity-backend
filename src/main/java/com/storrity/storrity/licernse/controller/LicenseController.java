@@ -293,7 +293,7 @@ public class LicenseController {
     public ClientSystem LicesneClient(@RequestBody @Valid  ClientLicenseCreationDto dto) {
         return clientSystemService.create(ClientSystemCreationDto
                 .builder()
-                .clientId(dto.getName())
+                .clientId(dto.getClientId())
                 .name(dto.getName())
                 .status(ClientSystemStatus.INACTIVE)
                 .build());

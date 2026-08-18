@@ -4,9 +4,11 @@
  */
 package com.storrity.storrity.stockmovement.service;
 
+import com.storrity.storrity.cashaccounts.entity.Money;
 import com.storrity.storrity.product.dto.ProductDto;
-import com.storrity.storrity.product.dto.StockFlow;
+import com.storrity.storrity.stockmovement.entity.StockMoevmentDirection;
 import com.storrity.storrity.product.entity.Product;
+import com.storrity.storrity.product.entity.StockStatus;
 import com.storrity.storrity.product.repository.ProductRepository;
 import com.storrity.storrity.stockmovement.dto.StockMovementDto;
 import com.storrity.storrity.stockmovement.dto.StockMovementInstruction;
@@ -14,6 +16,7 @@ import com.storrity.storrity.stockmovement.dto.StockMovementInstructionItem;
 import com.storrity.storrity.stockmovement.dto.StockMovementResult;
 import com.storrity.storrity.stockmovement.entity.StockMovement;
 import com.storrity.storrity.stockmovement.entity.StockMovementQueryParams;
+import com.storrity.storrity.stockmovement.entity.StockMovementType;
 import com.storrity.storrity.stockmovement.event.StockMovementCreatedEvent;
 import com.storrity.storrity.stockmovement.repository.StockMovementRepository;
 import com.storrity.storrity.util.dto.CountDto;
@@ -67,10 +70,10 @@ public class StockMovementServiceImpl implements StockMovementService{
         List<StockMovement> smList = new ArrayList<>();
         
         for(StockMovementInstructionItem item : instruction.getInstructionItems()){
-            if(StockFlow.INFLOW.equals(item.getFlow())){
+            if(StockMoevmentDirection.INFLOW.equals(item.getFlow())){
                 StockMovement sm = applyInflow(instruction, item, productMap, movementAt);
                 smList.add(sm);
-            }else if(StockFlow.OUTFLOW.equals(item.getFlow())){
+            }else if(StockMoevmentDirection.OUTFLOW.equals(item.getFlow())){
                 StockMovement sm = applyOutflow(instruction, item, productMap, movementAt);
                 smList.add(sm);
             }
@@ -132,18 +135,37 @@ public class StockMovementServiceImpl implements StockMovementService{
         Double newQtyInStock = p.getQtyInStock() + item.getQuantity();
         p.setQtyInStock(newQtyInStock);
         p.setLastMovementAt(movementAt);
-
+        updateStockStatusAndInventoryValue(p);
+        if(instruction.getMovementType() == StockMovementType.SUPPLY){
+            p.setLastStockInAt(LocalDateTime.now());
+        }
         
+        Money movementValue = p.getUnitPrice().multiply(item.getQuantity()); 
         StockMovement sm = StockMovement.builder()
                 .balance(newQtyInStock)
                 .description(instruction.getDescription())
+//                .metadata(metaData)
+                .storeId(p.getStore().getId())
+                .storeName(p.getStore().getName())
                 .performedBy(instruction.getPerformedBy())
-                .product(p)
-                .qtyIn(item.getQuantity())
-                .qtyOut(0d)
+                .productId(p.getId())
+                .productName(p.getName())
+                .productCode(p.getCode())
+                .productCategory(p.getCategory())
+                .productSubCategory(p.getSubcategory())
+                .productBrand(p.getBrand())
+                .unitCost(p.getUnitPrice())
+                .movementValue(movementValue)
+                .qtyIn(0d)
+                .qtyOut(item.getQuantity())
+                .direction(StockMoevmentDirection.INFLOW)
+                .movementType(instruction.getMovementType())
                 .sku(p.getStockKeepingUnit())
                 .transactionRef(instruction.getTransactionRef())
                 .pckQty(item.getPckQty())
+                .batchNumber(item.getBatchNumber())
+                .expiryDate(item.getExpiryDate())
+                .stockStatus(p.getStockStatus())
                 .build();
 
         return sm;
@@ -165,22 +187,57 @@ public class StockMovementServiceImpl implements StockMovementService{
         }
         p.setQtyInStock(newQtyInStock);
         p.setLastMovementAt(movementAt);
+        updateStockStatusAndInventoryValue(p);
 
-//        Map<String, Object> metaData = new LinkedHashMap<>();
-//        metaData.put("pckQty", item.getPckQty());
+        Money movementValue = p.getUnitPrice().multiply(item.getQuantity());         
         StockMovement sm = StockMovement.builder()
                 .balance(newQtyInStock)
                 .description(instruction.getDescription())
 //                .metadata(metaData)
+                .storeId(p.getStore().getId())
+                .storeName(p.getStore().getName())
                 .performedBy(instruction.getPerformedBy())
-                .product(p)
+                .productId(p.getId())
+                .productName(p.getName())
+                .productCode(p.getCode())
+                .productCategory(p.getCategory())
+                .productSubCategory(p.getSubcategory())
+                .productBrand(p.getBrand())
+                .unitCost(p.getUnitPrice())
+                .movementValue(movementValue)
                 .qtyIn(0d)
                 .qtyOut(item.getQuantity())
+                .direction(StockMoevmentDirection.OUTFLOW)
+                .movementType(instruction.getMovementType())
                 .sku(p.getStockKeepingUnit())
                 .transactionRef(instruction.getTransactionRef())
                 .pckQty(item.getPckQty())
+                .batchNumber(item.getBatchNumber())
+                .expiryDate(item.getExpiryDate())
+                .stockStatus(p.getStockStatus())
                 .build();
 
         return sm;
+    }
+    
+    private void updateStockStatusAndInventoryValue(Product p) {
+//        Update status
+        if (p.getQtyInStock() == null || p.getQtyInStock() <= 0) {
+            p.setStockStatus(StockStatus.OUT_OF_STOCK);
+            p.setLastStockOutAt(LocalDateTime.now());
+        } else if (p.getReorderLevel() != null && p.getQtyInStock() <= p.getReorderLevel()) {
+            p.setStockStatus(StockStatus.LOW_STOCK);
+        } else if (p.getMaximumStockLevel()!= null && p.getQtyInStock() >= p.getMaximumStockLevel()) {
+            p.setStockStatus(StockStatus.HIGH_STOCK);
+        } else {
+            p.setStockStatus(StockStatus.NORMAL);
+        }
+        
+//        update inventory value
+        if(p.getUnitPrice()!= null){
+            Double qtyInStock = p.getQtyInStock() == null ? 0d : p.getQtyInStock();
+            Money inventoryValue = p.getUnitPrice().multiply(qtyInStock);
+            p.setInventoryValue(inventoryValue);
+        }
     }
 }

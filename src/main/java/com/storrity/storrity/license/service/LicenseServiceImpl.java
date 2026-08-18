@@ -92,7 +92,7 @@ public class LicenseServiceImpl implements LicenseService{
     public IsClientSystemLicensedDto isClientSystemLicensed(ClientSystem cs) {
         try{            
             if(ClientSystemStatus.INACTIVE.equals(cs.getStatus())){
-                throw new BadRequestAppException("Client system is not licensed");
+                throw new BadRequestAppException("Client system is inactive");
             }
             
             String token = fetchLicense();

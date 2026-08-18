@@ -6,6 +6,8 @@ package com.storrity.storrity.product.dto;
 
 import com.storrity.storrity.cashaccounts.entity.Money;
 import com.storrity.storrity.product.entity.Product;
+import com.storrity.storrity.product.entity.ProductType;
+import com.storrity.storrity.product.entity.StockStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -45,6 +47,17 @@ public class ProductDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
+    private String brand;
+    private String description;
+    private String barCode;
+    private String location;
+    private Double minimumStockLevel;
+    private Double reorderLevel;
+    private Double reorderQuantity;
+    private Double maximumStockLevel;
+    private ProductType productType;
+    private StockStatus stockStatus;
+    
     public static ProductDto from(Product p) {
         ProductDto dto = new ProductDto();
         dto.setCategory(p.getCategory());
@@ -63,6 +76,16 @@ public class ProductDto {
         dto.setUnitPrice(p.getUnitPrice());
         dto.setUpdatedAt(p.getUpdatedAt());
         dto.setLastMovementAt(p.getLastMovementAt());
+        dto.setBrand(p.getBrand());
+        dto.setDescription(p.getDescription());
+        dto.setBarCode(p.getBarCode());
+        dto.setLocation(p.getLocation());
+        dto.setMinimumStockLevel(p.getMinimumStockLevel());
+        dto.setReorderLevel(p.getReorderLevel());
+        dto.setReorderQuantity(p.getReorderQuantity());
+        dto.setMaximumStockLevel(p.getMaximumStockLevel());
+        dto.setProductType(p.getProductType());
+        dto.setStockStatus(p.getStockStatus());
         
         return dto;
     }

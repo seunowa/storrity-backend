@@ -15,7 +15,7 @@ import com.storrity.storrity.license.dto.LicenseDto;
 import com.storrity.storrity.license.service.LicenseService;
 import com.storrity.storrity.product.entity.Product;
 import com.storrity.storrity.product.entity.ProductPackage;
-import com.storrity.storrity.product.entity.SupplyStatus;
+import com.storrity.storrity.supply.entity.SupplyStatus;
 import com.storrity.storrity.product.repository.ProductPackageRepository;
 import com.storrity.storrity.product.repository.ProductRepository;
 import com.storrity.storrity.sales.dto.SaleCreationDto;
@@ -25,9 +25,8 @@ import com.storrity.storrity.stockmovement.entity.PckQty;
 import com.storrity.storrity.store.entity.Store;
 import com.storrity.storrity.store.entity.StoreStatus;
 import com.storrity.storrity.store.repository.StoreRepository;
-import com.storrity.storrity.supply.dto.SupplyCreationDto;
-import com.storrity.storrity.supply.dto.SupplyItemCreationDto;
-import com.storrity.storrity.supply.service.SupplyService;
+import com.storrity.storrity.supply.dto.SupplyCreationDtoStale;
+import com.storrity.storrity.supply.dto.SupplyItemCreationDtoStale;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +39,17 @@ import com.storrity.storrity.security.entity.UserRole;
 import com.storrity.storrity.security.repository.UserRepository;
 import com.storrity.storrity.security.repository.UserRoleRepository;
 import com.storrity.storrity.security.service.AppUserService;
-import java.util.EnumSet;
-import java.util.Set;
+import com.storrity.storrity.security.service.AuthenticatedUser;
+import com.storrity.storrity.supply.dto.DeliveryDto;
+import com.storrity.storrity.supply.dto.DeliveryItemDto;
+import com.storrity.storrity.supply.dto.PurchaseOrderItemCreationDto;
+import com.storrity.storrity.supply.dto.PurchaseOrderCreationDto;
+import com.storrity.storrity.supply.dto.SupplyDto;
+import com.storrity.storrity.supply.service.SupplyService;
 import org.springframework.context.annotation.Profile;
+import java.util.UUID;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -83,12 +90,37 @@ public class DataInitializer implements CommandLineRunner{
     
     @Override
     public void run(String... args) throws Exception {
-//        seedAdmin();
+//        seedAdmin();        
+        installDevLicense();
         List<Store> stores = storeRepository.findAll();
         if(stores.isEmpty()){
-            init();
+            runAsDevUser(this::init);
         }
-        installDevLicense();
+    }
+    
+    private void runAsDevUser(Runnable action) {
+
+        AuthenticatedUser devUser = new AuthenticatedUser(
+                "dev-user",
+                "dev-client",
+                "Development Client"
+        );
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        devUser,
+                        null,
+                        null
+                );
+
+        SecurityContextHolder.getContext()
+                .setAuthentication(authentication);
+
+        try {
+            action.run();
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
     }
     
 //    public void seedAdmin() {
@@ -219,38 +251,99 @@ public class DataInitializer implements CommandLineRunner{
         // Save packages (assuming you have a ProductPackageRepository)
         productPackageRepository.saveAll(List.of(piecePk, doublePck));
         
-        SupplyCreationDto scDto = SupplyCreationDto.builder()
-                .amountPaid(new Money(50))
-                .approvedByUserId("approved by")
-                .contactPerson("contact person")
-                .deliveryFee(new Money (2))
-                .deliveryNoteNumber("delivery note number")
-                .enteredByUserId("entered by")
-                .invoiceNumber("invoice number")
-                .items(List.of(SupplyItemCreationDto.builder()
-                        .batchNumber("batch123")
-                        
-                        .expiryDate(LocalDate.now())
-                        .pckQty(List.of(PckQty.builder()
-                                .packageName("Small")
-                                .quantity(5d)
-                                .build()))
-                        .productId(savedProduct.getId())
-                        .costPrice(new Money(500))
-                        .build()))
-                .notes("notes")
-                .paymentMethod("Card")
-                .storeId(savedStore.getId())
-                .supplierEmail("supplier@email.com")
-                .supplierId("supplier id")
-                .supplierName("supplier Name")
-                .supplierPhone("suppier phone")
-                .supplyDate(LocalDate.now())
+//        SupplyCreationDtoStale scDto = SupplyCreationDtoStale.builder()
+//                .amountPaid(new Money(50))
+//                .approvedByUserId("approved by")
+//                .contactPerson("contact person")
+//                .deliveryFee(new Money (2))
+//                .deliveryNoteNumber("delivery note number")
+//                .enteredByUserId("entered by")
+//                .invoiceNumber("invoice number")
+//                .items(List.of(SupplyItemCreationDtoStale.builder()
+//                        .batchNumber("batch123")
+//                        
+//                        .expiryDate(LocalDate.now())
+//                        .pckQty(List.of(PckQty.builder()
+//                                .packageName("Small")
+//                                .quantity(5d)
+//                                .build()))
+//                        .productId(savedProduct.getId())
+//                        .costPrice(new Money(500))
+//                        .build()))
+//                .notes("notes")
+//                .paymentMethod("Card")
+//                .storeId(savedStore.getId())
+//                .supplierEmail("supplier@email.com")
+//                .supplierId("supplier id")
+//                .supplierName("supplier Name")
+//                .supplierPhone("suppier phone")
+//                .expectedSupplyDate(LocalDate.now())
+//                .transactionRef("supplyref101")
+//                .build();
+//        
+//        SupplyDtoStale supplyDto = supplyService.create(scDto);
+//        supplyService.updateStatus(supplyDto.getId(), SupplyStatusUpdateDtoStale.builder().supplyStatus(SupplyStatus.RECEIVED).build());
+
+
+        // 1. CREATE DRAFT
+        PurchaseOrderCreationDto supplyCreationDto = PurchaseOrderCreationDto.builder()
                 .transactionRef("supplyref101")
-                .supplyStatus(SupplyStatus.RECEIVED)
+                .storeId(savedStore.getId())
+                .expectedSupplyDate(LocalDate.now())
+                .deliveryNoteNumber("delivery-note-101")
+                .invoiceNumber("invoice-101")
+                .supplierId("supplier-id-001")
+                .supplierName("Sample Supplier")
+                .contactPerson("Contact Person")
+                .supplierPhone("08012345678")
+                .supplierEmail("supplier@email.com")
+                .notes("Sample development supply")
+                .purchaseOrderItems(List.of(PurchaseOrderItemCreationDto.builder()
+                                .productId(savedProduct.getId())
+                                .pckQty(List.of(
+                                        PckQty.builder()
+                                                .packageName("Small")
+                                                .quantity(5d)
+                                                .build()
+                                ))
+                                .costPrice(new Money(500))
+                                .build()
+                ))
                 .build();
-        
-        supplyService.create(scDto);
+
+        SupplyDto supplyDto = supplyService.createDraft(supplyCreationDto);
+
+
+        // 2. DELIVER
+        UUID orderItemId = supplyDto.getOrderItems()
+                .iterator()
+                .next()
+                .getId();
+
+        DeliveryItemDto deliveryItem = new DeliveryItemDto();
+        deliveryItem.setOrderItemId(orderItemId);
+        deliveryItem.setProductId(savedProduct.getId());
+        deliveryItem.setQuantityReceived(5d);
+        deliveryItem.setBatchNumber("batch123");
+        deliveryItem.setExpiryDate(LocalDate.now().plusMonths(6));
+        deliveryItem.setPckQty(List.of(
+                PckQty.builder()
+                        .packageName("Small")
+                        .quantity(5d)
+                        .build()
+        ));
+        deliveryItem.setCostPrice(new Money(500));
+
+        DeliveryDto deliveryDto = new DeliveryDto();
+        deliveryDto.setDeliveryNoteNumber("delivery-note-101");
+        deliveryDto.setInvoiceNumber("invoice-101");
+        deliveryDto.setItems(List.of(deliveryItem));
+
+        supplyService.deliver(supplyDto.getId(), deliveryDto);
+
+
+        // 3. RECEIVE
+        supplyService.receive(supplyDto.getId());
         
         //@Todo refactor implementation such that cost price is not required to create sales
         //rather retrieve cost price from product package

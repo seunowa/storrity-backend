@@ -1,4 +1,27 @@
-STORRITY RELEASE NOTES
+TORRITY RELEASE NOTES
+
+Version: 1.4.0
+
+## MODULE: Licensing
+
+Feature:
+* Purchase order in supply
+* Supply process in supply
+* Supply timeline in supply
+* Sytem wide Supply process settings
+
+## MODULE: Licensing
+
+Bug fix:
+* Fix bug in assigment of client id to client name
+
+Version: 1.3.3
+
+## MODULE: Security
+
+Features:
+* Add country name to root user initiation
+
 
 Version: 1.3.2
 

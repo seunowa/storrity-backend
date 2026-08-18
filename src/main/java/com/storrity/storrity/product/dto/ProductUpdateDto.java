@@ -5,6 +5,7 @@
 package com.storrity.storrity.product.dto;
 
 import com.storrity.storrity.cashaccounts.entity.Money;
+import com.storrity.storrity.product.entity.ProductType;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -40,6 +41,9 @@ public class ProductUpdateDto {
     private String description;
     private String barCode;
     private String location;
+    private Double minimumStockLevel;
     private Double reorderLevel;
-    private Double reorderQuantity;
+    private Double reorderQuantity;    
+    private Double maximumStockLevel;
+    private ProductType productType;
 }
