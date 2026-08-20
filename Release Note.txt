@@ -1,4 +1,11 @@
-TORRITY RELEASE NOTES
+STORRITY RELEASE NOTES
+
+Version: 1.4.1
+
+## MODULE: Supply
+
+Bugfix:
+* fix bug in supply service - order
 
 Version: 1.4.0
 

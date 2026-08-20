@@ -37,7 +37,7 @@ public class RootUserInitRequestDto {
     @NotBlank(message = "clientId is required")
     private String clientId;
 
-    @Schema(description = "Country Name", example = "United States")
+    @Schema(description = "Country Name", example = "United States of America")
     private String countryName;
 
 }

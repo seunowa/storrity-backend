@@ -273,6 +273,12 @@ public class SupplyServiceImpl implements SupplyService{
                 .orElseThrow(()->new ResourceNotFoundAppException("Supply not found with id: " + id));
 
         confirmActionIsAllowed(supply, SupplyAction.ORDER);
+        
+//        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String username = principal.getUsername();
+//        supply.setPurchaseOrderSubmittedAt(LocalDateTime.now());
+//        supply.setDraftSubmittedBy(username);
+        supply.setMostRecentSupplyAction(SupplyAction.ORDER);
 
         supply.setSupplyStatus(SupplyStatus.ORDERED);
 
@@ -584,9 +590,7 @@ public class SupplyServiceImpl implements SupplyService{
                 .build();
     }
     
-    private void confirmActionIsAllowed(
-        Supply supply,
-        SupplyAction action) {
+    private void confirmActionIsAllowed(Supply supply, SupplyAction action) {
 
         SupplyAction mostRecentAction = supply.getMostRecentSupplyAction();
 
