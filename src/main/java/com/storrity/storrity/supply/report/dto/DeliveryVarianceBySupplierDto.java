@@ -1,0 +1,43 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+package com.storrity.storrity.supply.report.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ *
+ * @author Seun Owa
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+public class DeliveryVarianceBySupplierDto {
+    private String supplierId;
+    private String supplierName;
+
+    private Double quantityOrdered;
+    private Double quantityReceived;
+    private Double quantityVariance;
+
+    public DeliveryVarianceBySupplierDto(
+            String supplierId,
+            String supplierName,
+            Double quantityOrdered,
+            Double quantityReceived,
+            Double quantityVariance) {
+
+        this.supplierId = supplierId;
+        this.supplierName = supplierName;
+
+        this.quantityOrdered = quantityOrdered;
+        this.quantityReceived = quantityReceived;
+        this.quantityVariance = quantityVariance;
+    }
+
+}

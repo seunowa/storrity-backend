@@ -63,7 +63,7 @@ public class StockMovement {
     @NotNull
     @Column(name = "balance")
     private Double balance;
-    private String sku;
+    private String baseUnit;
 //    @Deprecated
 //    @ManyToOne(fetch = FetchType.EAGER, optional = false)
 //    @JoinColumn(name = "product_id", nullable = false)

@@ -8,7 +8,6 @@ import com.storrity.storrity.cashaccounts.entity.Money;
 import com.storrity.storrity.store.entity.Store;
 import com.storrity.storrity.util.approval.ApprovalStatus;
 import com.storrity.storrity.util.entity.MetadataConverter;
-import com.storrity.storrity.util.entity.OrderItem;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.CascadeType;
@@ -119,7 +118,7 @@ public class Supply {
     private String deliverySbmittedBy;
     private String deliveryApprovedBy;
     private String receivedBy;
-    private String cancledBy;    
+    private String cancledBy;
     
 //  Reporting properties are derive these from expectedSupplyDate
     private LocalDate reportingExpectedSupplyDate;

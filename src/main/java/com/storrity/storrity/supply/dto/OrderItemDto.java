@@ -6,7 +6,7 @@ package com.storrity.storrity.supply.dto;
 
 import com.storrity.storrity.cashaccounts.entity.Money;
 import com.storrity.storrity.stockmovement.entity.PckQty;
-import com.storrity.storrity.util.entity.OrderItem;
+import com.storrity.storrity.supply.entity.OrderItem;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;

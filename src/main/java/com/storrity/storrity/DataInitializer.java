@@ -185,7 +185,7 @@ public class DataInitializer implements CommandLineRunner{
                 .code("12345")
                 .name("Sample Product")
                 .stockKeepingUnit("Small")
-                .qtyInStock(50.0)
+                .qtyInStock(0.0)
                 .store(savedStore)
                 .subcategory("subcategory Y")
                 .unitPrice(new Money(1000000))
@@ -195,10 +195,10 @@ public class DataInitializer implements CommandLineRunner{
         
         Product p2 = Product.builder()
                 .category("Category B")
-                .code("12345")
+                .code("123465")
                 .name("Sound System")
                 .stockKeepingUnit("Piece")
-                .qtyInStock(50.0)
+                .qtyInStock(0.0)
                 .store(savedStore)
                 .subcategory("subcategory A")
                 .unitPrice(new Money(2000000))
@@ -250,40 +250,6 @@ public class DataInitializer implements CommandLineRunner{
 
         // Save packages (assuming you have a ProductPackageRepository)
         productPackageRepository.saveAll(List.of(piecePk, doublePck));
-        
-//        SupplyCreationDtoStale scDto = SupplyCreationDtoStale.builder()
-//                .amountPaid(new Money(50))
-//                .approvedByUserId("approved by")
-//                .contactPerson("contact person")
-//                .deliveryFee(new Money (2))
-//                .deliveryNoteNumber("delivery note number")
-//                .enteredByUserId("entered by")
-//                .invoiceNumber("invoice number")
-//                .items(List.of(SupplyItemCreationDtoStale.builder()
-//                        .batchNumber("batch123")
-//                        
-//                        .expiryDate(LocalDate.now())
-//                        .pckQty(List.of(PckQty.builder()
-//                                .packageName("Small")
-//                                .quantity(5d)
-//                                .build()))
-//                        .productId(savedProduct.getId())
-//                        .costPrice(new Money(500))
-//                        .build()))
-//                .notes("notes")
-//                .paymentMethod("Card")
-//                .storeId(savedStore.getId())
-//                .supplierEmail("supplier@email.com")
-//                .supplierId("supplier id")
-//                .supplierName("supplier Name")
-//                .supplierPhone("suppier phone")
-//                .expectedSupplyDate(LocalDate.now())
-//                .transactionRef("supplyref101")
-//                .build();
-//        
-//        SupplyDtoStale supplyDto = supplyService.create(scDto);
-//        supplyService.updateStatus(supplyDto.getId(), SupplyStatusUpdateDtoStale.builder().supplyStatus(SupplyStatus.RECEIVED).build());
-
 
         // 1. CREATE DRAFT
         PurchaseOrderCreationDto supplyCreationDto = PurchaseOrderCreationDto.builder()
@@ -303,10 +269,20 @@ public class DataInitializer implements CommandLineRunner{
                                 .pckQty(List.of(
                                         PckQty.builder()
                                                 .packageName("Small")
-                                                .quantity(5d)
+                                                .quantity(50d)
                                                 .build()
                                 ))
-                                .costPrice(new Money(500))
+                                .costPrice(new Money(5000000))
+                                .build(),
+                                PurchaseOrderItemCreationDto.builder()
+                                .productId(savedProduct2.getId())
+                                .pckQty(List.of(
+                                        PckQty.builder()
+                                                .packageName("Piece")
+                                                .quantity(90d)
+                                                .build()
+                                ))
+                                .costPrice(new Money(5000000))
                                 .build()
                 ))
                 .build();
@@ -315,10 +291,12 @@ public class DataInitializer implements CommandLineRunner{
 
 
         // 2. DELIVER
-        UUID orderItemId = supplyDto.getOrderItems()
-                .iterator()
-                .next()
-                .getId();
+//        UUID orderItemId = supplyDto.getOrderItems()
+//                .iterator()
+//                .next()
+//                .getId();
+        UUID orderItemId = List.copyOf(supplyDto.getOrderItems()).get(0).getId();
+        UUID orderItemId2 = List.copyOf(supplyDto.getOrderItems()).get(1).getId();
 
         DeliveryItemDto deliveryItem = new DeliveryItemDto();
         deliveryItem.setOrderItemId(orderItemId);
@@ -329,15 +307,29 @@ public class DataInitializer implements CommandLineRunner{
         deliveryItem.setPckQty(List.of(
                 PckQty.builder()
                         .packageName("Small")
-                        .quantity(5d)
+                        .quantity(50d)
                         .build()
         ));
-        deliveryItem.setCostPrice(new Money(500));
+        deliveryItem.setCostPrice(new Money(5000000));
+        
+        DeliveryItemDto deliveryItem2 = new DeliveryItemDto();
+        deliveryItem2.setOrderItemId(orderItemId2);
+        deliveryItem2.setProductId(savedProduct2.getId());
+        deliveryItem2.setQuantityReceived(90d);
+        deliveryItem2.setBatchNumber("batch1234");
+        deliveryItem2.setExpiryDate(LocalDate.now().plusMonths(6));
+        deliveryItem2.setPckQty(List.of(
+                PckQty.builder()
+                        .packageName("Piece")
+                        .quantity(50d)
+                        .build()
+        ));
+        deliveryItem2.setCostPrice(new Money(2000000));
 
         DeliveryDto deliveryDto = new DeliveryDto();
         deliveryDto.setDeliveryNoteNumber("delivery-note-101");
         deliveryDto.setInvoiceNumber("invoice-101");
-        deliveryDto.setItems(List.of(deliveryItem));
+        deliveryDto.setItems(List.of(deliveryItem, deliveryItem2));
 
         supplyService.deliver(supplyDto.getId(), deliveryDto);
 

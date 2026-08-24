@@ -26,6 +26,7 @@ public class SalesReportQueryParams {
     private List<UUID> storeIds;
     private List<UUID> productIds;
     private List<UUID> customerIds;
+    private List<String> productCodes;
     private List<String> productCategories;
     private List<String> productSubCategories;
     private List<String> performedBy;

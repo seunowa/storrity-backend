@@ -85,8 +85,12 @@ public class StockMovementRepositoryImpl implements StockMovementRepositoryCusto
             predicates.add(root.get("id").in(params.getIds()));
         }
         
+//        if (params.getProductId() != null && !params.getProductId().isEmpty()) {
+//            predicates.add(root.get("product").get("id").in(params.getProductId()));
+//        }
+
         if (params.getProductId() != null && !params.getProductId().isEmpty()) {
-            predicates.add(root.get("product").get("id").in(params.getProductId()));
+            predicates.add(root.get("productId").in(params.getProductId()));
         }
 
         // Conditionally add date range filter

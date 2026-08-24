@@ -4,7 +4,7 @@
  */
 package com.storrity.storrity.supply.repository;
 
-import com.storrity.storrity.util.entity.OrderItem;
+import com.storrity.storrity.supply.entity.OrderItem;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

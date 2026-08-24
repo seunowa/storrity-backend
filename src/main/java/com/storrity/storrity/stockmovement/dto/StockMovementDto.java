@@ -53,7 +53,7 @@ public class StockMovementDto {
     private String productBrand;
     private Money unitCost;
     private Money movementValue;
-    private String sku;
+    private String baseUnit;
     private LocalDateTime createdAt;
     private List<PckQty> pckQty;
     private Map<String, Object> metadata;
@@ -80,7 +80,7 @@ public class StockMovementDto {
                 .productBrand(sm.getProductBrand())
                 .unitCost(sm.getUnitCost())
                 .movementValue(sm.getMovementValue())
-                .sku(sm.getSku())
+                .baseUnit(sm.getBaseUnit())
                 .createdAt(sm.getCreatedAt())
                 .pckQty(sm.getPckQty())
                 .metadata(sm.getMetadata())

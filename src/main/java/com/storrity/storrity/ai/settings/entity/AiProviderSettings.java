@@ -47,5 +47,6 @@ public class AiProviderSettings {
      */
     private String defaultModel;
 
+    @Builder.Default
     private boolean enabled = true;
 }

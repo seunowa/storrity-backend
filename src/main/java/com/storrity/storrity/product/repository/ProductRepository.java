@@ -26,9 +26,10 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, Product
     
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM Product p WHERE p.id IN :ids")
-        List<Product> findAllByIdForUpdate(@Param("ids") Collection<UUID> ids);
+    List<Product> findAllByIdForUpdate(@Param("ids") Collection<UUID> ids);
         
     @Query("SELECT p FROM Product p WHERE p.id IN :ids")
-        List<Product> findAllById(@Param("ids") Collection<UUID> ids);
-    
+    List<Product> findAllById(@Param("ids") Collection<UUID> ids);
+        
+    Optional<Product> findByCodeAndStoreId(String code, UUID storeId);
 }

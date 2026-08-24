@@ -27,7 +27,6 @@ import com.storrity.storrity.sales.report.dto.YearlySalesSummaryDto;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1281,6 +1280,11 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
         if (params.getProductIds() != null && !params.getProductIds().isEmpty()) {
             sql.append(" AND product_id IN (:productIds)");
             parameters.put("productIds", params.getProductIds());
+        }
+
+        if (params.getProductCodes()!= null && !params.getProductCodes().isEmpty()) {
+            sql.append(" AND product_code IN (:productCodes)");
+            parameters.put("productCodes", params.getProductCodes());
         }
 
         if (params.getCustomerIds() != null && !params.getCustomerIds().isEmpty()) {

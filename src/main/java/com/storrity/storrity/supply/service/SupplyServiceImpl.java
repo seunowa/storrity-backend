@@ -38,7 +38,7 @@ import com.storrity.storrity.supply.repository.OrderItemRepository;
 import com.storrity.storrity.supply.repository.SupplyItemRepository;
 import com.storrity.storrity.supply.repository.SupplyRepository;
 import com.storrity.storrity.util.dto.CountDto;
-import com.storrity.storrity.util.entity.OrderItem;
+import com.storrity.storrity.supply.entity.OrderItem;
 import com.storrity.storrity.util.exception.BadRequestAppException;
 import com.storrity.storrity.util.exception.ResourceNotFoundAppException;
 import java.time.LocalDateTime;
@@ -231,9 +231,15 @@ public class SupplyServiceImpl implements SupplyService{
         supply.setPurchaseOrderSubmittedAt(LocalDateTime.now());
         supply.setDraftSubmittedBy(username);
         supply.setMostRecentSupplyAction(SupplyAction.SUBMIT_DRAFT);
-
-        supply.setSupplyStatus(SupplyStatus.AWAITING_ORDER_APPROVAL
-        );
+        
+        supply.setSupplyStatus(SupplyStatus.AWAITING_ORDER_APPROVAL);
+        
+        supply.getSupplyTimeline().appendEntry( SupplyTimelineEntry
+                .builder()
+                .action(SupplyAction.SUBMIT_DRAFT)
+                .performedAt(LocalDateTime.now())
+                .performedBy(username)
+                .build());
 
         return SupplyDto.from(
                 supplyRepository.save(supply)
@@ -256,9 +262,15 @@ public class SupplyServiceImpl implements SupplyService{
         supply.setDraftApprovedBy(username);
         supply.setMostRecentSupplyAction(SupplyAction.APPROVE_DRAFT);
 
-        supply.setSupplyStatus(
-                SupplyStatus.DRAFT_APPROVED
-        );
+        supply.setSupplyStatus(SupplyStatus.DRAFT_APPROVED);
+        
+        supply.getSupplyTimeline().appendEntry( SupplyTimelineEntry
+                .builder()
+                .action(SupplyAction.APPROVE_DRAFT)
+                .performedAt(LocalDateTime.now())
+                .performedBy(username)
+                .build());
+        
 
         return SupplyDto.from(
                 supplyRepository.save(supply)
@@ -274,13 +286,20 @@ public class SupplyServiceImpl implements SupplyService{
 
         confirmActionIsAllowed(supply, SupplyAction.ORDER);
         
-//        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        String username = principal.getUsername();
+        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = principal.getUsername();
 //        supply.setPurchaseOrderSubmittedAt(LocalDateTime.now());
 //        supply.setDraftSubmittedBy(username);
         supply.setMostRecentSupplyAction(SupplyAction.ORDER);
 
         supply.setSupplyStatus(SupplyStatus.ORDERED);
+        
+        supply.getSupplyTimeline().appendEntry( SupplyTimelineEntry
+                .builder()
+                .action(SupplyAction.ORDER)
+                .performedAt(LocalDateTime.now())
+                .performedBy(username)
+                .build());
 
         return SupplyDto.from(
                 supplyRepository.save(supply)
@@ -336,6 +355,13 @@ public class SupplyServiceImpl implements SupplyService{
         supply.setSupplyStatus(
                 SupplyStatus.DELIVERED
         );
+        
+        supply.getSupplyTimeline().appendEntry( SupplyTimelineEntry
+                .builder()
+                .action(SupplyAction.DELIVER)
+                .performedAt(LocalDateTime.now())
+                .performedBy(username)
+                .build());
 
         return SupplyDto.from(
                 supplyRepository.save(supply)
@@ -358,13 +384,16 @@ public class SupplyServiceImpl implements SupplyService{
         supply.setDeliverySbmittedBy(username);
         supply.setMostRecentSupplyAction(SupplyAction.SUBMIT_DELIVERY);
 
-        supply.setSupplyStatus(
-                SupplyStatus.AWAITING_DELIVERY_APPROVAL
-        );
+        supply.setSupplyStatus(SupplyStatus.AWAITING_DELIVERY_APPROVAL);
+        
+        supply.getSupplyTimeline().appendEntry( SupplyTimelineEntry
+                .builder()
+                .action(SupplyAction.SUBMIT_DELIVERY)
+                .performedAt(LocalDateTime.now())
+                .performedBy(username)
+                .build());
 
-        return SupplyDto.from(
-                supplyRepository.save(supply)
-        );
+        return SupplyDto.from(supplyRepository.save(supply));
     }
 
     @Override
@@ -384,13 +413,16 @@ public class SupplyServiceImpl implements SupplyService{
         supply.setDeliveryApprovedBy(username);
         supply.setMostRecentSupplyAction(SupplyAction.APPROVE_DELIVERY);
 
-        supply.setSupplyStatus(
-                SupplyStatus.DELIVERY_APPROVED
-        );
+        supply.setSupplyStatus(SupplyStatus.DELIVERY_APPROVED);
+        
+        supply.getSupplyTimeline().appendEntry( SupplyTimelineEntry
+                .builder()
+                .action(SupplyAction.APPROVE_DELIVERY)
+                .performedAt(LocalDateTime.now())
+                .performedBy(username)
+                .build());
 
-        return SupplyDto.from(
-                supplyRepository.save(supply)
-        );
+        return SupplyDto.from(supplyRepository.save(supply));
     }
 
     @Override
@@ -446,9 +478,15 @@ public class SupplyServiceImpl implements SupplyService{
          */
         supply.setSupplyStatus(SupplyStatus.RECEIVED);
         supply.setMostRecentSupplyAction(SupplyAction.RECEIVE);
+        
+        supply.getSupplyTimeline().appendEntry( SupplyTimelineEntry
+                .builder()
+                .action(SupplyAction.RECEIVE)
+                .performedAt(LocalDateTime.now())
+                .performedBy(username)
+                .build());
 
-        Supply savedSupply =
-                supplyRepository.save(supply);
+        Supply savedSupply = supplyRepository.save(supply);
 
         /*
          * 5. Event is published after the state has been
@@ -477,10 +515,15 @@ public class SupplyServiceImpl implements SupplyService{
         supply.setCancledBy(username);
         supply.setSupplyStatus(SupplyStatus.CANCELED);
         supply.setMostRecentSupplyAction(SupplyAction.CANCEL);
+        
+        supply.getSupplyTimeline().appendEntry( SupplyTimelineEntry
+                .builder()
+                .action(SupplyAction.CANCEL)
+                .performedAt(LocalDateTime.now())
+                .performedBy(username)
+                .build());
 
-        return SupplyDto.from(
-                supplyRepository.save(supply)
-        );
+        return SupplyDto.from(supplyRepository.save(supply));
     }
     
     private List<SupplyItem> prepareReceivedItems(
@@ -677,12 +720,11 @@ public class SupplyServiceImpl implements SupplyService{
     }
 
     private Supply buildSupply(PurchaseOrderCreationDto dto, Store store, String username){
-        LocalDateTime now = LocalDateTime.now();
         SupplyTimeline timeline = SupplyTimeline.builder().build();
         timeline.appendEntry( SupplyTimelineEntry
                 .builder()
                 .action(SupplyAction.DRAFT)
-                .performedAt(now)
+                .performedAt(LocalDateTime.now())
                 .performedBy(username)
                 .build());
         
@@ -706,20 +748,10 @@ public class SupplyServiceImpl implements SupplyService{
                 .supplyTimeline(timeline)
                 .build();
         
-        
         return supply;
     }
     
-    private void updateDraftProperties(PurchaseOrderCreationDto dto, Supply supply, String username){
-        LocalDateTime now = LocalDateTime.now();
-        SupplyTimeline timeline = supply.getSupplyTimeline();
-        timeline.appendEntry( SupplyTimelineEntry
-                .builder()
-                .action(SupplyAction.DRAFT)
-                .performedAt(now)
-                .performedBy(username)
-                .build());
-        
+    private void updateDraftProperties(PurchaseOrderCreationDto dto, Supply supply, String username){        
         supply.setStoreId(supply.getStoreId());
         supply.setStoreName(supply.getStoreName());
         supply.setExpectedSupplyDate(dto.getExpectedSupplyDate());
@@ -735,7 +767,14 @@ public class SupplyServiceImpl implements SupplyService{
         supply.setCreatedBy(username);
         supply.setSupplyStatus(SupplyStatus.DRAFT);
         supply.setMostRecentSupplyAction(SupplyAction.DRAFT);
-        supply.setSupplyTimeline(timeline);           
+        
+        LocalDateTime now = LocalDateTime.now();
+        supply.getSupplyTimeline().appendEntry( SupplyTimelineEntry
+                .builder()
+                .action(SupplyAction.DRAFT)
+                .performedAt(now)
+                .performedBy(username)
+                .build());
     }
     
     private Money computeTotalAmountPayable(PurchaseOrderCreationDto dto){
