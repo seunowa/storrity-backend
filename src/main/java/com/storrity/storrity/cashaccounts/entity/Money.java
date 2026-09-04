@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.Embeddable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 /**
@@ -35,7 +36,12 @@ public class Money implements Comparable<Money>{
     }
 
     public static Money fromNaira(BigDecimal naira) {
-        return new Money(naira.multiply(BigDecimal.valueOf(10_000)).longValueExact());
+        if(naira == null){
+//            return new Money(0L);
+            return null;
+        }
+        BigDecimal roundedAmount = naira.setScale(4, RoundingMode.HALF_UP);
+        return new Money(roundedAmount.multiply(BigDecimal.valueOf(10_000)).longValueExact());
     }
 
     @JsonValue

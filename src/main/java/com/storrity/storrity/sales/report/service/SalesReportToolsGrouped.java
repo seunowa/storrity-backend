@@ -8,7 +8,6 @@ package com.storrity.storrity.sales.report.service;
 import com.storrity.storrity.sales.report.dto.*;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

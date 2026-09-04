@@ -12,5 +12,5 @@ public enum ProductionItemType {
 
     INPUT,
     OUTPUT,
-    LOSS
+    LOSS,
 }

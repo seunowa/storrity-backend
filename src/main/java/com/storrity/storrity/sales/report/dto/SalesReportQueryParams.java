@@ -36,5 +36,5 @@ public class SalesReportQueryParams {
     private Integer offset;
     private Integer limit;
 //    private String searchPhrase;
-//    private String sort;
+    private String sort;// raw sort string, e.g., "name:asc,createdAt:desc"
 }

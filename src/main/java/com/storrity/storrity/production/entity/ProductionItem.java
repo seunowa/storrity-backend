@@ -6,7 +6,6 @@
 package com.storrity.storrity.production.entity;
 
 import com.storrity.storrity.cashaccounts.entity.Money;
-import com.storrity.storrity.product.entity.Product;
 import com.storrity.storrity.util.entity.MetadataConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -81,7 +80,7 @@ public class ProductionItem {
     private UUID productId;
     private String productName;
     private String productCode;
-    private String sku;
+    private String baseUnit;
     private String productCategory;
     private String productSubCategory;
     

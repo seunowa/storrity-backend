@@ -59,7 +59,7 @@ public class ProductionWip {
     private UUID productId;
     private String productName;
     private String productCode;
-    private String sku;
+    private String baseUnit;
 
     /**
      * Quantity represented by this WIP state.

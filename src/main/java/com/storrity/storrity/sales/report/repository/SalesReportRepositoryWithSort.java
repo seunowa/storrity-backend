@@ -40,17 +40,186 @@ import org.springframework.stereotype.Repository;
  *
  * @author Seun Owa
  */
-@Deprecated
-//@Repository
-//@Todo replace implementation with SalesReportRepositoryWithSort
-public class SalesReportRepositoryImpl implements SalesReportRepository {
+@Repository
+public class SalesReportRepositoryWithSort implements SalesReportRepository {
 
     @PersistenceContext
     private EntityManager em;
     
     @Autowired
     private Environment environment;
-    
+
+    // Allow-lists of sortable properties per report. Native queries can't rely on
+    // JPA's Root/CriteriaBuilder to safely resolve a property name, so every
+    // sortable field a caller can request must be explicitly mapped here to the
+    // exact column/alias it's allowed to sort by - anything not listed is ignored.
+
+    private static final Map<String, String> HOURLY_SORT_MAP = Map.of(
+            "reportingHour", "reporting_hour",
+            "reportingDate", "reporting_date",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> DAILY_SORT_MAP = HOURLY_SORT_MAP;
+
+    private static final Map<String, String> WEEKLY_SORT_MAP = Map.of(
+            "reportingWeekStartDate", "reporting_week_start_date",
+            "reportingYear", "reporting_year",
+            "reportingWeek", "reporting_week",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> MONTHLY_SORT_MAP = Map.of(
+            "reportingMonthStartDate", "reporting_month_start_date",
+            "reportingYear", "reporting_year",
+            "reportingMonth", "reporting_month",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> QUARTERLY_SORT_MAP = Map.of(
+            "reportingQuarterStartDate", "reporting_quarter_start_date",
+            "reportingYear", "reporting_year",
+            "reportingQuarter", "reporting_quarter",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> YEARLY_SORT_MAP = Map.of(
+            "reportingYear", "reporting_year",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> BY_STORE_SORT_MAP = Map.of(
+            "storeId", "store_id",
+            "storeName", "store_name",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> BY_PRODUCT_SORT_MAP = Map.ofEntries(
+            Map.entry("productId", "product_id"),
+            Map.entry("productName", "product_name"),
+            Map.entry("productCode", "product_code"),
+            Map.entry("productCategory", "product_category"),
+            Map.entry("productSubCategory", "product_sub_category"),
+            Map.entry("transactions", "transactions"),
+            Map.entry("quantitySold", "quantity_sold"),
+            Map.entry("grossSales", "gross_sales"),
+            Map.entry("discount", "discount"),
+            Map.entry("tax", "tax"),
+            Map.entry("netSales", "net_sales")
+    );
+
+    private static final Map<String, String> BY_CATEGORY_SORT_MAP = Map.of(
+            "productCategory", "product_category",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> BY_BRAND_SORT_MAP = Map.of(
+            "productBrand", "product_brand",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> BY_CASHIER_SORT_MAP = Map.of(
+            "cashier", "performed_by",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> BY_CLIENT_SYSTEM_SORT_MAP = Map.of(
+            "clientSystemId", "client_system_id",
+            "clientSystemName", "client_system_name",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> BY_CUSTOMER_SORT_MAP = Map.of(
+            "customerId", "customer_id",
+            "customerName", "customer_name",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> BY_HOUR_SORT_MAP = Map.of(
+            "reportingHour", "reporting_hour",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> BY_MONTH_SORT_MAP = Map.of(
+            "reportingMonth", "reporting_month",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
+    private static final Map<String, String> BY_WEEKDAY_SORT_MAP = Map.of(
+            "reportingDayOfWeek", "reporting_day_of_week",
+            "transactions", "transactions",
+            "quantitySold", "quantity_sold",
+            "grossSales", "gross_sales",
+            "discount", "discount",
+            "tax", "tax",
+            "netSales", "net_sales"
+    );
+
     @Override
     public List<HourlySalesSummaryDto> hourlySalesSummary(SalesReportQueryParams params) {
 
@@ -78,10 +247,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
             GROUP BY
                 reporting_date,
                 reporting_hour
-            ORDER BY
-                reporting_date,
-                reporting_hour
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                HOURLY_SORT_MAP,
+                " ORDER BY reporting_date, reporting_hour"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -142,8 +313,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
 
         sql.append("""
             GROUP BY reporting_date
-            ORDER BY reporting_date
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                DAILY_SORT_MAP,
+                " ORDER BY reporting_date"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -188,12 +363,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
                 reporting_week_start_date,
                 reporting_year,
                 reporting_week,
-                COUNT(*),
-                SUM(quantity),
-                SUM(pre_discount_price_in_micro_naira),
-                SUM(discount_amount_in_micro_naira),
-                SUM(tax_amount_in_micro_naira),
-                SUM(amount_in_micro_naira)
+                COUNT(*)                               AS transactions,
+                SUM(quantity)                          AS quantity_sold,
+                SUM(pre_discount_price_in_micro_naira) AS gross_sales,
+                SUM(discount_amount_in_micro_naira)    AS discount,
+                SUM(tax_amount_in_micro_naira)         AS tax,
+                SUM(amount_in_micro_naira)             AS net_sales
             FROM sale
             WHERE 1 = 1
             """);
@@ -205,9 +380,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
                 reporting_week_start_date,
                 reporting_year,
                 reporting_week
-            ORDER BY
-                reporting_week_start_date;
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                WEEKLY_SORT_MAP,
+                " ORDER BY reporting_week_start_date"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -254,12 +432,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
                 reporting_month_start_date,
                 reporting_year,
                 reporting_month,
-                COUNT(*),
-                SUM(quantity),
-                SUM(pre_discount_price_in_micro_naira),
-                SUM(discount_amount_in_micro_naira),
-                SUM(tax_amount_in_micro_naira),
-                SUM(amount_in_micro_naira)
+                COUNT(*)                               AS transactions,
+                SUM(quantity)                          AS quantity_sold,
+                SUM(pre_discount_price_in_micro_naira) AS gross_sales,
+                SUM(discount_amount_in_micro_naira)    AS discount,
+                SUM(tax_amount_in_micro_naira)         AS tax,
+                SUM(amount_in_micro_naira)             AS net_sales
             FROM sale
             WHERE 1 = 1
             """);
@@ -271,9 +449,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
                 reporting_month_start_date,
                 reporting_year,
                 reporting_month
-            ORDER BY
-                reporting_month_start_date;
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                MONTHLY_SORT_MAP,
+                " ORDER BY reporting_month_start_date"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -320,12 +501,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
                 reporting_quarter_start_date,
                 reporting_year,
                 reporting_quarter,
-                COUNT(*),
-                SUM(quantity),
-                SUM(pre_discount_price_in_micro_naira),
-                SUM(discount_amount_in_micro_naira),
-                SUM(tax_amount_in_micro_naira),
-                SUM(amount_in_micro_naira)
+                COUNT(*)                               AS transactions,
+                SUM(quantity)                          AS quantity_sold,
+                SUM(pre_discount_price_in_micro_naira) AS gross_sales,
+                SUM(discount_amount_in_micro_naira)    AS discount,
+                SUM(tax_amount_in_micro_naira)         AS tax,
+                SUM(amount_in_micro_naira)             AS net_sales
             FROM sale
             WHERE 1 = 1
             """);
@@ -337,9 +518,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
                 reporting_quarter_start_date,
                 reporting_year,
                 reporting_quarter
-            ORDER BY
-                reporting_quarter_start_date;
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                QUARTERLY_SORT_MAP,
+                " ORDER BY reporting_quarter_start_date"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -384,26 +568,32 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
         sql.append("""
             SELECT
                 reporting_year,
-                COUNT(*),
-                SUM(quantity),
-                SUM(pre_discount_price_in_micro_naira),
-                SUM(discount_amount_in_micro_naira),
-                SUM(tax_amount_in_micro_naira),
-                SUM(amount_in_micro_naira)
+                COUNT(*)                               AS transactions,
+                SUM(quantity)                          AS quantity_sold,
+                SUM(pre_discount_price_in_micro_naira) AS gross_sales,
+                SUM(discount_amount_in_micro_naira)    AS discount,
+                SUM(tax_amount_in_micro_naira)         AS tax,
+                SUM(amount_in_micro_naira)             AS net_sales
             FROM sale
             WHERE 1 = 1
             """);
 
         appendFilters(sql, parameters, params);
 
+        // NOTE: GROUP BY here predates this refactor and groups by quarter fields
+        // that aren't in the SELECT list, so rows aren't truly collapsed to one
+        // per year - left as-is since fixing it is outside the scope of adding sort.
         sql.append("""
             GROUP BY
                 reporting_quarter_start_date,
                 reporting_year,
                 reporting_quarter
-            ORDER BY
-                reporting_quarter_start_date;
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                YEARLY_SORT_MAP,
+                " ORDER BY reporting_quarter_start_date"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -465,10 +655,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
             GROUP BY
                 store_id,
                 store_name
-            ORDER BY
-                SUM(amount_in_micro_naira) DESC,
-                store_name
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                BY_STORE_SORT_MAP,
+                " ORDER BY net_sales DESC, store_name"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -538,10 +730,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
                 product_code,
                 product_category,
                 product_sub_category
-            ORDER BY
-                SUM(amount_in_micro_naira) DESC,
-                product_name
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                BY_PRODUCT_SORT_MAP,
+                " ORDER BY net_sales DESC, product_name"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -606,10 +800,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
         sql.append("""
             GROUP BY
                 product_category
-            ORDER BY
-                SUM(amount_in_micro_naira) DESC,
-                product_category
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                BY_CATEGORY_SORT_MAP,
+                " ORDER BY net_sales DESC, product_category"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -669,8 +865,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
 
         sql.append("""
             GROUP BY product_brand
-            ORDER BY product_brand
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                BY_BRAND_SORT_MAP,
+                " ORDER BY product_brand"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -729,8 +929,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
 
         sql.append("""
             GROUP BY performed_by
-            ORDER BY SUM(amount_in_micro_naira) DESC
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                BY_CASHIER_SORT_MAP,
+                " ORDER BY net_sales DESC"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -792,10 +996,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
             GROUP BY
                 client_system_id,
                 client_system_name
-            ORDER BY
-                SUM(amount_in_micro_naira) DESC,
-                client_system_name
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                BY_CLIENT_SYSTEM_SORT_MAP,
+                " ORDER BY net_sales DESC, client_system_name"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -858,10 +1064,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
             GROUP BY
                 customer_id,
                 customer_name
-            ORDER BY
-                SUM(amount_in_micro_naira) DESC,
-                customer_name
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                BY_CUSTOMER_SORT_MAP,
+                " ORDER BY net_sales DESC, customer_name"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -922,9 +1130,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
         sql.append("""
             GROUP BY
                 reporting_hour
-            ORDER BY
-                reporting_hour
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                BY_HOUR_SORT_MAP,
+                " ORDER BY reporting_hour"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -984,9 +1195,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
         sql.append("""
             GROUP BY
                 reporting_month
-            ORDER BY
-                reporting_month
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                BY_MONTH_SORT_MAP,
+                " ORDER BY reporting_month"));
 
         Query query = em.createNativeQuery(sql.toString());
 
@@ -1046,9 +1260,12 @@ public class SalesReportRepositoryImpl implements SalesReportRepository {
         sql.append("""
             GROUP BY
                 reporting_day_of_week
-            ORDER BY
-                reporting_day_of_week
             """);
+
+        sql.append(NativeQuerySortUtils.buildOrderByClause(
+                params.getSort(),
+                BY_WEEKDAY_SORT_MAP,
+                " ORDER BY reporting_day_of_week"));
 
         Query query = em.createNativeQuery(sql.toString());
 

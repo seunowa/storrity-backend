@@ -24,7 +24,6 @@ import com.storrity.storrity.sales.report.dto.SalesByWeekdayDto;
 import com.storrity.storrity.sales.report.dto.SalesReportQueryParams;
 import com.storrity.storrity.sales.report.dto.WeeklySalesSummaryDto;
 import com.storrity.storrity.sales.report.dto.YearlySalesSummaryDto;
-import com.storrity.storrity.util.sort.NativeQuerySortUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -40,10 +39,8 @@ import org.springframework.stereotype.Repository;
  *
  * @author Seun Owa
  */
-@Deprecated
 //@Repository
-//@Todo replace implementation with SalesReportRepositoryWithSort
-public class SalesReportRepositoryImpl implements SalesReportRepository {
+public class SalesReportRepositoryImplStale implements SalesReportRepository {
 
     @PersistenceContext
     private EntityManager em;

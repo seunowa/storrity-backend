@@ -1,12 +1,29 @@
 STORRITY RELEASE NOTES
 
+Version: 1.5.1
+
+## MODULE: Supply Report
+
+Feature:
+* supply reports
+
+## MODULE: Inventory report
+
+Feature:
+* Inventory reports
+
 Version: 1.5.0
 
 ## MODULE: Stock Transfer
 
 Feature:
-* Storck transfer
+* Stock transfer
 * Stock transfer settings
+
+## MODULE: Stock Movement Report
+
+Feature:
+* Temporal stock movement report
 
 Version: 1.4.1
 

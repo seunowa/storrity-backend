@@ -38,6 +38,7 @@ public class SalesReportTools {
             List<String> productCodes,
             List<String> productCategories,
             List<String> performedBy,
+            String sort,
             Integer limit) {
 
         SalesReportQueryParams params = new SalesReportQueryParams();
@@ -63,6 +64,9 @@ public class SalesReportTools {
         }
         if (performedBy != null && !performedBy.isEmpty()) {
             params.setPerformedBy(performedBy);
+        }
+        if (sort != null) {
+            params.setSort(sort);
         }
         if (limit != null) {
             params.setLimit(limit);
@@ -104,10 +108,21 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "date:asc,hour:asc" or "netSales:desc,quantitySold:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.hourlySalesSummary(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -134,9 +149,20 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "date:asc" or "quantitySold:asc" or "netSales:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
         return salesReportService.dailySalesSummary(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -166,10 +192,21 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "quantitySold:asc" or "reportingYear:desc,reportingWeek:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.weeklySalesSummary(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -198,10 +235,21 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "quantitySold:desc" or "reportingMonthStartDate:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.monthlySalesSummary(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -230,10 +278,21 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "grossSales:desc" or "reportingQuarterStartDate:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.quarterlySalesSummary(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -260,10 +319,21 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "grossSales:desc" or "reportingYear:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.yearlySalesSummary(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     // =====================================================
@@ -295,10 +365,21 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "storeName:asc" or "quantitySold:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.salesByStore(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -329,10 +410,21 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "productName:asc" or "grossSales:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.salesByProduct(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -359,10 +451,21 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "productCategory:asc" or "grossSales:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.salesByCategory(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -389,10 +492,21 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "brand:asc" or "grossSales:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.salesByBrand(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -419,10 +533,21 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "cashier:asc" or "grossSales:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.salesByCashier(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -450,10 +575,21 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "customerName:asc" or "grossSales:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.salesByCustomer(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -482,10 +618,21 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "hour:asc" or "grossSales:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.salesByHour(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
     
     @Tool(description = """
@@ -514,10 +661,22 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        use propery in rows 
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "month:asc" or "grossSales:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.salesByMonth(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -545,10 +704,22 @@ public class SalesReportTools {
             @ToolParam(description = "Filter to specific product codes. Omit to include all codes.", required = false) List<String> productCodes,
             @ToolParam(description = "Filter to specific product categories. Omit to include all categories.", required = false) List<String> productCategories,
             @ToolParam(description = "Filter to specific cashiers/staff who performed the sale. Omit to include all.", required = false) List<String> performedBy,
+            @ToolParam(
+                description = """
+                        Sort results using comma-separated property and direction pairs.
+                        Format: property:direction.
+                        Use 'asc' for ascending or 'desc' for descending.
+                        use propery in rows 
+                        Multiple sort fields are separated by commas and are applied in the specified order.
+                        Example: "dayOfWeek:asc" or "grossSales:desc".
+                        Omit to use the repository's default sorting.
+                        """,
+                required = false)
+            String sort,
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.salesByWeekday(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, sort, limit));
     }
 
     @Tool(description = """
@@ -600,6 +771,6 @@ public class SalesReportTools {
             @ToolParam(description = "Maximum number of daily rows to return (most recent first if truncated). Omit for no limit.", required = false) Integer limit) {
 
         return salesReportService.averageBasket(
-                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, limit));
+                buildParams(from, to, storeIds, productIds, productCodes, productCategories, performedBy, null, limit));
     }
 }
