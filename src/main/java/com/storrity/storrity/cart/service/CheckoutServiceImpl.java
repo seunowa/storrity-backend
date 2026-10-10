@@ -106,12 +106,12 @@ public class CheckoutServiceImpl implements CheckoutService{
         salesService.create(salesCreationDto);
         
         
-        //debit sales attendants wallet if settings requires it
-//        @Todo implelent logic to check if settings for debiting sales attendant wallet is configured before debiting sales attendant wallet 
+        //debit sales attendants sales account if settings requires it
+//        @Todo implelent logic to check if settings for debiting sales attendant salses account is configured before debiting sales attendant account 
         PricedCartDto pricedCart = PricedCartDto.from(cart);
         List<AccountTransactionStep> steps = new ArrayList<>();
         steps.add(AccountTransactionStep.builder()
-                .accountId(attendant.getSalesWallet())
+                .accountId(attendant.getSalesAccount())
                 .amount(pricedCart.getGrandTotal())
                 .flow(Flow.DEBIT)
                 .build());

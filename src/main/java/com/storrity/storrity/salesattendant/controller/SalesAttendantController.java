@@ -45,8 +45,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @CrossOrigin
 @RestController
-@RequestMapping("/api/v1/sales_attendance")
-@Tag(name = "Sales Attendant", description = "Operations related to sales attendance management")
+@RequestMapping("/api/v1/sales_attendants")
+@Tag(name = "Sales Attendant", description = "Operations related to sales attendant management")
 public class SalesAttendantController {
 //    @Todo refactor the name attendant to cashier as cashier is more accurate
     private final SalesAttendantService salesAttendantService;
@@ -56,6 +56,12 @@ public class SalesAttendantController {
         this.salesAttendantService = salesAttendantService;
     }
     
+    /**
+     * Create sales attendant
+     * If sales account is provided it is used however when sales account is not provide one is auto generated
+     * @param dto
+     * @return 
+     */
     @Operation(
             operationId = "createSalesAttendant",
             description = "Create a sales attendant",

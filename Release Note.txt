@@ -289,7 +289,7 @@ Features:
 Features:
 
 * Register sales attendants
-* Sales wallet assignment
+* Sales account assignment
 * View sales attendants
 * Search sales attendants
 

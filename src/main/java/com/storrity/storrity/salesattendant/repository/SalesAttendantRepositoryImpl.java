@@ -89,8 +89,8 @@ public class SalesAttendantRepositoryImpl implements SalesAttendantRepositoryCus
             predicates.add(root.get("username").in(params.getUsernames()));
         }      
                 
-        if (params.getSalesWallets()!= null && !params.getSalesWallets().isEmpty()) {
-            predicates.add(root.get("salesWallet").in(params.getSalesWallets()));
+        if (params.getSalesAccounts()!= null && !params.getSalesAccounts().isEmpty()) {
+            predicates.add(root.get("salesAccount").in(params.getSalesAccounts()));
         }      
 
         // Conditionally add date range filter

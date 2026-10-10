@@ -36,7 +36,7 @@ public class SalesAttendant {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     private String username;
-    private String salesWallet;
+    private String salesAccount;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")

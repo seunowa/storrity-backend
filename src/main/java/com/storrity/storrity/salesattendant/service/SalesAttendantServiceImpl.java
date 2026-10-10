@@ -31,7 +31,7 @@ public class SalesAttendantServiceImpl implements SalesAttendantService{
     @Override
     public SalesAttendant create(SalesAttendantCreationDto dto) {
         SalesAttendant sa = SalesAttendant.builder()
-                .salesWallet(dto.getSalesWallet())
+                .salesAccount(dto.getSalesAccount())
                 .username(dto.getUsername())
                 .build();
         
@@ -71,7 +71,7 @@ public class SalesAttendantServiceImpl implements SalesAttendantService{
         SalesAttendant sa = salesAttendantRepository.findByIdForUpdate(id)
                 .orElseThrow(()->new ResourceNotFoundAppException("Sales attendant not found with id: " + id));
         
-        sa.setSalesWallet(dto.getSalesWallet());
+        sa.setSalesAccount(dto.getSalesAccount());
         SalesAttendant salesSa = salesAttendantRepository.save(sa);
         return salesSa;
     }

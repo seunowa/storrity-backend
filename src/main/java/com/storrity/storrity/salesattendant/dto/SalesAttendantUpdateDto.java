@@ -22,5 +22,5 @@ import lombok.experimental.SuperBuilder;
 @ToString
 @SuperBuilder
 public class SalesAttendantUpdateDto {
-    private String salesWallet;
+    private String salesAccount;
 }
