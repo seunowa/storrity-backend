@@ -22,15 +22,17 @@ import org.springframework.data.repository.query.Param;
 public interface SalesAttendantRepository extends JpaRepository<SalesAttendant, UUID>, SalesAttendantRepositoryCustom{
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT s FROM SalesAttendant s WHERE s.id = :id")
-    Optional<SalesAttendant> findByIdForUpdate(@Param("id") UUID id);
+    public Optional<SalesAttendant> findByIdForUpdate(@Param("id") UUID id);
     
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT s FROM SalesAttendant s WHERE s.id IN :ids")
-        List<SalesAttendant> findAllByIdForUpdate(@Param("ids") Collection<UUID> ids);
+    public List<SalesAttendant> findAllByIdForUpdate(@Param("ids") Collection<UUID> ids);
         
     @Query("SELECT s FROM SalesAttendant s WHERE s.id IN :ids")
-        List<SalesAttendant> findAllById(@Param("ids") Collection<UUID> ids);
+    public List<SalesAttendant> findAllById(@Param("ids") Collection<UUID> ids);
         
-    Optional<SalesAttendant> findByUsername(String username);
+    public Optional<SalesAttendant> findByUsername(String username);
+    
+    public boolean existsByUsername(String username);
     
 }

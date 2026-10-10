@@ -23,5 +23,4 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class SalesAttendantCreationDto {
     private String username;
-    private String salesAccount;
 }

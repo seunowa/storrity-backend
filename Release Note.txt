@@ -1,5 +1,9 @@
 STORRITY RELEASE NOTES
 
+Version: 1.6
+Fix typo in api naming change /api/v1/sales_attendance/** to /api/v1/sales_attendants/**
+change properties walletId to accountId
+
 Version: 1.5.1
 
 ## MODULE: Supply Report
