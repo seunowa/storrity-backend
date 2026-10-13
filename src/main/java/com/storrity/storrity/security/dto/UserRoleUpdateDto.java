@@ -4,7 +4,6 @@
  */
 package com.storrity.storrity.security.dto;
 
-import com.storrity.storrity.security.entity.UserPermission;
 import java.util.Set;
 import lombok.Data;
 
@@ -14,5 +13,5 @@ import lombok.Data;
  */
 @Data
 public class UserRoleUpdateDto {
-    private Set<UserPermission> permissions;
+    private Set<String> permissions;
 }

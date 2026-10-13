@@ -26,6 +26,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,6 +81,7 @@ public class UserRoleController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_CREATE')")
     public UserRoleDto create(@RequestBody @Valid UserRoleCreationDto dto){
         return userRoleService.create(dto);
     }
@@ -113,6 +115,7 @@ public class UserRoleController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_READ')")
     public List<UserRoleDto> list(@ModelAttribute @Valid  @ParameterObject UserRoleQueryParams params){
         return userRoleService.list(params);
     }
@@ -144,6 +147,7 @@ public class UserRoleController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('ROLE_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject UserRoleQueryParams params){
         return userRoleService.count(params);
     }
@@ -208,6 +212,7 @@ public class UserRoleController {
         )
     })
     @PatchMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('ROLE_UPDATE')")
     public UserRoleDto update(@PathVariable(name = "id") String id, @RequestBody @Valid UserRoleUpdateDto dto){
         return userRoleService.update(id, dto);
     }
@@ -240,6 +245,7 @@ public class UserRoleController {
         )
     })
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('ROLE_DELETE')")
     public UserRoleDto delete(@PathVariable(name = "id") String id){
         return userRoleService.delete(id);
     }

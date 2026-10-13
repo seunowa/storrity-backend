@@ -25,7 +25,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class RootUserInitRequestDto {
 
-    @Schema(description = "Username of the user", example = "admin", required = true)
+    @Schema(description = "Username of the user", example = "admin@admin.com", required = true)
     @NotBlank(message = "Username is required")
     private String username;
 

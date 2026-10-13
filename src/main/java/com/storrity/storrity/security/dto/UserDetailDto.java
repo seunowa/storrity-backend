@@ -7,7 +7,9 @@ package com.storrity.storrity.security.dto;
 import com.storrity.storrity.security.entity.AppUser;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.Data;
 
 /**
@@ -21,7 +23,7 @@ public class UserDetailDto {
     private String username;
     private Boolean pwdChangeRequired;
     private LocalDateTime pwdUpdatedAt;
-    private String role;
+    private Set<String> roles;
 
     public static UserDetailDto from(AppUser user) {
         UserDetailDto dto = new UserDetailDto();
@@ -29,7 +31,8 @@ public class UserDetailDto {
         dto.setUsername(user.getUsername());
         dto.setPwdChangeRequired(user.getPwdChangeRequired());
         dto.setPwdUpdatedAt(user.getPwdUpdatedAt());
-        dto.setRole(user.getRole().getId());
+        dto.setRoles(user.getRoles() == null ? Set.of() : user.getRoles().stream()
+                .map(role -> role.getId()).collect(Collectors.toSet()));
         return dto;
     }
 }

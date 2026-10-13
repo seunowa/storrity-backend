@@ -23,10 +23,13 @@ import com.storrity.storrity.security.repository.UserRepository;
 import com.storrity.storrity.security.repository.UserRoleRepository;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.ResourceNotFoundAppException;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -64,9 +67,13 @@ public class AppUserServiceImpl implements AppUserService{
                 .password(encoder.encode(dto.getPassword()))
                 .build();
 
-        UserRole role = roleRepo.findById(dto.getRole())
-                .orElseThrow(() -> new ResourceNotFoundAppException("Invalid role ID" + dto.getRole()));
-        user.setRole(role);
+//        UserRole role = roleRepo.findById(dto.getRole())
+//                .orElseThrow(() -> new ResourceNotFoundAppException("Invalid role ID" + dto.getRole()));
+//        user.setRole(role);
+
+        Set<UserRole> requestedRoles = resolveRoles(dto.getRoles());
+        protectSuperAdminAssignment(requestedRoles);
+        user.setRoles(requestedRoles);
 
         AppUser savedUser = userRepo.save(user);
         
@@ -126,11 +133,14 @@ public class AppUserServiceImpl implements AppUserService{
                 .orElseThrow(() -> new ResourceNotFoundAppException("User not found with username: " + dto.getUsername()));
 
         UserDetailDto previous = UserDetailDto.from(user);
-
-        UserRole role = roleRepo.findById(dto.getRole())
-                .orElseThrow(() -> new ResourceNotFoundAppException("Invalid role ID" + dto.getRole()));
-
-        user.setRole(role);
+        Set<UserRole> requestedRoles = resolveRoles(dto.getRoles());
+        protectSuperAdminAssignment(requestedRoles);
+        boolean currentlySuperAdmin = user.getRoles().stream().anyMatch(role -> "SUPER_ADMIN".equals(role.getId()));
+        boolean remainsSuperAdmin = requestedRoles.stream().anyMatch(role -> "SUPER_ADMIN".equals(role.getId()));
+        if (currentlySuperAdmin && !remainsSuperAdmin && userRepo.countByRoles_Id("SUPER_ADMIN") <= 1) {
+            throw new IllegalArgumentException("Cannot remove the final SUPER_ADMIN assignment");
+        }
+        user.setRoles(requestedRoles);
         AppUser savedUser = userRepo.save(user);
 
         UserDetailDto updated = UserDetailDto.from(savedUser);
@@ -169,5 +179,24 @@ public class AppUserServiceImpl implements AppUserService{
         UserDetailDto result = UserDetailDto.from(user);
         publisher.publishEvent(new UserDeletedEvent(result));
         return UserDetailDto.from(user);
+    }
+    
+    private void protectSuperAdminAssignment(Set<UserRole> requestedRoles) {
+        boolean assigningSuperAdmin = requestedRoles.stream().anyMatch(role -> "SUPER_ADMIN".equals(role.getId()));
+        if (!assigningSuperAdmin || userRepo.count() == 0) return; // permit the one-time root-user bootstrap
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean allowed = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(authority -> "USER_SUPER_ADMIN_ASSIGN".equals(authority.getAuthority()));
+        if (!allowed) throw new IllegalArgumentException("Only an authorized Super Admin can assign the SUPER_ADMIN role");
+    }
+
+    private Set<UserRole> resolveRoles(Set<String> roleIds) {
+        if (roleIds == null || roleIds.isEmpty()) throw new IllegalArgumentException("At least one role must be assigned");
+        List<UserRole> roles = roleRepo.findAllById(roleIds);
+        Set<String> found = roles.stream().map(UserRole::getId).collect(Collectors.toSet());
+        Set<String> missing = new java.util.LinkedHashSet<>(roleIds);
+        missing.removeAll(found);
+        if (!missing.isEmpty()) throw new ResourceNotFoundAppException("Invalid role IDs: " + missing);
+        return new LinkedHashSet<>(roles);
     }
 }

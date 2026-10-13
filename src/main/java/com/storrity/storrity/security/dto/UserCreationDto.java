@@ -6,6 +6,8 @@ package com.storrity.storrity.security.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import java.util.Set;
 import lombok.Data;
 
 /**
@@ -14,11 +16,10 @@ import lombok.Data;
  */
 @Data
 public class UserCreationDto {
-    @Email
-    @NotEmpty
+    @Email @NotEmpty
     private String username;
     @NotEmpty
     private String password;
-    @NotEmpty
-    private String role;
+    @NotNull @NotEmpty
+    private Set<String> roles;
 }

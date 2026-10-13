@@ -4,7 +4,7 @@
  */
 package com.storrity.storrity.security.dto;
 
-import com.storrity.storrity.security.entity.UserPermission;
+import jakarta.validation.constraints.NotBlank;
 import java.util.Set;
 import lombok.Data;
 
@@ -14,6 +14,7 @@ import lombok.Data;
  */
 @Data
 public class UserRoleCreationDto {
+    @NotBlank
     private String role;
-    private Set<UserPermission> permissions;
+    private Set<String> permissions;
 }

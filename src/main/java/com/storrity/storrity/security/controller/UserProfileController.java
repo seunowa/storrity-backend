@@ -25,6 +25,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -79,6 +80,7 @@ public class UserProfileController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('USER_PROFILE_READ')")
     public List<UserProfileDto> list(@ModelAttribute @Valid  @ParameterObject UserProfileQueryParams params){
         return userProfileService.list(params);
     }
@@ -110,6 +112,7 @@ public class UserProfileController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('USER_PROFILE_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject UserProfileQueryParams params){
         return userProfileService.count(params);
     }
@@ -142,6 +145,7 @@ public class UserProfileController {
         )
     })
     @GetMapping(path = "/{username}")
+    @PreAuthorize("hasAuthority('USER_PROFILE_READ')")
     public UserProfileDto fetch(@PathVariable(name = "username") String username){
         return userProfileService.fetch(username);
     }
@@ -174,6 +178,7 @@ public class UserProfileController {
         )
     })
     @PatchMapping(path = "/{username}")
+    @PreAuthorize("hasAuthority('USER_PROFILE_UPDATE')")
     public UserProfileDto update(@PathVariable(name = "username") String username, @RequestBody @Valid UserProfileUpdateDto dto){
         return userProfileService.update(username, dto);
     }

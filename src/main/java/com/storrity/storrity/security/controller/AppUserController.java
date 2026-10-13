@@ -24,6 +24,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 /**
  *
@@ -70,6 +71,7 @@ public class AppUserController {
             content = @Content(schema = @Schema(implementation = ServerError.class)))
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('USER_CREATE')")
 //    @PreAuthorize("hasAuthority('user:create')")
     public UserDetailDto create(@RequestBody @Valid UserCreationDto dto) {
         return userService.create(dto);
@@ -105,6 +107,7 @@ public class AppUserController {
     })
     @PatchMapping("/password")
 //    @PreAuthorize("hasAuthority('user:password:change')")
+    @PreAuthorize("hasAuthority('USER_PASSWORD_CHANGE')")
     public UserDetailDto changePassword(@RequestBody @Valid PasswordChangeDto dto) {
         return userService.changePassword(dto);
     }
@@ -140,6 +143,7 @@ public class AppUserController {
     })
     @PatchMapping("/password/reset")
 //    @PreAuthorize("hasAuthority('user:password:reset')")
+    @PreAuthorize("hasAuthority('USER_PASSWORD_RESET')")
     public UserDetailDto resetPassword(@RequestBody @Valid PasswordRestDto dto) {
         return userService.resetPassword(dto);
     }
@@ -175,6 +179,7 @@ public class AppUserController {
     })
     @PatchMapping("/role")
 //    @PreAuthorize("hasAuthority('user:role:change')")
+    @PreAuthorize("hasAuthority('USER_ROLE_ASSIGN')")
     public UserDetailDto changeRole(@RequestBody @Valid RoleChangeDto dto) {
         return userService.changeRole(dto);
     }
@@ -207,6 +212,7 @@ public class AppUserController {
     })
     @GetMapping
 //    @PreAuthorize("hasAuthority('user:read')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public List<UserDetailDto> list(@ModelAttribute @Valid  @ParameterObject AppUserQueryParams params) {
         return userService.list(params);
     }
@@ -236,6 +242,7 @@ public class AppUserController {
     })
     @GetMapping("/count")
 //    @PreAuthorize("hasAuthority('user:read')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject AppUserQueryParams params) {
         return userService.count(params);
     }    
@@ -271,6 +278,7 @@ public class AppUserController {
     })
     @GetMapping("/{username}")
 //    @PreAuthorize("hasAuthority('user:read')")
+    @PreAuthorize("hasAuthority('USER_READ')")
     public UserDetailDto fetch(@PathVariable(name = "username") String username) {
         return userService.fetch(username);
     }
@@ -304,6 +312,7 @@ public class AppUserController {
     })
     @DeleteMapping("/{username}")
 //    @PreAuthorize("hasAuthority('user:delete')")
+    @PreAuthorize("hasAuthority('USER_DELETE')")
     public UserDetailDto delete(@PathVariable(name = "username") String username) {
         return userService.delete(username);
     }

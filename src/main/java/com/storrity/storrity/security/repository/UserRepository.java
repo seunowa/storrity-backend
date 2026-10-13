@@ -15,4 +15,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface UserRepository extends JpaRepository<AppUser, UUID>, UserRepositoryCustom{
     Optional<AppUser> findByUsername(String username);
+    boolean existsByRoles_Id(String roleId);
+    long countByRoles_Id(String roleId);
 }

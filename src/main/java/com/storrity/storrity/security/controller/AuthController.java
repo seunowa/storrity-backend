@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.storrity.storrity.security.entity.AppUser;
 import com.storrity.storrity.security.entity.UserPermission;
 import com.storrity.storrity.security.entity.UserRole;
+import com.storrity.storrity.security.repository.UserPermissionRepository;
 import com.storrity.storrity.security.repository.UserRepository;
 import com.storrity.storrity.security.repository.UserRoleRepository;
 import com.storrity.storrity.security.service.AppUserService;
@@ -64,6 +65,7 @@ public class AuthController {
 
     private final UserRepository userRepo;
     private final UserRoleRepository roleRepo;
+    private final UserPermissionRepository permissionRepo;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder encoder;
     private final AppUserService appUserService;
@@ -72,12 +74,14 @@ public class AuthController {
     private final ClientSystemRepository clientSystemRepository;
     private final CountryService countryService;
 
-    public AuthController(UserRepository userRepo, UserRoleRepository roleRepo
+    public AuthController(UserRepository userRepo, UserRoleRepository roleRepo,
+            UserPermissionRepository permissionRepo
             , JwtUtil jwtUtil, PasswordEncoder encoder, AppUserService appUserService
             , ClientSystemService clientSystemService, LicenseService licenseService
             , ClientSystemRepository clientSystemRepository, CountryService countryService) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
+        this.permissionRepo = permissionRepo;
         this.jwtUtil = jwtUtil;
         this.encoder = encoder;
         this.appUserService = appUserService;
@@ -134,8 +138,10 @@ public class AuthController {
             throw new AuthenticationAppException("Invalid credentials");
         }
 
-        var authorities = user.getRole().getPermissions().stream()
-                .map(p -> "PERM_" + p.name())
+        var authorities = user.getRoles().stream()
+                .flatMap(role -> role.getPermissions().stream())
+                .map(UserPermission::getId)
+                .distinct()
                 .toList();
 
         String token = jwtUtil.generateToken(user.getUsername(), request.getClientId(), cs.getName(), authorities);
@@ -194,17 +200,24 @@ public class AuthController {
         }
         
         // Create admin role with all permissions
-        Set<UserPermission> allPerms = EnumSet.allOf(UserPermission.class);
-        UserRole adminRole = new UserRole();
-        adminRole.setId("ADMIN");
-        adminRole.setPermissions(allPerms);
-        roleRepo.save(adminRole);
+        List<UserPermission> allPerms = permissionRepo.findAll();
+        UserRole adminRole = roleRepo.findById("SUPER_ADMIN").orElseGet(() -> {
+            UserRole seeded = new UserRole();
+            seeded.setId("SUPER_ADMIN");
+            seeded.setSystemRole(true);
+            seeded.setPermissions(new java.util.LinkedHashSet<>(allPerms));
+            return roleRepo.save(seeded);
+        });
+//        UserRole adminRole = new UserRole();
+//        adminRole.setId("ADMIN");
+//        adminRole.setPermissions(allPerms);
+//        roleRepo.save(adminRole);
         
         // Create user
         UserCreationDto dto = new UserCreationDto();
         dto.setUsername(request.getUsername());
         dto.setPassword(request.getPassword());
-        dto.setRole(adminRole.getId());
+        dto.setRoles(java.util.Set.of(adminRole.getId()));
         appUserService.create(dto);
 
         System.out.println("✅ Added admin user with username");
@@ -300,11 +313,14 @@ public class AuthController {
         if (userRepo.findByUsername("admin").isPresent()) return;
 
         // Create admin role with all permissions
-        Set<UserPermission> allPerms = EnumSet.allOf(UserPermission.class);
-        UserRole adminRole = new UserRole();
-        adminRole.setId("ADMIN");
-        adminRole.setPermissions(allPerms);
-        roleRepo.save(adminRole);
+        List<UserPermission> allPerms = permissionRepo.findAll();
+        UserRole adminRole = roleRepo.findById("SUPER_ADMIN").orElseGet(() -> {
+            UserRole seeded = new UserRole();
+            seeded.setId("SUPER_ADMIN");
+            seeded.setSystemRole(true);
+            seeded.setPermissions(new java.util.LinkedHashSet<>(allPerms));
+            return roleRepo.save(seeded);
+        });
 
         String password = "password123";
         // Create admin user
@@ -316,7 +332,7 @@ public class AuthController {
         UserCreationDto dto = new UserCreationDto();
         dto.setUsername("admin");
         dto.setPassword(password);
-        dto.setRole(adminRole.getId());
+        dto.setRoles(java.util.Set.of(adminRole.getId()));
         appUserService.create(dto);
 
         System.out.println("✅ Seeded admin user with username=admin and password=" + password);

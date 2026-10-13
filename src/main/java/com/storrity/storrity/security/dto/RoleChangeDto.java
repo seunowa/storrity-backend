@@ -4,6 +4,9 @@
  */
 package com.storrity.storrity.security.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import java.util.Set;
 import lombok.Data;
 
 /**
@@ -13,5 +16,6 @@ import lombok.Data;
 @Data
 public class RoleChangeDto {
     private String username;
-    private String role;
+    @NotNull @NotEmpty
+    private Set<String> roles;
 }
