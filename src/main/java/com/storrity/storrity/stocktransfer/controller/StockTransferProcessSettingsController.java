@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -53,7 +54,8 @@ public class StockTransferProcessSettingsController {
 
     @Operation(
         operationId = "getStockTransferProcessSettings",
-        description = "Get the current system-wide stock transfer process settings",
+        description = "Get the current system-wide stock transfer process settings "
+                + "requires permission: STOCK_TRANSFER_SETTINGS_READ",
         summary = "Get stock transfer process settings",
         security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -91,6 +93,7 @@ public class StockTransferProcessSettingsController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_SETTINGS_READ')")
     public ResponseEntity<StockTransferProcess>
             getStockTransferProcessSettings() {
 
@@ -111,6 +114,7 @@ public class StockTransferProcessSettingsController {
         description = """
                       Replace the existing system-wide stock transfer
                       process settings with the supplied configuration
+                      requires permission: STOCK_TRANSFER_SETTINGS_UPDATE
                       """,
         summary = "Update stock transfer process settings",
         security = @SecurityRequirement(name = "bearerAuth")
@@ -154,6 +158,7 @@ public class StockTransferProcessSettingsController {
         )
     })
     @PutMapping
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_SETTINGS_UPDATE')")
     public StockTransferProcess updateStockTransferProcessSettings(
             @RequestBody StockTransferProcess stockTransferProcess) {
 
@@ -164,7 +169,8 @@ public class StockTransferProcessSettingsController {
 
     @Operation(
         operationId = "getStockTransferProcessTemplates",
-        description = "Get the available predefined stock transfer process templates",
+        description = "Get the available predefined stock transfer process templates "
+                + "requires permission: STOCK_TRANSFER_SETTINGS_READ",
         summary = "Get stock transfer process templates",
         security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -198,6 +204,7 @@ public class StockTransferProcessSettingsController {
         )
     })
     @GetMapping("/templates")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_SETTINGS_READ')")
     public StockTransferProcessTemplate getTemplates() {
 
         return stockTransferProcessSettingsService.getTemplates();

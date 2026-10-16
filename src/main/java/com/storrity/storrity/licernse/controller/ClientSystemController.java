@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,7 +57,8 @@ public class ClientSystemController {
     
     @Operation(
             operationId = "createClientSystem",
-            description = "Create a client system",
+            description = "Create a client system "
+                + "requires permission: CLIENT_SYSTEM_CREATE",
             summary = "Create a client system",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -77,13 +79,15 @@ public class ClientSystemController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('CLIENT_SYSTEM_CREATE')")
     public ClientSystem create(@RequestBody @Valid ClientSystemCreationDto dto){
         return clientSystemService.create(dto);
     }
     
     @Operation(
             operationId = "listClientSystem",
-            description = "List client systems",
+            description = "List client systems "
+                + "requires permission: CLIENT_SYSTEM_READ",
             summary = "List client systems",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -106,13 +110,15 @@ public class ClientSystemController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('CLIENT_SYSTEM_READ')")
     public List<ClientSystem> list(@ModelAttribute @Valid @ParameterObject ClientSystemQueryParams params){
         return clientSystemService.list(params);
     }
     
     @Operation(
             operationId = "countClientSystem",
-            description = "Count client system",
+            description = "Count client system "
+                + "requires permission: CLIENT_SYSTEM_READ",
             summary = "Count Client systems",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -133,13 +139,15 @@ public class ClientSystemController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('CLIENT_SYSTEM_READ')")
     public CountDto count(@ModelAttribute @Valid @ParameterObject ClientSystemQueryParams params){
         return clientSystemService.count(params);
     }
     
     @Operation(
             operationId = "getClientSystem",
-            description = "get a client system by id",
+            description = "get a client system by id "
+                + "requires permission: CLIENT_SYSTEM_READ",
             summary = "Get a client system by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -161,6 +169,7 @@ public class ClientSystemController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('CLIENT_SYSTEM_READ')")
     public ClientSystem fetch(@PathVariable(name = "id") UUID id){
         return clientSystemService.fetch(id);
     }
@@ -168,7 +177,8 @@ public class ClientSystemController {
     @Operation(
             operationId = "updateClientSystem",
             description = "Update a client system",
-            summary = "Update a client system by ID",
+            summary = "Update a client system by ID "
+                + "requires permission: CLIENT_SYSTEM_UPDATE",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -189,13 +199,15 @@ public class ClientSystemController {
         )
     })
     @PatchMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('CLIENT_SYSTEM_UPDATE')")
     public ClientSystem update(@PathVariable(name = "id") UUID id, @RequestBody @Valid ClientSystemUpdateDto dto){
         return clientSystemService.update(id, dto);
     }
     
     @Operation(
             operationId = "deleteClientSystem",
-            description = "delete a client system",
+            description = "delete a client system "
+                + "requires permission: CLIENT_SYSTEM_DELETE",
             summary = "Delete a client system by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -217,6 +229,7 @@ public class ClientSystemController {
         )
     })
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('CLIENT_SYSTEM_DELETE')")
     public ClientSystem delete(@PathVariable(name = "id") UUID id){
         return clientSystemService.delete(id);
     }

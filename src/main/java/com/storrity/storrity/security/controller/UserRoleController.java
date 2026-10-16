@@ -56,7 +56,8 @@ public class UserRoleController {
     
     @Operation(
             operationId = "createUserRole",
-            description = "Create a user role",
+            description = "Create a user role. "
+                + "requires permission: ROLE_CREATE",
             summary = "Create a user role", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -88,7 +89,8 @@ public class UserRoleController {
     
     @Operation(
             operationId = "listUserRoles",
-            description = "List a user roles",
+            description = "List a user roles. "
+                + "requires permission: ROLE_READ",
             summary = "List user roles", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -122,7 +124,8 @@ public class UserRoleController {
     
     @Operation(
             operationId = "countUserRoles",
-            description = "Count user roles",
+            description = "Count user roles. "
+                + "requires permission: ROLE_READ",
             summary = "Count user roles", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -154,7 +157,8 @@ public class UserRoleController {
     
     @Operation(
             operationId = "getUserRole",
-            description = "Get a user role by id",
+            description = "Get a user role by id. "
+                + "requires permission: ROLE_READ",
             summary = "Get a user role by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -180,13 +184,15 @@ public class UserRoleController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('ROLE_READ')")
     public UserRoleDto fetch(@PathVariable(name = "id") String id){
         return userRoleService.fetch(id);
     }
     
     @Operation(
             operationId = "updateUserRole",
-            description = "Update a user role",
+            description = "Update a user role. "
+                + "requires permission: ROLE_UPDATE",
             summary = "Update a user role by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -219,7 +225,8 @@ public class UserRoleController {
     
     @Operation(
             operationId = "deleteUserRole",
-            description = "Delete a user role",
+            description = "Delete a user role. "
+                + "requires permission: ROLE_DELETE",
             summary = "Delete a user role by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )

@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +44,8 @@ public class DatabaseBackupController {
 
     @Operation(
             operationId = "backupDatabase",
-            description = "Create a backup of the Storrity PostgreSQL database",
+            description = "Create a backup of the Storrity PostgreSQL database "
+                + "requires permission: DATABASE_BACKUP",
             summary = "Backup database",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -71,6 +73,7 @@ public class DatabaseBackupController {
         )
     })
     @PostMapping("/backup")
+    @PreAuthorize("hasAuthority('DATABASE_BACKUP')")
     public ResponseEntity<DatabaseBackupService.BackupResult> backup() {
 
         try {

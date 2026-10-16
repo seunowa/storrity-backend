@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,7 +70,8 @@ public class StockTransferController {
     @Operation(
         operationId = "getStockTransfer",
         summary = "Get a stock transfer by ID",
-        description = "Retrieves a stock transfer and its current workflow state",
+        description = "Retrieves a stock transfer and its current workflow state "
+                + "requires permission: STOCK_TRANSFER_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -103,6 +105,7 @@ public class StockTransferController {
         )
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_READ')")
     public StockTransferDto fetch(
             @PathVariable("id") UUID id) {
 
@@ -113,7 +116,8 @@ public class StockTransferController {
     @Operation(
         operationId = "listStockTransfers",
         summary = "List stock transfers",
-        description = "Returns stock transfers matching the supplied query parameters",
+        description = "Returns stock transfers matching the supplied query parameters "
+                + "requires permission: STOCK_TRANSFER_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -149,6 +153,7 @@ public class StockTransferController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_READ')")
     public List<StockTransferDto> list(
             @ModelAttribute
             @Valid
@@ -162,7 +167,8 @@ public class StockTransferController {
     @Operation(
         operationId = "countStockTransfers",
         summary = "Count stock transfers",
-        description = "Returns the number of stock transfers matching the supplied query parameters",
+        description = "Returns the number of stock transfers matching the supplied query parameters "
+                + "requires permission: STOCK_TRANSFER_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -196,6 +202,7 @@ public class StockTransferController {
         )
     })
     @GetMapping("/count")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_READ')")
     public CountDto count(
             @ModelAttribute
             @Valid
@@ -219,6 +226,7 @@ public class StockTransferController {
                       Creates a new stock transfer in DRAFT state.
                       Products are identified by product code and resolved
                       against the source store.
+                      requires permission: STOCK_TRANSFER_DRAFT_CREATE
                       """,
         security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -253,6 +261,7 @@ public class StockTransferController {
         )
     })
     @PostMapping("/draft")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_DRAFT_CREATE')")
     public StockTransferDto createDraft(
             @RequestBody
             @Valid
@@ -268,6 +277,7 @@ public class StockTransferController {
         description = """
                       Updates an existing stock transfer while it is still
                       in the DRAFT stage.
+                      requires permission: STOCK_TRANSFER_DRAFT_UPDATE
                       """,
         security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -309,6 +319,7 @@ public class StockTransferController {
         )
     })
     @PatchMapping("/{id}/draft")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_DRAFT_UPDATE')")
     public StockTransferDto updateDraft(
             @PathVariable("id") UUID id,
             @RequestBody
@@ -328,7 +339,8 @@ public class StockTransferController {
     @Operation(
         operationId = "submitStockTransferDraft",
         summary = "Submit stock transfer draft",
-        description = "Submits a stock transfer draft for approval",
+        description = "Submits a stock transfer draft for approval "
+                + "requires permission: STOCK_TRANSFER_DRAFT_SUBMIT",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -355,6 +367,7 @@ public class StockTransferController {
         )
     })
     @PostMapping("/{id}/submit_draft")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_DRAFT_SUBMIT')")
     public StockTransferDto submitDraft(
             @PathVariable("id") UUID id) {
 
@@ -365,7 +378,8 @@ public class StockTransferController {
     @Operation(
         operationId = "approveStockTransferDraft",
         summary = "Approve stock transfer draft",
-        description = "Approves a submitted stock transfer draft",
+        description = "Approves a submitted stock transfer draft "
+                + "requires permission: STOCK_TRANSFER_DRAFT_APPROVE",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -392,6 +406,7 @@ public class StockTransferController {
         )
     })
     @PostMapping("/{id}/approve_draft")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_DRAFT_APPROVE')")
     public StockTransferDto approveDraft(
             @PathVariable("id") UUID id) {
 
@@ -412,6 +427,7 @@ public class StockTransferController {
                       Sends the stock transfer from the source store.
                       This operation creates an OUTFLOW stock movement
                       for the transferred products.
+                      requires permission: STOCK_TRANSFER_SEND
                       """,
         security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -453,6 +469,7 @@ public class StockTransferController {
         )
     })
     @PostMapping("/{id}/send")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_SEND')")
     public StockTransferDto send(
             @PathVariable("id") UUID id) {
 
@@ -469,7 +486,8 @@ public class StockTransferController {
     @Operation(
         operationId = "submitStockTransferReceipt",
         summary = "Submit stock transfer receipt",
-        description = "Submits the stock transfer receipt for approval",
+        description = "Submits the stock transfer receipt for approval "
+                + "requires permission: STOCK_TRANSFER_RECEIPT_SUBMIT",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -496,6 +514,7 @@ public class StockTransferController {
         )
     })
     @PostMapping("/{id}/submit_receipt")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_RECEIPT_SUBMIT')")
     public StockTransferDto submitReceipt(
             @PathVariable("id") UUID id) {
 
@@ -506,7 +525,8 @@ public class StockTransferController {
     @Operation(
         operationId = "approveStockTransferReceipt",
         summary = "Approve stock transfer receipt",
-        description = "Approves the submitted stock transfer receipt",
+        description = "Approves the submitted stock transfer receipt "
+                + "requires permission: STOCK_TRANSFER_RECEIPT_APPROVE",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -533,6 +553,7 @@ public class StockTransferController {
         )
     })
     @PostMapping("/{id}/approve_receipt")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_RECEIPT_APPROVE')")
     public StockTransferDto approveReceipt(
             @PathVariable("id") UUID id) {
 
@@ -554,6 +575,7 @@ public class StockTransferController {
                       store. Products are resolved by product code against
                       the destination store and an INFLOW stock movement
                       is created.
+                      requires permission: STOCK_TRANSFER_RECEIVE
                       """,
         security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -595,6 +617,7 @@ public class StockTransferController {
         )
     })
     @PostMapping("/{id}/receive")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_RECEIVE')")
     public StockTransferDto receive(
             @PathVariable("id") UUID id,
             @RequestBody
@@ -618,6 +641,7 @@ public class StockTransferController {
                       Cancels a stock transfer that has not yet been received.
                       If stock has already been sent, the service reverses the
                       source-store stock movement.
+                      requires permission: STOCK_TRANSFER_CANCEL
                       """,
         security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -659,6 +683,7 @@ public class StockTransferController {
         )
     })
     @PostMapping("/{id}/cancel")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_CANCEL')")
     public StockTransferDto cancel(
             @PathVariable("id") UUID id) {
 
@@ -675,7 +700,8 @@ public class StockTransferController {
     @Operation(
         operationId = "deleteStockTransfer",
         summary = "Delete stock transfer",
-        description = "Deletes a stock transfer while it is still eligible for deletion",
+        description = "Deletes a stock transfer while it is still eligible for deletion "
+                + "requires permission: STOCK_TRANSFER_DRAFT_DELETE",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -716,6 +742,7 @@ public class StockTransferController {
         )
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('STOCK_TRANSFER_DRAFT_DELETE')")
     public StockTransferDto delete(
             @PathVariable("id") UUID id) {
 

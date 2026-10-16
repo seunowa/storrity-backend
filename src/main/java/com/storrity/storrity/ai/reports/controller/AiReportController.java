@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -41,7 +42,8 @@ public class AiReportController {
     @Operation(
             operationId = "generateAiReport",
             summary = "Generate an AI report",
-            description = "Accepts a natural language request and returns a structured report containing narrative text and chart-ready data.",
+            description = "Accepts a natural language request and returns a structured report containing narrative text and chart-ready data. "
+                    + "requires permission: AI_REPORT_GENERATE",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -65,6 +67,7 @@ public class AiReportController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('AI_REPORT_GENERATE')")
     public AiReportResponse generateReport(@RequestBody @Valid ReportRequest request) {
         return aiReportService.generateReport(request.prompt());
     }

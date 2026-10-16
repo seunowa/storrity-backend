@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.storrity.storrity.sales.service.SalesService;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  *
@@ -54,7 +55,8 @@ public class SaleController {
     
     @Operation(
             operationId = "createSale",
-            description = "Create a sale",
+            description = "Create a sale "
+                + "requires permission: SALE_CREATE",
             summary = "Create a sale", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -79,13 +81,15 @@ public class SaleController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('SALE_CREATE')")
     public SalesCreationResponse create(@RequestBody @Valid SalesCreationDto dto){
         return saleService.create(dto);
     }
     
     @Operation(
             operationId = "listSales",
-            description = "List sales",
+            description = "List sales "
+                + "requires permission: SALE_READ",
             summary = "List sales", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -112,13 +116,15 @@ public class SaleController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('SALE_READ')")
     public List<SaleDto> list(@ModelAttribute @Valid  @ParameterObject SaleQueryParams params){
         return saleService.list(params);
     }
     
     @Operation(
             operationId = "countSales",
-            description = "Count sales",
+            description = "Count sales "
+                + "requires permission: SALE_READ",
             summary = "Count sales", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -143,13 +149,15 @@ public class SaleController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('SALE_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject SaleQueryParams params){
         return saleService.count(params);
     }
     
     @Operation(
             operationId = "getSale",
-            description = "Get a sale",
+            description = "Get a sale "
+                + "requires permission: SALE_READ",
             summary = "Get a sale by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -175,6 +183,7 @@ public class SaleController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('SALE_READ')")
     public SaleDto fetch(@PathVariable(name = "id") UUID id){
         return saleService.fetch(id);
     }

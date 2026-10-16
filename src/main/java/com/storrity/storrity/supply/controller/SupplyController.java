@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,7 +70,8 @@ public class SupplyController {
     @Operation(
         operationId = "getSupply",
         summary = "Get a supply by ID",
-        description = "Retrieves a supply and its current workflow state",
+        description = "Retrieves a supply and its current workflow state "
+                + "requires permission: SUPPLY_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -103,6 +105,7 @@ public class SupplyController {
         )
     })
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('SUPPLY_READ')")
     public SupplyDto fetch(
         @PathVariable("id") UUID id
     ) {
@@ -113,7 +116,8 @@ public class SupplyController {
     @Operation(
         operationId = "listSupplies",
         summary = "List supplies",
-        description = "Returns supplies matching the supplied query parameters",
+        description = "Returns supplies matching the supplied query parameters "
+                + "requires permission: SUPPLY_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -149,6 +153,7 @@ public class SupplyController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('SUPPLY_READ')")
     public List<SupplyDto> list(
         @ModelAttribute
         @Valid
@@ -162,7 +167,8 @@ public class SupplyController {
     @Operation(
         operationId = "countSupplies",
         summary = "Count supplies",
-        description = "Returns the number of supplies matching the supplied query parameters",
+        description = "Returns the number of supplies matching the supplied query parameters "
+                + "requires permission: SUPPLY_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -196,6 +202,7 @@ public class SupplyController {
         )
     })
     @GetMapping("/count")
+    @PreAuthorize("hasAuthority('SUPPLY_READ')")
     public CountDto count(
         @ModelAttribute
         @Valid
@@ -215,7 +222,8 @@ public class SupplyController {
     @Operation(
         operationId = "createSupplyDraft",
         summary = "Create supply draft",
-        description = "Creates a new supply in DRAFT state",
+        description = "Creates a new supply in DRAFT state "
+                + "requires permission: SUPPLY_DRAFT_CREATE",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -249,6 +257,7 @@ public class SupplyController {
         )
     })
     @PostMapping("/draft")
+    @PreAuthorize("hasAuthority('SUPPLY_DRAFT_CREATE')")
     public SupplyDto createDraft(
         @RequestBody
         @Valid
@@ -261,7 +270,8 @@ public class SupplyController {
     @Operation(
         operationId = "updateSupplyDraft",
         summary = "Update supply draft",
-        description = "Updates an existing supply while it is still in the DRAFT stage",
+        description = "Updates an existing supply while it is still in the DRAFT stage "
+                + "requires permission: SUPPLY_DRAFT_UPDATE",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -302,6 +312,7 @@ public class SupplyController {
         )
     })
     @PatchMapping("/{id}/draft")
+    @PreAuthorize("hasAuthority('SUPPLY_DRAFT_UPDATE')")
     public SupplyDto updateDraft(
         @PathVariable("id") UUID id,
         @RequestBody
@@ -321,10 +332,12 @@ public class SupplyController {
     @Operation(
         operationId = "submitSupplyDraft",
         summary = "Submit supply draft",
-        description = "Submits a draft for approval",
+        description = "Submits a draft for approval "
+                + "requires permission: SUPPLY_DRAFT_SUBMIT",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @PostMapping("/{id}/submit_draft")
+    @PreAuthorize("hasAuthority('SUPPLY_DRAFT_SUBMIT')")
     public SupplyDto submitDraft(
         @PathVariable("id") UUID id
     ) {
@@ -335,10 +348,12 @@ public class SupplyController {
     @Operation(
         operationId = "approveSupplyDraft",
         summary = "Approve supply draft",
-        description = "Approves a submitted supply draft",
+        description = "Approves a submitted supply draft "
+                + "requires permission: SUPPLY_DRAFT_APPROVE",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @PostMapping("/{id}/approve_draft")
+    @PreAuthorize("hasAuthority('SUPPLY_DRAFT_APPROVE')")
     public SupplyDto approveDraft(
         @PathVariable("id") UUID id
     ) {
@@ -355,10 +370,12 @@ public class SupplyController {
     @Operation(
         operationId = "orderSupply",
         summary = "Order supply",
-        description = "Commits the supply order to the supplier",
+        description = "Commits the supply order to the supplier "
+                + "requires permission: SUPPLY_ORDER",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @PostMapping("/{id}/order")
+    @PreAuthorize("hasAuthority('SUPPLY_ORDER')")
     public SupplyDto order(
         @PathVariable("id") UUID id
     ) {
@@ -379,6 +396,7 @@ public class SupplyController {
                       Records the goods delivered by the supplier.
                       The delivered items may differ from the original
                       order items.
+                      requires permission: SUPPLY_DELIVERY_RECORD
                       """,
         security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -420,6 +438,7 @@ public class SupplyController {
         )
     })
     @PostMapping("/{id}/deliver")
+    @PreAuthorize("hasAuthority('SUPPLY_DELIVERY_RECORD')")
     public SupplyDto deliver(
         @PathVariable("id") UUID id,
         @RequestBody
@@ -433,10 +452,12 @@ public class SupplyController {
     @Operation(
         operationId = "submitSupplyDelivery",
         summary = "Submit supply delivery",
-        description = "Submits the recorded delivery for approval",
+        description = "Submits the recorded delivery for approval "
+                + "requires permission: SUPPLY_DELIVERY_SUBMIT",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @PostMapping("/{id}/submit_delivery")
+    @PreAuthorize("hasAuthority('SUPPLY_DELIVERY_SUBMIT')")
     public SupplyDto submitDelivery(
         @PathVariable("id") UUID id
     ) {
@@ -447,10 +468,12 @@ public class SupplyController {
     @Operation(
         operationId = "approveSupplyDelivery",
         summary = "Approve supply delivery",
-        description = "Approves the submitted delivery",
+        description = "Approves the submitted delivery "
+                + "requires permission: SUPPLY_DELIVERY_APPROVE",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @PostMapping("/{id}/approve_delivery")
+    @PreAuthorize("hasAuthority('SUPPLY_DELIVERY_APPROVE')")
     public SupplyDto approveDelivery(
         @PathVariable("id") UUID id
     ) {
@@ -471,6 +494,7 @@ public class SupplyController {
                       Accepts the delivered goods into inventory.
                       This operation also creates the corresponding
                       stock movement.
+                      requires permission: SUPPLY_RECEIVE
                       """,
         security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -512,6 +536,7 @@ public class SupplyController {
         )
     })
     @PostMapping("/{id}/receive")
+    @PreAuthorize("hasAuthority('SUPPLY_RECEIVE')")
     public SupplyDto receive(
         @PathVariable("id") UUID id
     ) {
@@ -528,10 +553,12 @@ public class SupplyController {
     @Operation(
         operationId = "cancelSupply",
         summary = "Cancel supply",
-        description = "Cancels a supply that has not yet been received",
+        description = "Cancels a supply that has not yet been received "
+                + "requires permission: SUPPLY_CANCEL",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @PostMapping("/{id}/cancel")
+    @PreAuthorize("hasAuthority('SUPPLY_CANCEL')")
     public SupplyDto cancel(
         @PathVariable("id") UUID id
     ) {
@@ -548,10 +575,12 @@ public class SupplyController {
     @Operation(
         operationId = "deleteSupply",
         summary = "Delete supply",
-        description = "Deletes a supply while it is still eligible for deletion",
+        description = "Deletes a supply while it is still eligible for deletion "
+                + "requires permission: SUPPLY_DRAFT_DELETE",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SUPPLY_DRAFT_DELETE')")
     public SupplyDto delete(
         @PathVariable("id") UUID id
     ) {

@@ -33,8 +33,8 @@ public class SecurityRbacSeeder implements ApplicationRunner {
     @Override @Transactional
     public void run(ApplicationArguments args) {
         Map<String, String> catalog = new LinkedHashMap<>();
-        catalog.put("BUDGET_VIEW", "View budget information retained from the existing permission catalogue");
-        catalog.put("BUDGET_APPROVE", "Approve budgets retained from the existing permission catalogue");
+//        catalog.put("BUDGET_VIEW", "View budget information retained from the existing permission catalogue");
+//        catalog.put("BUDGET_APPROVE", "Approve budgets retained from the existing permission catalogue");
         catalog.put("USER_READ", "List, fetch and count users");
         catalog.put("USER_CREATE", "Create users");
         catalog.put("USER_DELETE", "Delete users");
@@ -93,7 +93,6 @@ public class SecurityRbacSeeder implements ApplicationRunner {
         catalog.put("SALE_CREATE", "Create sales");
         catalog.put("SALE_REPORT_READ", "Read sales reports");
         catalog.put("SALE_RETURN_READ", "Read sales returns");
-        catalog.put("SALE_RETURN_CREATE", "Create sales returns");
         catalog.put("POS_READ", "Read POS terminals");
         catalog.put("POS_CREATE", "Create POS terminals");
         catalog.put("POS_UPDATE", "Update POS terminals");
@@ -144,10 +143,15 @@ public class SecurityRbacSeeder implements ApplicationRunner {
 //        catalog.put("LICENSE_IMPORT", "Import a license file");
 //        catalog.put("LICENSE_CLIENT_REQUEST", "Request an additional licensed client");
 //        catalog.put("LICENSE_CLIENT_STATUS_READ", "Read client license status");
-//        catalog.put("COUNTRY_READ", "Read country lookup data");
+        catalog.put("COUNTRY_READ", "Read country lookup data");
         catalog.put("COUNTRY_CONFIG_UPDATE", "Change selected country");
 //        catalog.put("AUTH_ROOT_USER_STATUS_READ", "Check root user initialization status");
 //        catalog.put("AUTH_ROOT_USER_INITIALIZE", "Initialize root user");
+        catalog.put("STORE_ACCESS_VIEW", "View user store access assignments and policies");
+        catalog.put("STORE_ACCESS_ASSIGN", "Assign users to selected stores");
+        catalog.put("STORE_ACCESS_REVOKE", "Revoke explicit user-store assignments");
+        catalog.put("STORE_ACCESS_ALL_STORES", "Grant or revoke all-store access");
+        catalog.put("STORE_ACCESS_VIEW_USERS", "View users with effective access to a store");
         catalog.forEach((id, description) -> permissionsRepository.findById(id).orElseGet(() -> permissionsRepository.save(new UserPermission(id, description))));
         Set<String> all = catalog.keySet();
         seedRole("SUPER_ADMIN", all);

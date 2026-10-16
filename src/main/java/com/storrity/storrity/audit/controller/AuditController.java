@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +52,8 @@ public class AuditController {
     
     @Operation(
             operationId = "listAuditItems",
-            description = "List audit  items",
+            description = "List audit  items "
+                + "requires permission: AUDIT_READ",
             summary = "List audit items", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -78,13 +80,15 @@ public class AuditController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('AUDIT_READ')")
     public List<Audit> list(@ModelAttribute @Valid  @ParameterObject AuditQueryParam params){
         return auditService.list(params);
     }
     
     @Operation(
             operationId = "countAuditItems",
-            description = "Count audit items",
+            description = "Count audit items.  "
+                + "requires permission: AUDIT_READ",
             summary = "Count audit items", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -108,13 +112,15 @@ public class AuditController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('AUDIT_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject AuditQueryParam params){
         return auditService.count(params);
     }
     
     @Operation(
             operationId = "getAuditItem",
-            description = "Get audit item by id",
+            description = "Get audit item by id. "
+                + "requires permission: AUDIT_READ",
             summary = "Get an audit item by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -140,13 +146,15 @@ public class AuditController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('AUDIT_READ')")
     public Audit fetch(@PathVariable(name = "id") UUID id){
         return auditService.fetch(id);
     }
     
     @Operation(
             operationId = "deleteAuditItem",
-            description = "Delete audit item by id",
+            description = "Delete audit item by id. "
+                + "requires permission: AUDIT_DELETE",
             summary = "Delete an audit item by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -172,6 +180,7 @@ public class AuditController {
         )
     })
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('AUDIT_DELETE')")
     public Audit delete(@PathVariable(name = "id") UUID id){
         return auditService.delete(id);
     }

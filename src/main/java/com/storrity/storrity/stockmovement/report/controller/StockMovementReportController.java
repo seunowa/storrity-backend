@@ -22,6 +22,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -55,7 +56,8 @@ public class StockMovementReportController {
             summary = "Hourly Stock Movement Summary",
             description = "Returns aggregated stock movement statistics grouped by hour. "
                     + "Supports filtering by date range, store, product, category, "
-                    + "brand, movement type, direction and other report query parameters.",
+                    + "brand, movement type, direction and other report query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -99,6 +101,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("hourly_summary")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<HourlyStockMovementSummaryDto> hourlyStockMovementSummary(
             @ModelAttribute
             @Valid
@@ -113,7 +116,8 @@ public class StockMovementReportController {
             summary = "Daily Stock Movement Summary",
             description = "Returns aggregated stock movement statistics grouped by day. "
                     + "Supports filtering by date range, store, product, category, "
-                    + "brand, movement type, direction and other report query parameters.",
+                    + "brand, movement type, direction and other report query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -157,6 +161,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("daily_summary")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<DailyStockMovementSummaryDto> dailyStockMovementSummary(
             @ModelAttribute
             @Valid
@@ -171,7 +176,8 @@ public class StockMovementReportController {
             summary = "Weekly Stock Movement Summary",
             description = "Returns aggregated stock movement statistics grouped by week. "
                     + "Supports filtering by date range, store, product, category, "
-                    + "brand, movement type, direction and other report query parameters.",
+                    + "brand, movement type, direction and other report query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -215,6 +221,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("weekly_summary")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<WeeklyStockMovementSummaryDto> weeklyStockMovementSummary(
             @ModelAttribute
             @Valid
@@ -229,7 +236,8 @@ public class StockMovementReportController {
             summary = "Monthly Stock Movement Summary",
             description = "Returns aggregated stock movement statistics grouped by month. "
                     + "Supports filtering by date range, store, product, category, "
-                    + "brand, movement type, direction and other report query parameters.",
+                    + "brand, movement type, direction and other report query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -273,6 +281,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("monthly_summary")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<MonthlyStockMovementSummaryDto> monthlyStockMovementSummary(
             @ModelAttribute
             @Valid
@@ -287,7 +296,8 @@ public class StockMovementReportController {
             summary = "Quarterly Stock Movement Summary",
             description = "Returns aggregated stock movement statistics grouped by quarter. "
                     + "Supports filtering by date range, store, product, category, "
-                    + "brand, movement type, direction and other report query parameters.",
+                    + "brand, movement type, direction and other report query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -331,6 +341,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("quarterly_summary")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<QuarterlyStockMovementSummaryDto> quarterlyStockMovementSummary(
             @ModelAttribute
             @Valid
@@ -345,7 +356,8 @@ public class StockMovementReportController {
             summary = "Yearly Stock Movement Summary",
             description = "Returns aggregated stock movement statistics grouped by year. "
                     + "Supports filtering by date range, store, product, category, "
-                    + "brand, movement type, direction and other report query parameters.",
+                    + "brand, movement type, direction and other report query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -389,6 +401,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("yearly_summary")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<YearlyStockMovementSummaryDto> yearlyStockMovementSummary(
             @ModelAttribute
             @Valid
@@ -403,7 +416,8 @@ public class StockMovementReportController {
             summary = "Stock Movements by Store",
             description = "Returns aggregated stock movement statistics grouped by store. "
                     + "Supports filtering by date range, store, product, category, "
-                    + "brand, movement type, direction and other report query parameters.",
+                    + "brand, movement type, direction and other report query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -447,6 +461,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("stock_movements_by_store")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<StockMovementsByStoreDto> stockMovementsByStore(
             @ModelAttribute
             @Valid
@@ -461,7 +476,8 @@ public class StockMovementReportController {
             summary = "Stock Movements by Product id",
             description = "Returns aggregated stock movement statistics grouped by product id. "
                     + "Supports filtering by date range, store, product, category, "
-                    + "brand, movement type, direction and other report query parameters.",
+                    + "brand, movement type, direction and other report query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -505,6 +521,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("stock_movements_by_product_id")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<StockMovementsByProductIdDto> stockMovementsByProduct(
             @ModelAttribute
             @Valid
@@ -519,7 +536,8 @@ public class StockMovementReportController {
             summary = "Stock Movements by Product Code",
             description = "Returns aggregated stock movement statistics grouped by product code. "
                     + "Supports filtering by date range, store, product, category, "
-                    + "brand, movement type, direction and other report query parameters.",
+                    + "brand, movement type, direction and other report query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -563,6 +581,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("stock_movements_by_product_code")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<StockMovementsByProductIdDto> stockMovementsByProductCode(
             @ModelAttribute
             @Valid
@@ -578,7 +597,8 @@ public class StockMovementReportController {
             description = "Returns aggregated stock movement statistics grouped by "
                     + "product category. Supports filtering by date range, store, "
                     + "product, category, brand, movement type, direction and other "
-                    + "report query parameters.",
+                    + "report query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -622,6 +642,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("stock_movements_by_category")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<StockMovementsByCategoryDto> stockMovementsByCategory(
             @ModelAttribute
             @Valid
@@ -637,7 +658,8 @@ public class StockMovementReportController {
             description = "Returns aggregated stock movement statistics grouped by "
                     + "product brand. Supports filtering by date range, store, "
                     + "product, category, brand, movement type, direction and other "
-                    + "report query parameters.",
+                    + "report query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -681,6 +703,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("stock_movements_by_brand")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<StockMovementsByBrandDto> stockMovementsByBrand(
             @ModelAttribute
             @Valid
@@ -696,7 +719,8 @@ public class StockMovementReportController {
             description = "Returns aggregated stock movement statistics grouped by "
                     + "movement type. Supports filtering by date range, store, product, "
                     + "category, brand, movement type, direction and other report "
-                    + "query parameters.",
+                    + "query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -740,6 +764,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("stock_movements_by_movement_type")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<StockMovementsByMovementTypeDto> stockMovementsByMovementType(
             @ModelAttribute
             @Valid
@@ -755,7 +780,8 @@ public class StockMovementReportController {
             description = "Returns aggregated stock movement statistics grouped by "
                     + "movement direction. Supports filtering by date range, store, "
                     + "product, category, brand, movement type, direction and other "
-                    + "report query parameters.",
+                    + "report query parameters. "
+                + "requires permission: STOCK_MOVEMENT_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -799,6 +825,7 @@ public class StockMovementReportController {
         )
     })
     @GetMapping("stock_movements_by_direction")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_REPORT_READ')")
     public List<StockMovementsByDirectionDto> stockMovementsByDirection(
             @ModelAttribute
             @Valid

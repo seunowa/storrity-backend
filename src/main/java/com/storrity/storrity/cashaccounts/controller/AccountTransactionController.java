@@ -26,6 +26,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -52,7 +53,8 @@ public class AccountTransactionController {
     
     @Operation(
             operationId = "createAcountTransaction",
-            description = "Create an account transaction",
+            description = "Create an account transaction "
+                + "requires permission: ACCOUNT_TRANSACTION_CREATE",
             summary = "Create an account transaction", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -73,13 +75,15 @@ public class AccountTransactionController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('ACCOUNT_TRANSACTION_CREATE')")
     public AccountTransaction create(@RequestBody @Valid AccountTransactionInstruction dto){
         return accountTransactionService.create(dto);
     }
     
     @Operation(
             operationId = "listAcountTransactions",
-            description = "List account transactions",
+            description = "List account transactions "
+                + "requires permission: ACCOUNT_TRANSACTION_READ",
             summary = "List cash account transactions",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -102,13 +106,15 @@ public class AccountTransactionController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('ACCOUNT_TRANSACTION_READ')")
     public List<AccountTransaction> list(@ModelAttribute @Valid  @ParameterObject AccountTransactionQueryParams params){
         return accountTransactionService.list(params);
     }
     
     @Operation(
             operationId = "countAcountTransactions",
-            description = "Count account transactions",
+            description = "Count account transactions "
+                + "requires permission: ACCOUNT_TRANSACTION_READ",
             summary = "Count account transactions",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -129,13 +135,15 @@ public class AccountTransactionController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('ACCOUNT_TRANSACTION_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject AccountTransactionQueryParams params){
         return accountTransactionService.count(params);
     }    
     
     @Operation(
             operationId = "getAccountTransaction",
-            description = "Get an account transaction by id",
+            description = "Get an account transaction by id "
+                + "requires permission: ACCOUNT_TRANSACTION_READ",
             summary = "Get an account transaction by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -156,6 +164,7 @@ public class AccountTransactionController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('ACCOUNT_TRANSACTION_READ')")
     public AccountTransaction fetch(@PathVariable(name = "id") UUID id){
         return accountTransactionService.fetch(id);
     }

@@ -24,6 +24,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -50,7 +51,8 @@ public class SupplyReportController {
 
     @Operation(
             operationId = "getSupplyStatusSummary",
-            description = "Get supplies grouped by supply status with their count and total value.",
+            description = "Get supplies grouped by supply status with their count and total value. "
+                + "requires permission: SUPPLY_REPORT_READ",
             summary = "Get supply status summary",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -65,6 +67,7 @@ public class SupplyReportController {
                 content = @Content(schema = @Schema(implementation = ServerError.class)))
     })
     @GetMapping("/status_summary")
+    @PreAuthorize("hasAuthority('SUPPLY_REPORT_READ')")
     public List<SupplyStatusSummaryDto> supplyStatusSummary(
             @ModelAttribute @Valid @ParameterObject SupplyReportQueryParams params) {
         return supplyReportService.supplyStatusSummary(params);
@@ -72,7 +75,8 @@ public class SupplyReportController {
 
     @Operation(
             operationId = "getDeliveryVariance",
-            description = "Get delivery variance for supply items by comparing ordered and received quantities.",
+            description = "Get delivery variance for supply items by comparing ordered and received quantities. "
+                + "requires permission: SUPPLY_REPORT_READ",
             summary = "Get delivery variance",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -87,6 +91,7 @@ public class SupplyReportController {
                 content = @Content(schema = @Schema(implementation = ServerError.class)))
     })
     @GetMapping("/delivery_variance")
+    @PreAuthorize("hasAuthority('SUPPLY_REPORT_READ')")
     public List<DeliveryVarianceDto> deliveryVariance(
             @ModelAttribute @Valid @ParameterObject SupplyReportQueryParams params) {
         return supplyReportService.deliveryVariance(params);
@@ -94,7 +99,8 @@ public class SupplyReportController {
 
     @Operation(
             operationId = "getSupplierPerformance",
-            description = "Get supplier delivery performance including on-time delivery rate, delays and spend.",
+            description = "Get supplier delivery performance including on-time delivery rate, delays and spend. "
+                + "requires permission: SUPPLY_REPORT_READ",
             summary = "Get supplier performance",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -109,6 +115,7 @@ public class SupplyReportController {
                 content = @Content(schema = @Schema(implementation = ServerError.class)))
     })
     @GetMapping("/supplier_performance")
+    @PreAuthorize("hasAuthority('SUPPLY_REPORT_READ')")
     public List<SupplierPerformanceDto> supplierPerformance(
             @ModelAttribute @Valid @ParameterObject SupplyReportQueryParams params) {
         return supplyReportService.supplierPerformance(params);
@@ -116,7 +123,8 @@ public class SupplyReportController {
 
     @Operation(
             operationId = "getDeliveryVarianceByProduct",
-            description = "Get delivery variance aggregated by product.",
+            description = "Get delivery variance aggregated by product "
+                + "requires permission: SUPPLY_REPORT_READ",
             summary = "Get delivery variance by product",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -131,6 +139,7 @@ public class SupplyReportController {
                 content = @Content(schema = @Schema(implementation = ServerError.class)))
     })
     @GetMapping("/delivery_variance/by_product")
+    @PreAuthorize("hasAuthority('SUPPLY_REPORT_READ')")
     public List<DeliveryVarianceByProductDto> deliveryVarianceByProduct(
             @ModelAttribute @Valid @ParameterObject SupplyReportQueryParams params) {
         return supplyReportService.deliveryVarianceByProduct(params);
@@ -138,7 +147,8 @@ public class SupplyReportController {
 
     @Operation(
             operationId = "getDeliveryVarianceBySupplier",
-            description = "Get delivery variance aggregated by supplier.",
+            description = "Get delivery variance aggregated by supplier. "
+                + "requires permission: SUPPLY_REPORT_READ",
             summary = "Get delivery variance by supplier",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -153,6 +163,7 @@ public class SupplyReportController {
                 content = @Content(schema = @Schema(implementation = ServerError.class)))
     })
     @GetMapping("/delivery-variance/by-supplier")
+    @PreAuthorize("hasAuthority('SUPPLY_REPORT_READ')")
     public List<DeliveryVarianceBySupplierDto> deliveryVarianceBySupplier(
             @ModelAttribute @Valid @ParameterObject SupplyReportQueryParams params) {
         return supplyReportService.deliveryVarianceBySupplier(params);
@@ -160,7 +171,8 @@ public class SupplyReportController {
 
     @Operation(
             operationId = "getSupplierLeadTime",
-            description = "Get order-to-receipt lead-time statistics grouped by supplier.",
+            description = "Get order-to-receipt lead-time statistics grouped by supplier. "
+                + "requires permission: SUPPLY_REPORT_READ",
             summary = "Get supplier lead time",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -175,6 +187,7 @@ public class SupplyReportController {
                 content = @Content(schema = @Schema(implementation = ServerError.class)))
     })
     @GetMapping("/supplier_lead_time")
+    @PreAuthorize("hasAuthority('SUPPLY_REPORT_READ')")
     public List<SupplierLeadTimeDto> supplierLeadTime(
             @ModelAttribute @Valid @ParameterObject SupplyReportQueryParams params) {
         return supplyReportService.supplierLeadTime(params);
@@ -182,7 +195,8 @@ public class SupplyReportController {
 
     @Operation(
             operationId = "getProductProcurementSummary",
-            description = "Get procurement summary including quantities, spend, purchase prices and supplier counts.",
+            description = "Get procurement summary including quantities, spend, purchase prices and supplier counts. "
+                + "requires permission: SUPPLY_REPORT_READ",
             summary = "Get product procurement summary",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -197,6 +211,7 @@ public class SupplyReportController {
                 content = @Content(schema = @Schema(implementation = ServerError.class)))
     })
     @GetMapping("/product_procurement_summary")
+    @PreAuthorize("hasAuthority('SUPPLY_REPORT_READ')")
     public List<ProductProcurementSummaryDto> productProcurementSummary(
             @ModelAttribute @Valid @ParameterObject SupplyReportQueryParams params) {
         return supplyReportService.productProcurementSummary(params);

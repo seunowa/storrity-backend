@@ -44,7 +44,8 @@ public class AppUserController {
 
     @Operation(
             operationId = "createUser",
-            description = "Create a user",
+            description = "Create a user. "
+                + "requires permission: USER_CREATE",
             summary = "Create a new user",
             security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
@@ -79,7 +80,8 @@ public class AppUserController {
 
     @Operation(
             operationId = "changePassword",
-            description = "change password",
+            description = "change password. "
+                + "requires permission: USER_PASSWORD_CHANGE",
             summary = "Change user password",
             security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
@@ -114,7 +116,8 @@ public class AppUserController {
 
     @Operation(
             operationId = "resetPassword",
-            description = "reset password",
+            description = "reset password. "
+                + "requires permission: USER_PASSWORD_RESET",
             summary = "Reset user password",
             security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
@@ -150,7 +153,8 @@ public class AppUserController {
 
     @Operation(
             operationId = "changeUserRole",
-            description = "change user role",
+            description = "change user role. "
+                + "requires permission: USER_ROLE_ASSIGN",
             summary = "Change user role",
             security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
@@ -186,7 +190,8 @@ public class AppUserController {
     
     @Operation(
             operationId = "listUsers",
-            description = "list users",
+            description = "list users. "
+                + "requires permission: USER_READ",
             summary = "List users",
             security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
@@ -219,7 +224,8 @@ public class AppUserController {
 
     @Operation(
             operationId = "countUsers",
-            description = "count user",
+            description = "count user. "
+                + "requires permission: USER_READ",
             summary = "Count users",
             security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
@@ -249,7 +255,8 @@ public class AppUserController {
 
     @Operation(
             operationId = "fetchUser",
-            description = "fetch user",
+            description = "fetch user. "
+                + "requires permission: USER_READ",
             summary = "Fetch user by username",
             security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
@@ -285,7 +292,8 @@ public class AppUserController {
 
     @Operation(
             operationId = "deleteUser",
-            description = "delete user",
+            description = "delete user. "
+                + "requires permission: USER_DELETE",
             summary = "Delete user by username",
             security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({

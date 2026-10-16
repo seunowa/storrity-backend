@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  *
@@ -66,7 +67,8 @@ public class ProductController {
     
     @Operation(
             operationId = "createProduct",
-            description = "Creates a product",
+            description = "Creates a product "
+                + "requires permission: PRODUCT_CREATE",
             summary = "Create a product", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -91,6 +93,7 @@ public class ProductController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('PRODUCT_CREATE')")
     public ProductDto create(@RequestBody @Valid ProductCreationDto dto){
         return productService.create(dto);
     }
@@ -98,7 +101,8 @@ public class ProductController {
     @Operation(
             operationId = "createBatchProduct",
             description = "Creates a batch of products, all belonging to the same store. "
-                    + "The operation is transactional: either all products are created, or none are.",
+                    + "The operation is transactional: either all products are created, or none are. "
+                + "requires permission: PRODUCT_BATCH_CREATE",
             summary = "Create a batch of products",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -123,6 +127,7 @@ public class ProductController {
         )
     })
     @PostMapping("/batch")
+    @PreAuthorize("hasAuthority('PRODUCT_BATCH_CREATE')")
     public List<ProductDto> create(@RequestBody @Valid BatchProductCreationDto dto){
         return productService.create(dto);
     }
@@ -130,7 +135,8 @@ public class ProductController {
     @Operation(
             operationId = "importProducts",
             description = "Imports products from a CSV file. Each row is processed independently. " +
-                    "See ProductCsvMapper for the expected column format.",
+                    "See ProductCsvMapper for the expected column format. "
+                + "requires permission: PRODUCT_IMPORT",
             summary = "Import products from CSV",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -157,6 +163,7 @@ public class ProductController {
         )
     })
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('PRODUCT_IMPORT')")
     public ProductImportResultDto importProducts(
             @RequestParam(value = "file", required = true) MultipartFile file
             , @RequestParam(value = "storeId", required = true) UUID storeId) throws IOException {
@@ -175,7 +182,8 @@ public class ProductController {
     @Operation(
             operationId = "exportProducts",
             description = "Exports products matching the query params as a CSV file " +
-                    "in the same format accepted by the import endpoint.",
+                    "in the same format accepted by the import endpoint. "
+                + "requires permission: PRODUCT_EXPORT",
             summary = "Export products to CSV",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -202,6 +210,7 @@ public class ProductController {
         )
     })
     @GetMapping(value = "/export", produces = "text/csv")
+    @PreAuthorize("hasAuthority('PRODUCT_EXPORT')")
     public ResponseEntity<byte[]> exportProducts(
             @ModelAttribute @Valid @ParameterObject ProductQueryParams params) {
         
@@ -217,7 +226,8 @@ public class ProductController {
     
     @Operation(
             operationId = "listProducts",
-            description = "List products",
+            description = "List products "
+                + "requires permission: PRODUCT_READ",
             summary = "List products", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -244,13 +254,15 @@ public class ProductController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public List<ProductDto> list(@ModelAttribute @Valid  @ParameterObject ProductQueryParams params){
         return productService.list(params);
     }
     
     @Operation(
             operationId = "countProducts",
-            description = "count products",
+            description = "count products "
+                + "requires permission: PRODUCT_READ",
             summary = "Count products", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -275,13 +287,15 @@ public class ProductController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject ProductQueryParams params){
         return productService.count(params);
     }     
     
     @Operation(
             operationId = "listProductNames",
-            description = "List product names",
+            description = "List product names. "
+                + "requires permission: PRODUCT_READ",
             summary = "List product names", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -304,6 +318,7 @@ public class ProductController {
         )
     })
     @GetMapping(path = "/names")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public List<String> listProductNames(
             @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam(required = false, defaultValue = "10") Integer limit,
@@ -313,7 +328,8 @@ public class ProductController {
     
     @Operation(
             operationId = "listCategories",
-            description = "List product categories",
+            description = "List product categories "
+                + "requires permission: PRODUCT_READ",
             summary = "List product categories", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -336,6 +352,7 @@ public class ProductController {
         )
     })
     @GetMapping(path = "/categories")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public List<String> listCategories(
             @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam(required = false, defaultValue = "10") Integer limit,
@@ -345,7 +362,8 @@ public class ProductController {
     
     @Operation(
             operationId = "listSubcategories",
-            description = "List product subcategories",
+            description = "List product subcategories "
+                + "requires permission: PRODUCT_READ",
             summary = "List product subcategories", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -368,6 +386,7 @@ public class ProductController {
         )
     })
     @GetMapping(path = "/subcategories")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public List<String> listSubcategories(    
             @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam(required = false, defaultValue = "10") Integer limit,
@@ -377,7 +396,8 @@ public class ProductController {
     
     @Operation(
             operationId = "listBrands",
-            description = "List product brands",
+            description = "List product brands "
+                + "requires permission: PRODUCT_READ",
             summary = "List product brands", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -400,6 +420,7 @@ public class ProductController {
         )
     })
     @GetMapping(path = "/brands")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public List<String> findBrands(
             @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam(required = false, defaultValue = "10") Integer limit,
@@ -410,7 +431,8 @@ public class ProductController {
     
     @Operation(
             operationId = "listStockKeepingUnits",
-            description = "List product stock keeping units",
+            description = "List product stock keeping units "
+                + "requires permission: PRODUCT_READ",
             summary = "List product stock keeping units", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -433,6 +455,7 @@ public class ProductController {
         )
     })
     @GetMapping(path = "/sku")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public List<String> listStockKeepingUnits(
             @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam(required = false, defaultValue = "10") Integer limit,
@@ -443,7 +466,8 @@ public class ProductController {
     
     @Operation(
             operationId = "listPackages",
-            description = "List packages",
+            description = "List packages "
+                + "requires permission: PRODUCT_READ",
             summary = "List packages", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -466,6 +490,7 @@ public class ProductController {
         )
     })
     @GetMapping(path = "/packages")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public List<String> listPackages(
             @RequestParam(required = false, defaultValue = "") String query,
             @RequestParam(required = false, defaultValue = "10") Integer limit,
@@ -475,7 +500,8 @@ public class ProductController {
     
     @Operation(
             operationId = "getProduct",
-            description = "Get a product by id",
+            description = "Get a product by id "
+                + "requires permission: PRODUCT_READ",
             summary = "Get a product by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -501,13 +527,15 @@ public class ProductController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public ProductDto fetch(@PathVariable(name = "id") UUID id){
         return productService.fetch(id);
     }
     
     @Operation(
             operationId = "updateProduct",
-            description = "Update a product",
+            description = "Update a product "
+                + "requires permission: PRODUCT_UPDATE",
             summary = "Update a product by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -533,13 +561,15 @@ public class ProductController {
         )
     })
     @PatchMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('PRODUCT_UPDATE')")
     public ProductDto update(@PathVariable(name = "id") UUID id, @RequestBody @Valid ProductUpdateDto dto){
         return productService.update(id, dto);
     }
     
     @Operation(
             operationId = "deleteProduct",
-            description = "Delete a product",
+            description = "Delete a product "
+                + "requires permission: PRODUCT_DELETE",
             summary = "Delete a product by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -565,6 +595,7 @@ public class ProductController {
         )
     })
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('PRODUCT_DELETE')")
     public ProductDto delete(@PathVariable(name = "id") UUID id){
         return productService.delete(id);
     }    

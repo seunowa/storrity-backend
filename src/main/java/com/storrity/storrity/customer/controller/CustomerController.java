@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,7 +58,8 @@ public class CustomerController {
     
     @Operation(
             operationId = "createCustomer",
-            description = "Creates a customer",
+            description = "Creates a customer. "
+                + "requires permission: CUSTOMER_CREATE",
             summary = "Create a customer", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -82,13 +84,15 @@ public class CustomerController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('CUSTOMER_CREATE')")
     public Customer create(@RequestBody @Valid CustomerCreationDto dto){
         return customerService.create(dto);
     }
     
     @Operation(
             operationId = "listCustomers",
-            description = "List customers",
+            description = "List customers. "
+                + "requires permission: CUSTOMER_READ",
             summary = "List customers", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -115,13 +119,15 @@ public class CustomerController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
     public List<Customer> list(@ModelAttribute @Valid  @ParameterObject CustomerQueryParams params){
         return customerService.list(params);
     }
     
     @Operation(
             operationId = "countCustomers",
-            description = "Count customers",
+            description = "Count customers. "
+                + "requires permission: CUSTOMER_READ",
             summary = "Count customers", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -146,13 +152,15 @@ public class CustomerController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject CustomerQueryParams params){
         return customerService.count(params);
     }
     
     @Operation(
             operationId = "getCustomer",
-            description = "Get a customer",
+            description = "Get a customer. "
+                + "requires permission: CUSTOMER_READ",
             summary = "Get a customer by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -178,13 +186,15 @@ public class CustomerController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
     public Customer fetch(@PathVariable(name = "id") UUID id){
         return customerService.fetch(id);
     }
     
     @Operation(
             operationId = "updateCustomer",
-            description = "Update a customer id",
+            description = "Update a customer id. "
+                + "requires permission: CUSTOMER_UPDATE",
             summary = "Update a customer by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -210,13 +220,15 @@ public class CustomerController {
         )
     })
     @PatchMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER_UPDATE')")
     public Customer update(@PathVariable(name = "id") UUID id, @RequestBody @Valid CustomerUpdateDto dto){
         return customerService.update(id, dto);
     }
     
     @Operation(
             operationId = "deleteCustomer",
-            description = "Delete a customer by id",
+            description = "Delete a customer by id. "
+                + "requires permission: CUSTOMER_DELETE",
             summary = "Delete a product by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -242,6 +254,7 @@ public class CustomerController {
         )
     })
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('CUSTOMER_DELETE')")
     public Customer delete(@PathVariable(name = "id") UUID id){
         return customerService.delete(id);
     }

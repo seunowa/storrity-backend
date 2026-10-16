@@ -38,6 +38,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  *
@@ -60,7 +61,8 @@ public class CashAccountController {
     
     @Operation(
             operationId = "createCashAccount",
-            description = "Create a cash account",
+            description = "Create a cash account "
+                + "requires permission: CASH_ACCOUNT_CREATE",
             summary = "Create a cash account", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -81,13 +83,15 @@ public class CashAccountController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('CASH_ACCOUNT_CREATE')")
     public CashAccount create(@RequestBody @Valid CashAccountCreationDto dto){
         return cashAccountService.create(dto);
     }
     
     @Operation(
             operationId = "listCashAccounts",
-            description = "List cash accounts",
+            description = "List cash accounts "
+                + "requires permission: CASH_ACCOUNT_READ",
             summary = "List cash accounts",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -110,13 +114,15 @@ public class CashAccountController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('CASH_ACCOUNT_READ')")
     public List<CashAccount> list(@ModelAttribute @Valid  @ParameterObject CashAccountQueryParams params){
         return cashAccountService.list(params);
     }
     
     @Operation(
             operationId = "countCashAccounts",
-            description = "Count cash accounts",
+            description = "Count cash accounts "
+                + "requires permission: CASH_ACCOUNT_READ",
             summary = "Count cash accounts",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -137,13 +143,15 @@ public class CashAccountController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('CASH_ACCOUNT_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject CashAccountQueryParams params){
         return cashAccountService.count(params);
     }
     
     @Operation(
             operationId = "getCashAccount",
-            description = "Get a cash account by id",
+            description = "Get a cash account by id "
+                + "requires permission: CASH_ACCOUNT_READ",
             summary = "Get a cash account by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -165,13 +173,15 @@ public class CashAccountController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('CASH_ACCOUNT_READ')")
     public CashAccount fetch(@PathVariable(name = "id") String id){
         return cashAccountService.fetch(id);
     }
     
     @Operation(
             operationId = "validateAccount",
-            description = "Validate a cash account by id",
+            description = "Validate a cash account by id "
+                + "requires permission: CASH_ACCOUNT_READ",
             summary = "Validate a cash account by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -193,13 +203,15 @@ public class CashAccountController {
         )
     })
     @GetMapping(path = "/{id}/validation")
+    @PreAuthorize("hasAuthority('CASH_ACCOUNT_READ')")
     public AccountValidationDto validate(@PathVariable(name = "id") String id){
         return cashAccountService.validateAccount(id);
     }
     
     @Operation(
             operationId = "updateCashAccount",
-            description = "Update a cash account",
+            description = "Update a cash account "
+                + "requires permission: CASH_ACCOUNT_UPDATE",
             summary = "Update a cash account by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -221,13 +233,15 @@ public class CashAccountController {
         )
     })
     @PatchMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('CASH_ACCOUNT_UPDATE')")
     public CashAccount update(@PathVariable(name = "id") String id, @RequestBody @Valid CashAccountUpdateDto dto){
         return cashAccountService.update(id, dto);
     }
     
     @Operation(
             operationId = "deleteCashAccount",
-            description = "Delete a cash account",
+            description = "Delete a cash account "
+                + "requires permission: CASH_ACCOUNT_DELETE",
             summary = "Delete a cash account by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -249,13 +263,15 @@ public class CashAccountController {
         )
     })
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('CASH_ACCOUNT_DELETE')")
     public CashAccount delete(@PathVariable(name = "id") String id){
         return cashAccountService.delete(id);
     }
     
     @Operation(
             operationId = "updateCashAccountParent",
-            description = "Update a cash account's parent by id",
+            description = "Update a cash account's parent by id "
+                + "requires permission: CASH_ACCOUNT_PARENT_UPDATE",
             summary = "Update a cash account's parent by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -277,6 +293,7 @@ public class CashAccountController {
         )
     })
     @PatchMapping(path = "/{id}/parent")
+    @PreAuthorize("hasAuthority('CASH_ACCOUNT_PARENT_UPDATE')")
     public CashAccount update(@PathVariable(name = "id") String id, @RequestBody @Valid ChangeParentAccountInstruction dto){
         dto.setAccountId(id);
         return parentAccountService.changeParentAccount(dto);

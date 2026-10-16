@@ -6,10 +6,8 @@ package com.storrity.storrity.stockmovement.conroller;
 
 import com.storrity.storrity.stockmovement.dto.StockMovementDto;
 import com.storrity.storrity.stockmovement.dto.StockMovementInstruction;
-import com.storrity.storrity.stockmovement.dto.StockMovementResult;
 import com.storrity.storrity.stockmovement.entity.StockMovementQueryParams;
 import com.storrity.storrity.stockmovement.service.StockMovementService;
-import com.storrity.storrity.store.entity.Store;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.ApiError;
 import com.storrity.storrity.util.exception.ServerError;
@@ -26,6 +24,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -53,7 +52,8 @@ public class StockMovementController {
     
     @Operation(
             operationId = "createStockMovement",
-            description = "Create stock movement",
+            description = "Create stock movement "
+                + "requires permission: STOCK_MOVEMENT_CREATE",
             summary = "Create stock movements", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -76,13 +76,15 @@ public class StockMovementController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_CREATE')")
     public List<StockMovementDto> create(@RequestBody @Valid StockMovementInstruction dto){
         return stockMovementService.create(dto);
     }
     
     @Operation(
             operationId = "listStockMovements",
-            description = "List stock movements",
+            description = "List stock movements "
+                + "requires permission: STOCK_MOVEMENT_READ",
             summary = "List stock movements",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -105,13 +107,15 @@ public class StockMovementController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_READ')")
     public List<StockMovementDto> list(@ModelAttribute @Valid  @ParameterObject StockMovementQueryParams params){
         return stockMovementService.list(params);
     }
     
     @Operation(
             operationId = "countStockMovements",
-            description = "Count stock movements",
+            description = "Count stock movements "
+                + "requires permission: STOCK_MOVEMENT_READ",
             summary = "Count stock movements",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -132,13 +136,15 @@ public class StockMovementController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject StockMovementQueryParams params){
         return stockMovementService.count(params);
     }
     
     @Operation(
             operationId = "getStockMovement",
-            description = "Get stock movement",
+            description = "Get stock movement "
+                + "requires permission: STOCK_MOVEMENT_READ",
             summary = "Get a stock movement by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -160,6 +166,7 @@ public class StockMovementController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('STOCK_MOVEMENT_READ')")
     public StockMovementDto fetch(@PathVariable(name = "id") UUID id){
         return stockMovementService.fetch(id);
     }

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -50,7 +51,8 @@ public class StatementItemController {
     
     @Operation(
             operationId = "listAccountStatements",
-            description = "List account statements",
+            description = "List account statements "
+                + "requires permission: ACCOUNT_STATEMENT_READ",
             summary = "List account statement items",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -73,13 +75,15 @@ public class StatementItemController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('ACCOUNT_STATEMENT_READ')")
     public List<StatementItem> list(@ModelAttribute @Valid  @ParameterObject StatementItemQueryParams params){
         return statementItemService.list(params);
     }
     
     @Operation(
             operationId = "countAccountStatements",
-            description = "Count account statements",
+            description = "Count account statements "
+                + "requires permission: ACCOUNT_STATEMENT_READ",
             summary = "Count account statement items",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -100,13 +104,15 @@ public class StatementItemController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('ACCOUNT_STATEMENT_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject StatementItemQueryParams params){
         return statementItemService.count(params);
     }
     
     @Operation(
             operationId = "getAccountStatement",
-            description = "Get a account statement by id",
+            description = "Get a account statement by id "
+                + "requires permission: ACCOUNT_STATEMENT_READ",
             summary = "Get an account statement item by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -128,6 +134,7 @@ public class StatementItemController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('ACCOUNT_STATEMENT_READ')")
     public StatementItem fetch(@PathVariable(name = "id") UUID id){
         return statementItemService.fetch(id);
     }

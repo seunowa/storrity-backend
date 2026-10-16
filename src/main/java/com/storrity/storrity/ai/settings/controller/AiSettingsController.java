@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,7 +51,8 @@ public class AiSettingsController {
     @Operation(
             operationId = "saveAiProvider",
             summary = "Create or Update provider details - api key",
-            description = "Update api model provider details",
+            description = "Update api model provider details"
+                + "requires permission: AI_PROVIDER_CONFIGURE",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -74,6 +76,7 @@ public class AiSettingsController {
         )
     })
     @PutMapping("/providers/{provider}")
+    @PreAuthorize("hasAuthority('AI_PROVIDER_CONFIGURE')")
     public ResponseEntity<String> saveProvider(
             @PathVariable String provider,
             @RequestBody @Valid SaveProviderRequest request) {
@@ -91,7 +94,8 @@ public class AiSettingsController {
     @Operation(
             operationId = "setActiveAiProvider",
             summary = "Set active provider",
-            description = "Set the api model provider to use for AI requests",
+            description = "Set the api model provider to use for AI requests"            
+                + "requires permission: AI_PROVIDER_ACTIVATE",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -115,6 +119,7 @@ public class AiSettingsController {
         )
     })
     @PutMapping("/active")
+    @PreAuthorize("hasAuthority('AI_PROVIDER_ACTIVATE')")
     public ResponseEntity<String> setActive(@RequestBody @Valid SetActiveRequest request) {
         aiConfigService.setActiveProvider(request.provider(), request.model());
         return ResponseEntity.ok("Active model updated");
@@ -123,7 +128,8 @@ public class AiSettingsController {
     // ---------- Status ----------
     @Operation(
             operationId = "getAiSettingsStatus",
-            summary = "Get the api provider's status",
+            summary = "Get the api provider's status."
+                + "requires permission: AI_STATUS_READ",
             description = "Get the api provider's status",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -144,6 +150,7 @@ public class AiSettingsController {
         )
     })
     @GetMapping("/status")
+    @PreAuthorize("hasAuthority('AI_STATUS_READ')")
     public AiStatusResponse getStatus() {
         var active = aiConfigService.getActiveConfig();
         var providers = aiConfigService.getAllEnabledProviders().stream()
@@ -160,7 +167,8 @@ public class AiSettingsController {
     @Operation(
             operationId = "listSupportedProviders",
             summary = "List supported AI providers with recommended models",
-            description = "List supported AI providers with recommended models",
+            description = "List supported AI providers with recommended models "
+                + "requires permission: AI_PROVIDER_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -182,6 +190,7 @@ public class AiSettingsController {
         )
     })
     @GetMapping("/providers")
+    @PreAuthorize("hasAuthority('AI_PROVIDER_READ')")
     public List<ProviderInfo> listSupportedProviders() {
         return Arrays.stream(AiProvider.values())
                 .map(p -> new ProviderInfo(

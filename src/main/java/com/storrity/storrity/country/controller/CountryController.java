@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -51,7 +52,8 @@ public class CountryController {
     @Operation(
             operationId = "listCountries",
             summary = "List countries",
-            description = "Returns countries matching supplied filters.",
+            description = "Returns countries matching supplied filters. "
+                + "requires permission: COUNTRY_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -74,6 +76,7 @@ public class CountryController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('COUNTRY_READ')")
     public List<Country> listCountries(
             @ModelAttribute @Valid @ParameterObject CountryQueryParams params) {
 
@@ -84,7 +87,8 @@ public class CountryController {
     @Operation(
             operationId = "getCountry",
             summary = "Get country",
-            description = "Retrieve a country by country name.",
+            description = "Retrieve a country by country name. "
+                + "requires permission: COUNTRY_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -105,6 +109,7 @@ public class CountryController {
         )
     })
     @GetMapping("/{countryName}")
+    @PreAuthorize("hasAuthority('COUNTRY_READ')")
     public Country getCountry(
             @PathVariable String countryName) {
 
@@ -115,7 +120,8 @@ public class CountryController {
     @Operation(
         operationId = "updateSelectedCountry",
         summary = "Update selected country",
-        description = "Stores the application's selected country.",
+        description = "Stores the application's selected country. "
+                + "requires permission: COUNTRY_CONFIG_UPDATE",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -141,6 +147,7 @@ public class CountryController {
         )
     })
     @PutMapping("/selected_country")
+    @PreAuthorize("hasAuthority('COUNTRY_CONFIG_UPDATE')")
     public Country updateSelectedCountry(
             @RequestBody @Valid SelectedCountryDto dto) {
         return countryService.updateSelectedCountry(dto);
@@ -149,7 +156,8 @@ public class CountryController {
     @Operation(
             operationId = "getSelectedCountry",
             summary = "Get selected country",
-            description = "Returns the country name currently stored in the database.",
+            description = "Returns the country name currently stored in the database. "
+                + "requires permission: COUNTRY_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -170,6 +178,7 @@ public class CountryController {
         )
     })
     @GetMapping("/selected_country")
+    @PreAuthorize("hasAuthority('COUNTRY_READ')")
     public SelectedCountryDto getSelectedCountry() {
 
         return countryService.getSelectedCountry();
@@ -179,7 +188,8 @@ public class CountryController {
     @Operation(
             operationId = "getSelectedCountryDetails",
             summary = "Get selected country details",
-            description = "Returns the full country information for the selected country.",
+            description = "Returns the full country information for the selected country. "
+                + "requires permission: COUNTRY_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -200,6 +210,7 @@ public class CountryController {
         )
     })
     @GetMapping("/selected_country/details")
+    @PreAuthorize("hasAuthority('COUNTRY_READ')")
     public Country getSelectedCountryDetails() {
 
         return countryService.getSelectedCountryDetails();

@@ -58,6 +58,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -93,7 +94,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "getInventorySummary",
-            description = "Get a summary of current inventory",
+            description = "Get a summary of current inventory "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "Get inventory summary",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -136,6 +138,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/summary")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public InventorySummaryDto inventorySummary(
             @ModelAttribute @Valid @ParameterObject InventorySummaryQueryParams params) {
 
@@ -150,7 +153,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listInventoryByProduct",
-            description = "List current inventory grouped by product",
+            description = "List current inventory grouped by product "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List inventory by product",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -195,6 +199,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/by_product")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<InventoryByProductDto> inventoryByProduct(
             @ModelAttribute @Valid @ParameterObject InventoryByProductQueryParams params) {
 
@@ -209,7 +214,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listInventoryByStore",
-            description = "List current inventory grouped by store",
+            description = "List current inventory grouped by store "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List inventory by store",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -254,6 +260,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/by_store")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<InventoryByStoreDto> inventoryByStore(
             @ModelAttribute @Valid @ParameterObject InventoryByStoreQueryParams params) {
 
@@ -268,7 +275,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listInventoryByCategory",
-            description = "List current inventory grouped by category",
+            description = "List current inventory grouped by category "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List inventory by category",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -313,6 +321,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/by_category")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<InventoryByCategoryDto> inventoryByCategory(
             @ModelAttribute @Valid @ParameterObject InventoryByCategoryQueryParams params) {
 
@@ -327,7 +336,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listInventoryByBrand",
-            description = "List current inventory grouped by brand",
+            description = "List current inventory grouped by brand "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List inventory by brand",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -372,6 +382,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/by_brand")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<InventoryByBrandDto> inventoryByBrand(
             @ModelAttribute @Valid @ParameterObject InventoryByBrandQueryParams params) {
 
@@ -386,7 +397,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listInventoryByProductType",
-            description = "List current inventory grouped by product type",
+            description = "List current inventory grouped by product type "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List inventory by product type",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -431,6 +443,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/by_product_type")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<InventoryByProductTypeDto> inventoryByProductType(
             @ModelAttribute @Valid @ParameterObject InventoryByProductTypeQueryParams params) {
 
@@ -445,7 +458,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listLowStockInventory",
-            description = "List products whose current stock is below the configured reorder level",
+            description = "List products whose current stock is below the configured reorder level "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List low stock inventory",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -490,6 +504,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/low_stock")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<LowStockInventoryDto> lowStockInventory(
             @ModelAttribute @Valid @ParameterObject LowStockInventoryQueryParams params) {
 
@@ -498,7 +513,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listOutOfStockInventory",
-            description = "List products with no stock currently available",
+            description = "List products with no stock currently available "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List out of stock inventory",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -543,6 +559,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/out_of_stock")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<OutOfStockInventoryDto> outOfStockInventory(
             @ModelAttribute @Valid @ParameterObject OutOfStockInventoryQueryParams params) {
 
@@ -551,7 +568,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listOverstockInventory",
-            description = "List products whose current stock exceeds the configured maximum stock level",
+            description = "List products whose current stock exceeds the configured maximum stock level "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List overstock inventory",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -596,6 +614,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/overstock")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<OverstockInventoryDto> overstockInventory(
             @ModelAttribute @Valid @ParameterObject OverstockInventoryQueryParams params) {
 
@@ -604,7 +623,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listInventoryReorderRecommendations",
-            description = "List products that require replenishment based on their current stock and configured reorder parameters",
+            description = "List products that require replenishment based on their current stock and configured reorder parameters "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List inventory reorder recommendations",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -649,6 +669,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/reorder_recommendations")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<InventoryReorderRecommendationDto> inventoryReorderRecommendations(
             @ModelAttribute @Valid @ParameterObject InvReorderRecQueryParams params) {
 
@@ -663,7 +684,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listExpiringInventory",
-            description = "List inventory with an expiry date within the specified date range",
+            description = "List inventory with an expiry date within the specified date range "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List expiring inventory",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -708,6 +730,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/expiring")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<ExpiringInventoryDto> expiringInventory(
             @ModelAttribute @Valid @ParameterObject ExpiringInventoryQueryParams params) {
 
@@ -716,7 +739,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listExpiredInventory",
-            description = "List inventory that has already expired",
+            description = "List inventory that has already expired "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List expired inventory",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -761,6 +785,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/expired")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<ExpiredInventoryDto> expiredInventory(
             @ModelAttribute @Valid @ParameterObject ExpiredInventoryQueryParams params) {
 
@@ -769,7 +794,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listInventoryByBatch",
-            description = "List current inventory grouped by batch",
+            description = "List current inventory grouped by batch "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List inventory by batch",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -814,6 +840,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/by_batch")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<InventoryByBatchDto> inventoryByBatch(
             @ModelAttribute @Valid @ParameterObject InventoryByBatchQueryParams params) {
 
@@ -828,7 +855,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listSlowMovingInventory",
-            description = "List inventory with low movement activity over the specified period",
+            description = "List inventory with low movement activity over the specified period "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List slow moving inventory",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -873,6 +901,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/slow_moving")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<SlowMovingInventoryDto> slowMovingInventory(
             @ModelAttribute @Valid @ParameterObject SlowMovingInventoryQueryParams params) {
 
@@ -881,7 +910,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listDeadStockInventory",
-            description = "List inventory with no outbound movement over the specified inactivity period",
+            description = "List inventory with no outbound movement over the specified inactivity period "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List dead stock inventory",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -926,6 +956,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/dead_stock")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<DeadStockInventoryDto> deadStockInventory(
             @ModelAttribute @Valid @ParameterObject DeadStockInventoryQueryParams params) {
 
@@ -934,7 +965,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listInventoryDaysOfSupply",
-            description = "Estimate the number of days the current inventory can support based on historical stock consumption",
+            description = "Estimate the number of days the current inventory can support based on historical stock consumption "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List inventory days of supply",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -979,6 +1011,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/days_of_supply")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<InventoryDaysOfSupplyDto> inventoryDaysOfSupply(
             @ModelAttribute @Valid @ParameterObject InventoryDaysOfSupplyQueryParams params) {
 
@@ -987,7 +1020,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listInventoryTurnover",
-            description = "Calculate inventory turnover over the specified period",
+            description = "Calculate inventory turnover over the specified period "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List inventory turnover",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -1032,6 +1066,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/turnover")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<InventoryTurnoverDto> inventoryTurnover(
             @ModelAttribute @Valid @ParameterObject InventoryTurnoverQueryParams params) {
 
@@ -1046,7 +1081,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listInventoryBalanceReconciliation",
-            description = "Compare the current inventory snapshot against the balance derived from stock movements",
+            description = "Compare the current inventory snapshot against the balance derived from stock movements "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "Reconcile inventory balances",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -1091,6 +1127,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/balance_reconciliation")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<InventoryBalanceReconciliationDto> inventoryBalanceReconciliation(
             @ModelAttribute @Valid @ParameterObject InvBalanceRecQueryParams params) {
 
@@ -1105,7 +1142,8 @@ public class InventoryReportController {
 
     @Operation(
             operationId = "listInventoryInTransit",
-            description = "List inventory that has been sent between stores but has not yet been received",
+            description = "List inventory that has been sent between stores but has not yet been received "
+                + "requires permission: INVENTORY_REPORT_READ",
             summary = "List inventory in transit",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -1150,6 +1188,7 @@ public class InventoryReportController {
         )
     })
     @GetMapping("/in_transit")
+    @PreAuthorize("hasAuthority('INVENTORY_REPORT_READ')")
     public List<InventoryInTransitDto> inventoryInTransit(
             @ModelAttribute @Valid @ParameterObject InventoryInTransitQueryParams params) {
 

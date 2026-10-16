@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,7 +56,8 @@ public class StoreController {
     
     @Operation(
             operationId = "createStore",
-            description = "Create a store",
+            description = "Create a store "
+                + "requires permission: STORE_CREATE",
             summary = "Create a store",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -76,13 +78,15 @@ public class StoreController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('STORE_CREATE')")
     public Store create(@RequestBody @Valid StoreCreationDto dto){
         return storeService.create(dto);
     }
     
     @Operation(
             operationId = "listStores",
-            description = "List stores",
+            description = "List stores "
+                + "requires permission: STORE_READ",
             summary = "List stores",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -104,6 +108,7 @@ public class StoreController {
             content = @Content(schema = @Schema(implementation = ServerError.class))
         )
     })
+    @PreAuthorize("hasAuthority('STORE_READ')")
     @GetMapping
     public List<Store> list(@ModelAttribute @Valid @ParameterObject StoreQueryParams params){
         return storeService.list(params);
@@ -111,7 +116,8 @@ public class StoreController {
     
     @Operation(
             operationId = "countStores",
-            description = "Count stores",
+            description = "Count stores "
+                + "requires permission: STORE_READ",
             summary = "Count stores",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -132,13 +138,15 @@ public class StoreController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('STORE_READ')")
     public CountDto count(@ModelAttribute @Valid @ParameterObject StoreQueryParams params){
         return storeService.count(params);
     }
     
     @Operation(
             operationId = "getStore",
-            description = "get a store by id",
+            description = "get a store by id "
+                + "requires permission: STORE_READ",
             summary = "Get a stores by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -160,13 +168,15 @@ public class StoreController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('STORE_READ')")
     public Store fetch(@PathVariable(name = "id") UUID id){
         return storeService.fetch(id);
     }
     
     @Operation(
             operationId = "updateStore",
-            description = "Update a store",
+            description = "Update a store "
+                + "requires permission: STORE_UPDATE",
             summary = "Update a store by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -187,6 +197,7 @@ public class StoreController {
             content = @Content(schema = @Schema(implementation = ServerError.class))
         )
     })
+    @PreAuthorize("hasAuthority('STORE_UPDATE')")
     @PatchMapping(path = "/{id}")
     public Store update(@PathVariable(name = "id") UUID id, @RequestBody @Valid StoreUpdateDto dto){
         return storeService.update(id, dto);
@@ -194,7 +205,8 @@ public class StoreController {
     
     @Operation(
             operationId = "deleteStore",
-            description = "delete a store",
+            description = "delete a store "
+                + "requires permission: STORE_DELETE",
             summary = "Delete a store by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -216,6 +228,7 @@ public class StoreController {
         )
     })
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('STORE_DELETE')")
     public Store delete(@PathVariable(name = "id") UUID id){
         return storeService.delete(id);
     }

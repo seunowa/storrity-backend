@@ -33,6 +33,8 @@ import com.storrity.storrity.security.repository.UserRepository;
 import com.storrity.storrity.security.repository.UserRoleRepository;
 import com.storrity.storrity.security.service.AppUserService;
 import com.storrity.storrity.security.service.JwtUtil;
+import com.storrity.storrity.storeaccess.dto.StoreAccessPolicyRequest;
+import com.storrity.storrity.storeaccess.service.StoreAccessService;
 import com.storrity.storrity.util.exception.AuthenticationAppException;
 import com.storrity.storrity.util.exception.BadRequestAppException;
 import com.storrity.storrity.util.exception.ResourceNotFoundAppException;
@@ -73,12 +75,14 @@ public class AuthController {
     private final LicenseService licenseService;
     private final ClientSystemRepository clientSystemRepository;
     private final CountryService countryService;
+    private final StoreAccessService storeAccessService;
 
     public AuthController(UserRepository userRepo, UserRoleRepository roleRepo,
             UserPermissionRepository permissionRepo
             , JwtUtil jwtUtil, PasswordEncoder encoder, AppUserService appUserService
             , ClientSystemService clientSystemService, LicenseService licenseService
-            , ClientSystemRepository clientSystemRepository, CountryService countryService) {
+            , ClientSystemRepository clientSystemRepository, CountryService countryService
+            , StoreAccessService storeAccessService) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
         this.permissionRepo = permissionRepo;
@@ -89,6 +93,7 @@ public class AuthController {
         this.licenseService = licenseService;
         this.clientSystemRepository = clientSystemRepository;
         this.countryService = countryService;
+        this.storeAccessService = storeAccessService;
     }
     
     @Operation(
@@ -221,6 +226,21 @@ public class AuthController {
         appUserService.create(dto);
 
         System.out.println("✅ Added admin user with username");
+
+        // Retrieve the newly created root user
+        AppUser rootUser = userRepo.findByUsername(request.getUsername())
+                .orElseThrow(() ->
+                        new IllegalStateException(
+                                "Root user was created but could not be retrieved"
+                        ));
+
+        // Grant root user access to all stores
+        storeAccessService.updatePolicy(
+                rootUser.getUsername(),
+                new StoreAccessPolicyRequest(true),
+                rootUser.getUsername()
+        );
+        System.out.println("✅ Root user store access policy updated to grant access to all stores");
         
         //Create Create client system
         ClientSystemCreationDto cscDto = ClientSystemCreationDto

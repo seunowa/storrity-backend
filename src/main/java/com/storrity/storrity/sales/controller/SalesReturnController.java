@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.storrity.storrity.sales.service.SalesReturnService;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  *
@@ -53,7 +54,8 @@ public class SalesReturnController {
     
     @Operation(
             operationId = "createSalesReturn",
-            description = "Create a sales return",
+            description = "Create a sales return "
+                + "requires permission: SALE_RETURN_CREATE",
             summary = "Create a sales return", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -78,13 +80,15 @@ public class SalesReturnController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('SALE_RETURN_CREATE')")
     public SalesReturnDto create(@RequestBody @Valid SalesReturnCreationDto dto){
         return salesReturnService.create(dto);
     }
     
     @Operation(
             operationId = "listSalesReturns",
-            description = "List sales returns",
+            description = "List sales returns "
+                + "requires permission: SALE_RETURN_READ",
             summary = "List sales returns", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -111,13 +115,15 @@ public class SalesReturnController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('SALE_RETURN_READ')")
     public List<SalesReturnDto> list(@ModelAttribute @Valid  @ParameterObject SalesReturnQueryParams params){
         return salesReturnService.list(params);
     }
     
     @Operation(
             operationId = "countSalesReturns",
-            description = "Count sales returns",
+            description = "Count sales returns "
+                + "requires permission: SALE_RETURN_READ",
             summary = "Count sales returns", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -142,13 +148,15 @@ public class SalesReturnController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('SALE_RETURN_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject SalesReturnQueryParams params){
         return salesReturnService.count(params);
     }
     
     @Operation(
             operationId = "getSalesReturn",
-            description = "Get a sales return",
+            description = "Get a sales return "
+                + "requires permission: SALE_RETURN_READ",
             summary = "Get a sales return by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -174,6 +182,7 @@ public class SalesReturnController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('SALE_RETURN_READ')")
     public SalesReturnDto fetch(@PathVariable(name = "id") UUID id){
         return salesReturnService.fetch(id);
     }

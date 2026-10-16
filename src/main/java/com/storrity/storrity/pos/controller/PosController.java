@@ -9,7 +9,6 @@ import com.storrity.storrity.pos.dto.PosUpdateDto;
 import com.storrity.storrity.pos.entity.Pos;
 import com.storrity.storrity.pos.entity.PosQueryParam;
 import com.storrity.storrity.pos.service.PosService;
-import com.storrity.storrity.store.entity.Store;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.ApiError;
 import com.storrity.storrity.util.exception.AuthorizationError;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,7 +58,8 @@ public class PosController {
     
     @Operation(
             operationId = "createPos",
-            description = "Creates a Pos",
+            description = "Creates a Pos "
+                + "requires permission: POS_CREATE",
             summary = "Create a POS", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -83,13 +84,15 @@ public class PosController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('POS_CREATE')")
     public Pos create(@RequestBody @Valid PosCreationDto dto){
         return posService.create(dto);
     }
     
     @Operation(
             operationId = "listPos",
-            description = "List Pos",
+            description = "List Pos "
+                + "requires permission: POS_READ",
             summary = "List POS", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -113,13 +116,15 @@ public class PosController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('POS_READ')")
     public List<Pos> list(@ModelAttribute @Valid  @ParameterObject PosQueryParam params){
         return posService.list(params);
     }
     
     @Operation(
             operationId = "countPos",
-            description = "Count Pos",
+            description = "Count Pos "
+                + "requires permission: POS_READ",
             summary = "Count a POS", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -146,13 +151,15 @@ public class PosController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('POS_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject PosQueryParam params){
         return posService.count(params);
     }
     
     @Operation(
             operationId = "getPos",
-            description = "Get a Pos by Id",
+            description = "Get a Pos by Id "
+                + "requires permission: POS_READ",
             summary = "Get a usre role by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -178,13 +185,15 @@ public class PosController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('POS_READ')")
     public Pos fetch(@PathVariable(name = "id") UUID id){
         return posService.fetch(id);
     }
     
     @Operation(
             operationId = "updatePos",
-            description = "Update a Pos",
+            description = "Update a Pos "
+                + "requires permission: POS_UPDATE",
             summary = "Update a POS by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -210,13 +219,15 @@ public class PosController {
         )
     })
     @PatchMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('POS_UPDATE')")
     public Pos update(@PathVariable(name = "id") UUID id, @RequestBody @Valid PosUpdateDto dto){
         return posService.update(id, dto);
     }
     
     @Operation(
             operationId = "deletePos",
-            description = "Delete a Pos",
+            description = "Delete a Pos "
+                + "requires permission: POS_DELETE",
             summary = "Delete a user role by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -242,6 +253,7 @@ public class PosController {
         )
     })
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('POS_DELETE')")
     public Pos delete(@PathVariable(name = "id") UUID id){
         return posService.delete(id);
     }

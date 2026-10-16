@@ -26,6 +26,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -53,7 +54,8 @@ public class CheckoutController {
     
     @Operation(
             operationId = "createCheckout",
-            description = "Creates a checkout",
+            description = "Creates a checkout "
+                + "requires permission: CHECKOUT_CREATE",
             summary = "Create a checkout", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -78,13 +80,15 @@ public class CheckoutController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('CHECKOUT_CREATE')")
     public Checkout create(@RequestBody @Valid CheckoutCreationDto dto){
         return checkoutService.create(dto);
     }
     
     @Operation(
             operationId = "listCheckouts",
-            description = "List a checkouts",
+            description = "List a checkouts "
+                + "requires permission: CHECKOUT_READ",
             summary = "List checkouts", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -111,13 +115,15 @@ public class CheckoutController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('CHECKOUT_READ')")
     public List<Checkout> list(@ModelAttribute @Valid  @ParameterObject CheckoutQueryParams params){
         return checkoutService.list(params);
     }    
     
     @Operation(
             operationId = "countCheckouts",
-            description = "Count a checkouts",
+            description = "Count a checkouts "
+                + "requires permission: CHECKOUT_READ",
             summary = "Count checkouts", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -142,13 +148,15 @@ public class CheckoutController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('CHECKOUT_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject CheckoutQueryParams params){
         return checkoutService.count(params);
     }
     
     @Operation(
             operationId = "getCheckout",
-            description = "Get a checkout by id",
+            description = "Get a checkout by id "
+                + "requires permission: CHECKOUT_READ",
             summary = "Get a checkout by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -174,6 +182,7 @@ public class CheckoutController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('CHECKOUT_READ')")
     public Checkout fetch(@PathVariable(name = "id") UUID id){
         return checkoutService.fetch(id);
     }

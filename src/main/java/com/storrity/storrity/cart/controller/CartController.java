@@ -11,8 +11,6 @@ import com.storrity.storrity.cart.dto.CartUpdateDto;
 import com.storrity.storrity.cart.dto.PricedCartDto;
 import com.storrity.storrity.cart.entity.CartQueryParams;
 import com.storrity.storrity.cart.service.CartService;
-import com.storrity.storrity.product.entity.ProductQueryParams;
-import com.storrity.storrity.store.entity.Store;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.ApiError;
 import com.storrity.storrity.util.exception.AuthorizationError;
@@ -34,6 +32,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,7 +63,8 @@ public class CartController {
     
     @Operation(
             operationId = "createCart",
-            description = "Creates a cart",
+            description = "Creates a cart "
+                + "requires permission: CART_CREATE",
             summary = "Create a cart", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -89,13 +89,15 @@ public class CartController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('CART_CREATE')")
     public PricedCartDto create(@RequestBody @Valid CartCreationDto dto){
         return cartService.create(dto);
     }
     
     @Operation(
             operationId = "exportCarts",
-            description = "Exports carts matching the query params as a CSV file ",
+            description = "Exports carts matching the query params as a CSV file "
+                + "requires permission: CART_READ",
             summary = "Export carts to CSV",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -122,6 +124,7 @@ public class CartController {
         )
     })
     @GetMapping(value = "/export", produces = "text/csv")
+    @PreAuthorize("hasAuthority('CART_READ')")
     public ResponseEntity<byte[]> exportProducts(
             @ModelAttribute @Valid @ParameterObject CartQueryParams params) {
         
@@ -137,7 +140,8 @@ public class CartController {
     
     @Operation(
             operationId = "listCarts",
-            description = "List a carts",
+            description = "List a carts "
+                + "requires permission: CART_READ",
             summary = "List carts", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -164,13 +168,15 @@ public class CartController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('CART_READ')")
     public List<CartDto> list(@ModelAttribute @Valid  @ParameterObject CartQueryParams params){
         return cartService.list(params);
     }    
     
     @Operation(
             operationId = "CountCarts",
-            description = "Count carts",
+            description = "Count carts "
+                + "requires permission: CART_READ",
             summary = "Count carts", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -195,13 +201,15 @@ public class CartController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('CART_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject CartQueryParams params){
         return cartService.count(params);
     }
     
     @Operation(
             operationId = "getCart",
-            description = "Get a cart",
+            description = "Get a cart "
+                + "requires permission: CART_READ",
             summary = "Get a cart by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -233,7 +241,8 @@ public class CartController {
     
     @Operation(
             operationId = "updateCart",
-            description = "Update a cart",
+            description = "Update a cart "
+                + "requires permission: CART_UPDATE",
             summary = "Update cart",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -255,13 +264,15 @@ public class CartController {
         )
     })
     @PatchMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('CART_UPDATE')")
     public PricedCartDto update(@PathVariable(name = "id") UUID id, @RequestBody @Valid CartUpdateDto dto){
         return cartService.update(id, dto);
     }
     
     @Operation(
             operationId = "deleteCart",
-            description = "Delete a cart by id",
+            description = "Delete a cart by id "
+                + "requires permission: CART_DELETE",
             summary = "Delete a cart by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -283,13 +294,15 @@ public class CartController {
         )
     })
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('CART_DELETE')")
     public PricedCartDto delete(@PathVariable(name = "id") UUID id){
         return cartService.delete(id);
     }
     
     @Operation(
             operationId = "updateCartItem",
-            description = "Update a cart item",
+            description = "Update a cart item "
+                + "requires permission: CART_UPDATE",
             summary = "Add or update cart item",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -311,13 +324,15 @@ public class CartController {
         )
     })
     @PutMapping(path = "/{id}/items")
+    @PreAuthorize("hasAuthority('CART_UPDATE')")
     public PricedCartDto updateCartItems(@PathVariable(name = "id") UUID id, @RequestBody @Valid CartItemInsertDto dto){
         return cartService.updateCartItems(id, dto);
     }
     
     @Operation(
             operationId = "deleteCartItem",
-            description = "Delete a cart item by id",
+            description = "Delete a cart item by id "
+                + "requires permission: CART_DELETE",
             summary = "Delete a cart item by ID",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -339,6 +354,7 @@ public class CartController {
         )
     })
     @DeleteMapping(path = "/items/{id}")
+    @PreAuthorize("hasAuthority('CART_DELETE')")
     public PricedCartDto deleteCartItem(@PathVariable(name = "id") UUID id){
         return cartService.deleteCartItem(id);
     }

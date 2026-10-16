@@ -53,7 +53,8 @@ public class UserProfileController {
     
     @Operation(
             operationId = "listUserProfiles",
-            description = "List a user profiles",
+            description = "List a user profiles. "
+                + "requires permission: USER_PROFILE_READ",
             summary = "List user profiles", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -87,7 +88,8 @@ public class UserProfileController {
     
     @Operation(
             operationId = "countUserProfiles",
-            description = "Count user profiles",
+            description = "Count user profiles. "
+                + "requires permission: USER_PROFILE_READ",
             summary = "Count user profiles", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -119,7 +121,8 @@ public class UserProfileController {
     
     @Operation(
             operationId = "getUserProfile",
-            description = "Get a profile role by username",
+            description = "Get a profile role by username. "
+                + "requires permission: USER_PROFILE_READ",
             summary = "Get a user profile by username", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -152,7 +155,8 @@ public class UserProfileController {
     
     @Operation(
             operationId = "updateUserProfile",
-            description = "Update a profile role",
+            description = "Update a profile role. "
+                + "requires permission: USER_PROFILE_UPDATE",
             summary = "Update a user profile by username", 
             security = @SecurityRequirement(name = "bearerAuth")
     )

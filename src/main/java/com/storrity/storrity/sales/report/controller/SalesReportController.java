@@ -40,6 +40,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -67,7 +68,8 @@ private final SalesReportService salesReportService;
             summary = "Hourly Sales Summary",
             description = "Returns aggregated sales statistics grouped by hour of the day. "
                     + "Supports filtering by date range, store, product, customer, "
-                    + "cashier, client system and other report query parameters.",
+                    + "cashier, client system and other report query parameters. "
+                + "requires permission: SALE_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -97,6 +99,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("hourly_summary")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<HourlySalesSummaryDto> hourlySalesSummary(
             @ModelAttribute
             @Valid
@@ -111,7 +114,8 @@ private final SalesReportService salesReportService;
             summary = "Daily Sales Summary",
             description = "Returns aggregated sales statistics grouped by day. "
                     + "Supports filtering by date range, store, product, customer, "
-                    + "cashier, client system and other report query parameters.",
+                    + "cashier, client system and other report query parameters. "
+                + "requires permission: SALE_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -141,6 +145,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("daily_summary")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<DailySalesSummaryDto> dailySalesSummary(
             @ModelAttribute
             @Valid
@@ -155,7 +160,8 @@ private final SalesReportService salesReportService;
             summary = "Weekly Sales Summary",
             description = "Returns aggregated sales statistics grouped by week. "
                     + "Supports filtering by date range, store, product, customer, "
-                    + "cashier, client system and other report query parameters.",
+                    + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -185,6 +191,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("weekly_summary")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<WeeklySalesSummaryDto> weeklySalesSummary(
             @ModelAttribute
             @Valid
@@ -199,7 +206,8 @@ private final SalesReportService salesReportService;
             summary = "Monthly Sales Summary",
             description = "Returns aggregated sales statistics grouped by month. "
                     + "Supports filtering by date range, store, product, customer, "
-                    + "cashier, client system and other report query parameters.",
+                    + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -229,6 +237,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("monthly_summary")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<MonthlySalesSummaryDto> monthlySalesSummary(
             @ModelAttribute
             @Valid
@@ -243,7 +252,8 @@ private final SalesReportService salesReportService;
             summary = "Quarterly Sales Summary",
             description = "Returns aggregated sales statistics grouped by quarterly. "
                     + "Supports filtering by date range, store, product, customer, "
-                    + "cashier, client system and other report query parameters.",
+                    + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -273,6 +283,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("quarterly_summary")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<QuarterlySalesSummaryDto> quarterlySalesSummary(
             @ModelAttribute
             @Valid
@@ -287,7 +298,8 @@ private final SalesReportService salesReportService;
             summary = "Yearly Sales Summary",
             description = "Returns aggregated sales statistics grouped by yearly. "
                     + "Supports filtering by date range, store, product, customer, "
-                    + "cashier, client system and other report query parameters.",
+                    + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -317,6 +329,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("yearly_summary")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<YearlySalesSummaryDto> yearlySalesSummary(
             @ModelAttribute
             @Valid
@@ -331,7 +344,8 @@ private final SalesReportService salesReportService;
         summary = "Sales by Store",
         description = "Returns aggregated sales statistics grouped by store. "
                 + "Supports filtering by date range, store, product, customer, "
-                + "cashier, client system and other report query parameters.",
+                + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -361,6 +375,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("sales_by_store")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<SalesByStoreDto> salesByStore(
             @ModelAttribute
             @Valid
@@ -375,7 +390,8 @@ private final SalesReportService salesReportService;
         summary = "Sales by Product",
         description = "Returns aggregated sales statistics grouped by product. "
                 + "Supports filtering by date range, store, product, customer, "
-                + "cashier, client system and other report query parameters.",
+                + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -405,6 +421,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("sales_by_product")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<SalesByProductDto> salesByProduct(
             @ModelAttribute
             @Valid
@@ -419,7 +436,8 @@ private final SalesReportService salesReportService;
         summary = "Sales by Category",
         description = "Returns aggregated sales statistics grouped by category. "
                 + "Supports filtering by date range, store, product, customer, "
-                + "cashier, client system and other report query parameters.",
+                + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -449,6 +467,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("sales_by_category")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<SalesByCategoryDto> salesByCategory(
             @ModelAttribute
             @Valid
@@ -463,7 +482,8 @@ private final SalesReportService salesReportService;
         summary = "Sales by Brand",
         description = "Returns aggregated sales statistics grouped by brand. "
                 + "Supports filtering by date range, store, product, customer, "
-                + "cashier, client system and other report query parameters.",
+                + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -493,6 +513,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("sales_by_brand")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<SalesByBrandDto> salesByBrand(
             @ModelAttribute
             @Valid
@@ -507,7 +528,8 @@ private final SalesReportService salesReportService;
         summary = "Sales by Cashier",
         description = "Returns aggregated sales statistics grouped by cashier. "
                 + "Supports filtering by date range, store, product, customer, "
-                + "cashier, client system and other report query parameters.",
+                + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -537,6 +559,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("sales_by_cashier")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<SalesByCashierDto> salesByCashier(
             @ModelAttribute
             @Valid
@@ -551,7 +574,8 @@ private final SalesReportService salesReportService;
         summary = "Sales by Client System",
         description = "Returns aggregated sales statistics grouped by client system. "
                 + "Supports filtering by date range, store, product, customer, "
-                + "cashier, client system and other report query parameters.",
+                + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -581,6 +605,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("sales_by_client_system")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<SalesByClientSystemDto> salesByClientSystem(
             @ModelAttribute
             @Valid
@@ -596,7 +621,8 @@ private final SalesReportService salesReportService;
         summary = "Sales by Customer",
         description = "Returns aggregated sales statistics grouped by customer. "
                 + "Supports filtering by date range, store, product, customer, "
-                + "cashier, client system and other report query parameters.",
+                + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -626,6 +652,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("sales_by_customer")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<SalesByCustomerDto> salesByCustomer(
             @ModelAttribute
             @Valid
@@ -640,7 +667,8 @@ private final SalesReportService salesReportService;
             summary = "Sales by Month",
             description = "Returns aggregated sales statistics grouped by month. "
                     + "Supports filtering by date range, store, product, customer, "
-                    + "cashier, client system and other report query parameters.",
+                    + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -670,6 +698,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("sales_by_month")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<SalesByMonthDto> salesByMonth(
             @ModelAttribute
             @Valid
@@ -685,7 +714,8 @@ private final SalesReportService salesReportService;
         summary = "Sales by Hour",
         description = "Returns aggregated sales statistics grouped by hour. "
                 + "Supports filtering by date range, store, product, customer, "
-                + "cashier, client system and other report query parameters.",
+                + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -715,6 +745,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("sales_by_hour")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<SalesByHourDto> salesByHour(
             @ModelAttribute
             @Valid
@@ -730,7 +761,8 @@ private final SalesReportService salesReportService;
         summary = "Sales by Weekday",
         description = "Returns aggregated sales statistics grouped by weekday. "
                 + "Supports filtering by date range, store, product, customer, "
-                + "cashier, client system and other report query parameters.",
+                + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -760,6 +792,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("sales_by_weekday")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public List<SalesByWeekdayDto> salesByWeekday(
             @ModelAttribute
             @Valid
@@ -775,7 +808,8 @@ private final SalesReportService salesReportService;
         summary = "Average Basket",
         description = "Returns aggregated sales statistics grouped by average basket. "
                 + "Supports filtering by date range, store, product, customer, "
-                + "cashier, client system and other report query parameters.",
+                + "cashier, client system and other report query parameters "
+                + "requires permission: SALE_REPORT_READ",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -805,6 +839,7 @@ private final SalesReportService salesReportService;
         )
     })
     @GetMapping("average_basket")
+    @PreAuthorize("hasAuthority('SALE_REPORT_READ')")
     public AverageBasketDto averageBasket(
             @ModelAttribute
             @Valid

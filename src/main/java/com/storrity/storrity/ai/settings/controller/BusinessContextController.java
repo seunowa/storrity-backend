@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +46,8 @@ public class BusinessContextController {
 
     @Operation(
             operationId = "getGlobalBusinessContext",
-            description = "Get global AI business context",
+            description = "Get global AI business context "
+                + "requires permission: AI_BUSINESS_CONTEXT_READ",
             summary = "Get global business context",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -71,13 +73,15 @@ public class BusinessContextController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('AI_BUSINESS_CONTEXT_READ')")
     public BusinessContextDto getGlobal() {
         return service.getGlobal();
     }
 
     @Operation(
             operationId = "getStoreBusinessContext",
-            description = "Get AI business context for a specific store by store ID",
+            description = "Get AI business context for a specific store by store ID "
+                + "requires permission: AI_BUSINESS_CONTEXT_READ",
             summary = "Get business context for store",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -103,13 +107,15 @@ public class BusinessContextController {
         )
     })
     @GetMapping("/store/{storeId}")
+    @PreAuthorize("hasAuthority('AI_BUSINESS_CONTEXT_READ')")
     public BusinessContextDto getForStore(@PathVariable UUID storeId) {
         return service.getForStore(storeId);
     }
 
     @Operation(
             operationId = "saveGlobalBusinessContext",
-            description = "Create or update global AI business context",
+            description = "Create or update global AI business context "
+                + "requires permission: AI_BUSINESS_CONTEXT_UPDATE",
             summary = "Save global business context",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -134,6 +140,7 @@ public class BusinessContextController {
         )
     })
     @PutMapping
+    @PreAuthorize("hasAuthority('AI_BUSINESS_CONTEXT_UPDATE')")
     public BusinessContextDto saveGlobal(@RequestBody @Valid BusinessContextCreationDto request) {
         
         return service.saveGlobalCtx(request);
@@ -141,7 +148,8 @@ public class BusinessContextController {
 
     @Operation(
             operationId = "saveStoreBusinessContext",
-            description = "Create or update AI business context for a specific store",
+            description = "Create or update AI business context for a specific store "
+                + "requires permission: AI_BUSINESS_CONTEXT_UPDATE",
             summary = "Save store business context",
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -166,6 +174,7 @@ public class BusinessContextController {
         )
     })
     @PutMapping("/store/{storeId}")
+    @PreAuthorize("hasAuthority('AI_BUSINESS_CONTEXT_UPDATE')")
     public BusinessContextDto saveForStore(@PathVariable UUID storeId,
                                         @RequestBody @Valid BusinessContextCreationDto request) {
         return service.saveStoreCtx(storeId, request);

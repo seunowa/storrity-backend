@@ -1,8 +1,14 @@
 STORRITY RELEASE NOTES
 
 Version: 1.6
-Fix typo in api naming change /api/v1/sales_attendance/** to /api/v1/sales_attendants/**
+
+Bug Fix:
+* Fix typo in api naming change /api/v1/sales_attendance/** to /api/v1/sales_attendants/**
 change properties walletId to accountId
+
+Feature:
+* Role based fine-grained access control
+* Store access to manage the stores a user can access
 
 Version: 1.5.1
 
@@ -33,7 +39,7 @@ Version: 1.4.1
 
 ## MODULE: Supply
 
-Bugfix:
+Bug Fix:
 * fix bug in supply service - order
 
 Version: 1.4.0

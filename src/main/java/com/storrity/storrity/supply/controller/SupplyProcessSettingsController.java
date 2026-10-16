@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -53,7 +54,8 @@ public class SupplyProcessSettingsController {
 
     @Operation(
         operationId = "getSupplyProcessSettings",
-        description = "Get the current system-wide supply process settings",
+        description = "Get the current system-wide supply process settings "
+                + "requires permission: SUPPLY_SETTINGS_READ",
         summary = "Get supply process settings",
         security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -91,6 +93,7 @@ public class SupplyProcessSettingsController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('SUPPLY_SETTINGS_READ')")
     public ResponseEntity<SupplyProcess> getSupplyProcessSettings() {
 
         SupplyProcess supplyProcess =
@@ -106,7 +109,8 @@ public class SupplyProcessSettingsController {
 
     @Operation(
         operationId = "updateSupplyProcessSettings",
-        description = "Replace the existing system-wide supply process settings with the supplied configuration",
+        description = "Replace the existing system-wide supply process settings with the supplied configuration "
+                + "requires permission: SUPPLY_SETTINGS_UPDATE",
         summary = "Update supply process settings",
         security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -149,6 +153,7 @@ public class SupplyProcessSettingsController {
         )
     })
     @PutMapping
+    @PreAuthorize("hasAuthority('SUPPLY_SETTINGS_UPDATE')")
     public SupplyProcess updateSupplyProcessSettings(
             @RequestBody SupplyProcess supplyProcess) {
 
@@ -158,7 +163,8 @@ public class SupplyProcessSettingsController {
 
     @Operation(
         operationId = "getSupplyProcessTemplates",
-        description = "Get the available predefined supply process templates",
+        description = "Get the available predefined supply process templates "
+                + "requires permission: SUPPLY_SETTINGS_READ",
         summary = "Get supply process templates",
         security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -192,6 +198,7 @@ public class SupplyProcessSettingsController {
         )
     })
     @GetMapping("/templates")
+    @PreAuthorize("hasAuthority('SUPPLY_SETTINGS_READ')")
     public SupplyProcessTemplate getTemplates() {
 
         return supplyProcessSettingsService.getTemplates();

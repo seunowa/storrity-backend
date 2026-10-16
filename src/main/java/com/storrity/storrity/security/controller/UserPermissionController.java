@@ -44,7 +44,8 @@ public class UserPermissionController {
     
     @Operation(
             operationId = "listUserPermissions",
-            description = "List user permissions",
+            description = "List user permissions. "
+                + "requires permission: PERMISSION_READ",
             summary = "List user permissions", 
             security = @SecurityRequirement(name = "bearerAuth")
     )

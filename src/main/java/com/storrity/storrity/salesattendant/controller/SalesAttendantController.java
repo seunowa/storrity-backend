@@ -9,7 +9,6 @@ import com.storrity.storrity.salesattendant.dto.SalesAttendantUpdateDto;
 import com.storrity.storrity.salesattendant.entity.SalesAttendant;
 import com.storrity.storrity.salesattendant.entity.SalesAttendantQueryParams;
 import com.storrity.storrity.salesattendant.service.SalesAttendantService;
-import com.storrity.storrity.store.entity.Store;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.ApiError;
 import com.storrity.storrity.util.exception.AuthorizationError;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,7 +64,8 @@ public class SalesAttendantController {
      */
     @Operation(
             operationId = "createSalesAttendant",
-            description = "Create a sales attendant",
+            description = "Create a sales attendant "
+                + "requires permission: SALES_ATTENDANT_CREATE",
             summary = "Create a sales attendant", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -89,13 +90,15 @@ public class SalesAttendantController {
         )
     })
     @PostMapping
+    @PreAuthorize("hasAuthority('SALES_ATTENDANT_CREATE')")
     public SalesAttendant create(@RequestBody @Valid SalesAttendantCreationDto dto){
         return salesAttendantService.create(dto);
     }
     
     @Operation(
             operationId = "listSalesAttendants",
-            description = "List sales attendants",
+            description = "List sales attendants "
+                + "requires permission: SALES_ATTENDANT_READ",
             summary = "List Sales attendants", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -122,13 +125,15 @@ public class SalesAttendantController {
         )
     })
     @GetMapping
+    @PreAuthorize("hasAuthority('SALES_ATTENDANT_READ')")
     public List<SalesAttendant> list(@ModelAttribute @Valid  @ParameterObject SalesAttendantQueryParams params){
         return salesAttendantService.list(params);
     }
     
     @Operation(
             operationId = "countSalesAttendants",
-            description = "Count sales attendants",
+            description = "Count sales attendants "
+                + "requires permission: SALES_ATTENDANT_READ",
             summary = "Count Sales attendants", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -153,13 +158,15 @@ public class SalesAttendantController {
         )
     })
     @GetMapping(path = "/count")
+    @PreAuthorize("hasAuthority('SALES_ATTENDANT_READ')")
     public CountDto count(@ModelAttribute @Valid  @ParameterObject SalesAttendantQueryParams params){
         return salesAttendantService.count(params);
     }
     
     @Operation(
             operationId = "getSalesAttendant",
-            description = "Get a sales attendant",
+            description = "Get a sales attendant "
+                + "requires permission: SALES_ATTENDANT_READ",
             summary = "Get a Sales attendant by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -185,13 +192,15 @@ public class SalesAttendantController {
         )
     })
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('SALES_ATTENDANT_READ')")
     public SalesAttendant fetch(@PathVariable(name = "id") UUID id){
         return salesAttendantService.fetch(id);
     }
     
     @Operation(
             operationId = "updateSalesAttendant",
-            description = "Update a sales attendant",
+            description = "Update a sales attendant "
+                + "requires permission: SALES_ATTENDANT_UPDATE",
             summary = "Update a Sales attendant by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -217,13 +226,15 @@ public class SalesAttendantController {
         )
     })
     @PatchMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('SALES_ATTENDANT_UPDATE')")
     public SalesAttendant update(@PathVariable(name = "id") UUID id, @RequestBody @Valid SalesAttendantUpdateDto dto){
         return salesAttendantService.update(id, dto);
     }
     
     @Operation(
             operationId = "deleteSalesAttendant",
-            description = "Delete a sales attendant",
+            description = "Delete a sales attendant "
+                + "requires permission: SALES_ATTENDANT_DELETE",
             summary = "Delete a Sales attendant by ID", 
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -249,6 +260,7 @@ public class SalesAttendantController {
         )
     })
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAuthority('SALES_ATTENDANT_DELETE')")
     public SalesAttendant delete(@PathVariable(name = "id") UUID id){
         return salesAttendantService.delete(id);
     }
