@@ -1,5 +1,15 @@
 STORRITY RELEASE NOTES
 
+Version: 1.6.2
+
+Bug Fix:
+* Fix issue with fetching detail of current logged in user in users store access controller
+
+Version: 1.6.1
+
+Bug Fix:
+* Fix repository in list users
+
 Version: 1.6
 
 Bug Fix:

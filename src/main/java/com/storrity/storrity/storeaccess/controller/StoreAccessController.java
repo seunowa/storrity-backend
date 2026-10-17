@@ -9,6 +9,7 @@ import com.storrity.storrity.storeaccess.dto.StoreAssignmentRequest;
 import com.storrity.storrity.storeaccess.service.StoreAccessService;
 import com.storrity.storrity.security.entity.AppUser;
 import com.storrity.storrity.security.repository.UserRepository;
+import com.storrity.storrity.security.service.AuthenticatedUser;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,10 +94,15 @@ public class StoreAccessController {
     }
 
     private String resolveActorId(Authentication authentication) {
+        //@Todo refactor how current user is retrived across the application
+
         if (authentication == null || authentication.getName() == null) {
             throw new AccessDeniedException("An authenticated application user is required for this operation");
         }
-        return userRepository.findByUsername(authentication.getName())
+        
+        AuthenticatedUser principal = (AuthenticatedUser)authentication.getPrincipal();
+        String username = principal.getUsername();
+        return userRepository.findByUsername(username)
                 .map(AppUser::getUsername)
                 .orElseThrow(() -> new AccessDeniedException("Authenticated principal is not an application user"));
     }
