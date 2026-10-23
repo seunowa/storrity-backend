@@ -18,6 +18,12 @@ import com.storrity.storrity.stocktransfer.repository.*;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.BadRequestAppException;
 import com.storrity.storrity.util.exception.ResourceNotFoundAppException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -37,6 +43,9 @@ public class StockTransferServiceImpl implements StockTransferService {
     private final StockTransferItemRepository itemRepository;
     private final StockTransferReceivedItemRepository receivedItemRepository;
     private final StockTransferProcessSettingsService processSettingsService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public StockTransferServiceImpl(
             StoreService storeService,
@@ -60,11 +69,39 @@ public class StockTransferServiceImpl implements StockTransferService {
         return StockTransferDto.from(get(id));
     }
 
+//    @Override
+//    public List<StockTransferDto> list(StockTransferQueryParams params) {
+//        return repository.findAll(
+//                StockTransferSpecifications.from(params),
+//                Sort.by(Sort.Direction.DESC, "createdAt"))
+//            .stream()
+//            .map(StockTransferDto::from)
+//            .collect(Collectors.toList());
+//    }
+    
     @Override
     public List<StockTransferDto> list(StockTransferQueryParams params) {
-        return repository.findAll(
-                StockTransferSpecifications.from(params),
-                Sort.by(Sort.Direction.DESC, "createdAt"))
+        int limit = params.getLimit() == null || params.getLimit() < 1
+            ? 10 : Math.min(params.getLimit(), 100);
+        int offset = params.getOffset() == null || params.getOffset() < 0
+            ? 0 : params.getOffset();
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<StockTransfer> cq = cb.createQuery(StockTransfer.class);
+        Root<StockTransfer> root = cq.from(StockTransfer.class);
+
+        Predicate predicate = StockTransferSpecifications.from(params)
+            .toPredicate(root, cq, cb);
+        if (predicate != null) {
+            cq.where(predicate);
+        }
+
+        cq.select(root).orderBy(cb.desc(root.get("createdAt")), cb.asc(root.get("id")));
+
+        return entityManager.createQuery(cq)
+            .setFirstResult(offset)
+            .setMaxResults(limit)
+            .getResultList()
             .stream()
             .map(StockTransferDto::from)
             .collect(Collectors.toList());

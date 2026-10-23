@@ -31,8 +31,8 @@ public class PingController {
     @Operation(
             operationId = "ping",
             description = "Ping storrity backend",
-            summary = "Ping storrity backend", 
-            security = @SecurityRequirement(name = "bearerAuth")
+            summary = "Ping storrity backend" 
+//            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
         @ApiResponse(

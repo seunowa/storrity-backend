@@ -2,10 +2,11 @@ package com.storrity.storrity.stocktransfer.repository;
 
 import com.storrity.storrity.stocktransfer.dto.StockTransferQueryParams;
 import com.storrity.storrity.stocktransfer.entity.StockTransfer;
-import com.storrity.storrity.stocktransfer.entity.StockTransferStatus;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 public final class StockTransferSpecifications {
@@ -26,19 +27,50 @@ public final class StockTransferSpecifications {
     }
 
     private static Specification<StockTransfer> dateRange(StockTransferQueryParams p) {
-        if (p.getFromDate() == null && p.getToDate() == null) return null;
+                
+        List<LocalDate> range = p.getDateRange();
+//        if (range == null || range.isEmpty()) return null;
+//
+//        LocalDate fromDate = range.get(0);
+//        LocalDate toDate = range.size() > 1 ? range.get(1) : null;
+//
+//        if (fromDate == null && toDate == null) return null;
+//
+//        return (root, q, cb) -> {
+//            LocalDateTime from = fromDate == null
+//                ? LocalDateTime.MIN : fromDate.atStartOfDay();
+//
+//            LocalDateTime to = toDate == null
+//                ? LocalDateTime.MAX : toDate.plusDays(1).atStartOfDay();
+//
+//            return cb.and(
+//                cb.greaterThanOrEqualTo(root.get("createdAt"), from),
+//                cb.lessThan(root.get("createdAt"), to)
+//            );
+//        };
+//        
+//        if (range == null || range.isEmpty()) return null;
+//
+//        LocalDate fromDate = range.get(0);
+//        LocalDate toDate = range.size() > 1 ? range.get(1) : null;
+
+        if (range == null || range.isEmpty()) return null;
+
+        LocalDate fromDate = range.get(0);
+        LocalDate toDate = range.size() > 1 ? range.get(1) : null;
+
+        if (fromDate == null && toDate == null) return null;
 
         return (root, q, cb) -> {
-            LocalDateTime from = p.getFromDate() == null
-                ? LocalDateTime.MIN : p.getFromDate().atStartOfDay();
+            var createdAt = root.<java.time.LocalDateTime>get("createdAt");
 
-            LocalDateTime to = p.getToDate() == null
-                ? LocalDateTime.MAX : p.getToDate().plusDays(1).atStartOfDay();
+            var from = fromDate == null
+                ? null : cb.greaterThanOrEqualTo(createdAt, fromDate.atStartOfDay());
+            var to = toDate == null
+                ? null : cb.lessThan(createdAt, toDate.plusDays(1).atStartOfDay());
 
-            return cb.and(
-                cb.greaterThanOrEqualTo(root.get("createdAt"), from),
-                cb.lessThan(root.get("createdAt"), to)
-            );
+            if (from != null && to != null) return cb.and(from, to);
+            return from != null ? from : to;
         };
     }
 
