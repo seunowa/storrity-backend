@@ -1,6 +1,6 @@
 STORRITY RELEASE NOTES
 
-Version: 1.6.2
+Version: 1.7
 
 Feature:
 * Multiple payment methods in checkout

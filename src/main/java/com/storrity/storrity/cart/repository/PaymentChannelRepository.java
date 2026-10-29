@@ -12,9 +12,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Seun Owa
  */
 public interface PaymentChannelRepository
-        extends JpaRepository<PaymentChannel, UUID> {
+        extends JpaRepository<PaymentChannel, UUID>, PaymentChannelRepositoryCustom {
 
     boolean existsByStoreIdAndCode(UUID storeId, String code);
+
+    boolean existsByStoreIdAndCodeAndIdNot(UUID storeId, String code, UUID id);
 
     List<PaymentChannel> findByStoreIdAndPaymentMethodAndActiveTrue(
         UUID storeId,
@@ -25,4 +27,6 @@ public interface PaymentChannelRepository
         UUID id,
         UUID storeId
     );
+
+    Optional<PaymentChannel> findByStoreIdAndCode(UUID storeId, String code);
 }

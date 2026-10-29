@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/v1/cashier-shifts")
+@RequestMapping("/api/v1/cashier_shifts")
 @Tag(name = "Cashier Shifts", description = "Operations related to cashier shifts")
 public class CashierShiftController {
 
