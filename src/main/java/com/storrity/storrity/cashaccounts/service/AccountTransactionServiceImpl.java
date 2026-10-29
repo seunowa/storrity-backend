@@ -86,10 +86,10 @@ public class AccountTransactionServiceImpl implements AccountTransactionService{
         LocalDateTime now = LocalDateTime.now();
         for (AccountTransactionStep step : instruction.getSteps()) {            
             CashAccount account = accountMap.get(step.getAccountId());
-            account.setLastTxnAt(now);
             if(account == null){
                 throw new ResourceNotFoundAppException("Account not found with id: " + step.getAccountId());
             }
+            account.setLastTxnAt(now);
         
             if (CashAccountStatus.ACTIVE != account.getStatus()) {
                 inActiveAccountIds.add(step.getAccountId());

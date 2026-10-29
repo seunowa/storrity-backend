@@ -1,9 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-package com.storrity.storrity.security.service;
+package com.storrity.storrity.security.config;
 
 import com.storrity.storrity.security.entity.UserPermission;
 import com.storrity.storrity.security.entity.UserRole;
@@ -103,6 +98,12 @@ public class SecurityRbacSeeder implements ApplicationRunner {
         catalog.put("CART_DELETE", "Delete carts and cart items");
         catalog.put("CHECKOUT_READ", "Read checkouts");
         catalog.put("CHECKOUT_CREATE", "Create checkouts");
+        catalog.put("CASHIER_SHIFT_CREATE", "Open cashier shifts");
+        catalog.put("CASHIER_SHIFT_READ", "Read cashier shifts and expected payment amounts");
+        catalog.put("CASHIER_SHIFT_CLOSE", "Close cashier shifts");
+        catalog.put("CASHIER_SUBMIT_SHIFT_CLOSE", "Submit counted amounts for shift closing");
+        catalog.put("CASHIER_SHIFT_REVIEW", "Review and reject submitted shift closings");
+        catalog.put("CASH_FLOW_CREATE", "Record manual cash inflows and outflows");
         catalog.put("SALES_ATTENDANT_READ", "Read sales attendants");
         catalog.put("SALES_ATTENDANT_CREATE", "Create sales attendants");
         catalog.put("SALES_ATTENDANT_UPDATE", "Update sales attendants");
@@ -160,7 +161,7 @@ public class SecurityRbacSeeder implements ApplicationRunner {
         admin.removeAll(Set.of("DATABASE_BACKUP", "COUNTRY_CONFIG_UPDATE", "USER_SUPER_ADMIN_ASSIGN"));
         seedRole("ADMIN", admin);
         seedRole("STORE_KEEPER", Set.of("PRODUCT_READ", "PRODUCT_CREATE", "PRODUCT_UPDATE", "PRODUCT_IMPORT", "PRODUCT_EXPORT", "STOCK_MOVEMENT_READ", "STOCK_MOVEMENT_CREATE", "INVENTORY_REPORT_READ", "INVENTORY_RECONCILIATION_READ", "SUPPLY_READ", "SUPPLY_DRAFT_CREATE", "SUPPLY_DRAFT_UPDATE", "SUPPLY_DRAFT_SUBMIT", "SUPPLY_ORDER", "SUPPLY_DELIVERY_RECORD", "SUPPLY_DELIVERY_SUBMIT", "SUPPLY_RECEIVE", "SUPPLY_REPORT_READ", "STOCK_TRANSFER_READ", "STOCK_TRANSFER_DRAFT_CREATE", "STOCK_TRANSFER_DRAFT_UPDATE", "STOCK_TRANSFER_DRAFT_SUBMIT", "STOCK_TRANSFER_SEND", "STOCK_TRANSFER_RECEIPT_SUBMIT", "STOCK_TRANSFER_RECEIVE", "STOCK_TRANSFER_REPORT_READ", "STORE_READ", "CUSTOMER_READ", "SALE_READ", "SALE_REPORT_READ"));
-        seedRole("ATTENDANT", Set.of("PRODUCT_READ", "STORE_READ", "CUSTOMER_READ", "CUSTOMER_CREATE", "CUSTOMER_UPDATE", "POS_READ", "CART_READ", "CART_CREATE", "CART_UPDATE", "CART_DELETE", "CHECKOUT_READ", "CHECKOUT_CREATE", "SALE_READ", "SALE_CREATE", "SALES_ATTENDANT_READ", "SALE_RETURN_READ"));
+        seedRole("ATTENDANT", Set.of("PRODUCT_READ", "STORE_READ", "CUSTOMER_READ", "CUSTOMER_CREATE", "CUSTOMER_UPDATE", "POS_READ", "CART_READ", "CART_CREATE", "CART_UPDATE", "CART_DELETE", "CHECKOUT_READ", "CHECKOUT_CREATE", "SALE_READ", "SALE_CREATE", "SALES_ATTENDANT_READ", "SALE_RETURN_READ", "CASHIER_SHIFT_CREATE", "CASHIER_SHIFT_READ", "CASH_FLOW_CREATE", "CASHIER_SUBMIT_SHIFT_CLOSE"));
     }
 
     private void seedRole(String id, Set<String> permissionIds) {

@@ -40,6 +40,9 @@ import com.storrity.storrity.security.repository.UserRepository;
 import com.storrity.storrity.security.repository.UserRoleRepository;
 import com.storrity.storrity.security.service.AppUserService;
 import com.storrity.storrity.security.service.AuthenticatedUser;
+import com.storrity.storrity.store.dto.StoreCreationDto;
+import com.storrity.storrity.store.entity.StoreQueryParams;
+import com.storrity.storrity.store.service.StoreService;
 import com.storrity.storrity.supply.dto.DeliveryDto;
 import com.storrity.storrity.supply.dto.DeliveryItemDto;
 import com.storrity.storrity.supply.dto.PurchaseOrderItemCreationDto;
@@ -59,7 +62,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Profile("dev")
 public class DataInitializer implements CommandLineRunner{
     
-    private final StoreRepository storeRepository;
+    private final StoreService storeService;
     private final ProductRepository productRepository;
     private final ProductPackageRepository productPackageRepository;
     private final SupplyService supplyService;
@@ -71,12 +74,12 @@ public class DataInitializer implements CommandLineRunner{
     private final LicenseService licenseService;
 
     @Autowired
-    public DataInitializer(StoreRepository storeRepository, ProductRepository productRepository
+    public DataInitializer(StoreService storeService, ProductRepository productRepository
             , ProductPackageRepository productPackageRepository, SupplyService supplyService
             , SalesService SaleService, CashAccountService cashAccountService
             , UserRepository userRepo, UserRoleRepository roleRepo, AppUserService appUserService
             , LicenseService licenseService) {
-        this.storeRepository = storeRepository;
+        this.storeService = storeService;
         this.productRepository = productRepository;
         this.productPackageRepository = productPackageRepository;
         this.supplyService = supplyService;
@@ -92,7 +95,7 @@ public class DataInitializer implements CommandLineRunner{
     public void run(String... args) throws Exception {
 //        seedAdmin();        
         installDevLicense();
-        List<Store> stores = storeRepository.findAll();
+        List<Store> stores = storeService.list(StoreQueryParams.builder().build());
         if(stores.isEmpty()){
             runAsDevUser(this::init);
         }
@@ -150,7 +153,8 @@ public class DataInitializer implements CommandLineRunner{
 //    }
     
     public void init() {
-        Store s = Store.builder()
+        StoreCreationDto sDto = StoreCreationDto
+                .builder()
                 .city("Ibadan")
                 .email("store@store.com")
                 .managerAddress("Manager Address")
@@ -163,9 +167,11 @@ public class DataInitializer implements CommandLineRunner{
                 .street("Dugbe")
                 .status(StoreStatus.OPEN)
                 .build();
-        Store savedStore = storeRepository.save(s);
         
-        Store s2 = Store.builder()
+        Store savedStore = storeService.create(sDto);
+        
+        StoreCreationDto sDto2 = StoreCreationDto
+                .builder()
                 .city("Lagos")
                 .email("store2@store.com")
                 .managerAddress("Manager Address 2")
@@ -178,7 +184,7 @@ public class DataInitializer implements CommandLineRunner{
                 .street("Ikeja")
                 .status(StoreStatus.OPEN)
                 .build();
-        Store savedStore2 = storeRepository.save(s2);
+        Store savedStore2 = storeService.create(sDto2);
         
         Product p = Product.builder()
                 .category("Category X")

@@ -4,6 +4,7 @@
  */
 package com.storrity.storrity.store.service;
 
+import com.storrity.storrity.cart.service.PaymentChannelService;
 import com.storrity.storrity.store.dto.StoreCreationDto;
 import com.storrity.storrity.store.dto.StoreUpdateDto;
 import com.storrity.storrity.store.entity.Store;
@@ -30,11 +31,15 @@ public class StoreServiceImpl implements StoreService{
     
     private final StoreRepository storeRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final PaymentChannelService cashPaymentChannelService;
 
     @Autowired
-    public StoreServiceImpl(StoreRepository storeRepository, ApplicationEventPublisher eventPublisher) {
+    public StoreServiceImpl(StoreRepository storeRepository,
+            ApplicationEventPublisher eventPublisher,
+            PaymentChannelService cashPaymentChannelSeeder) {
         this.storeRepository = storeRepository;
         this.eventPublisher = eventPublisher;
+        this.cashPaymentChannelService = cashPaymentChannelSeeder;
     }
 
     @Override
@@ -55,6 +60,8 @@ public class StoreServiceImpl implements StoreService{
                 .build();
         
         Store saved = storeRepository.save(newStore);
+        
+        cashPaymentChannelService.createCashChannelForStore(saved.getId());
         
         eventPublisher.publishEvent(new StoreCreatedEvent(saved));
         return saved;

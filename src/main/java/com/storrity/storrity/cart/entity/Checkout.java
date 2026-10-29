@@ -8,17 +8,20 @@ import com.storrity.storrity.cashaccounts.entity.Money;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -51,12 +54,14 @@ public class Checkout {
     @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
-    private String paymentMethod;  
-    @AttributeOverrides({
-        @AttributeOverride(name = "valueInMicroNaira", column = @Column(name = "amount_paid_in_micro_naira"))
-    })
+//    private String paymentMethod;    
+    @OneToMany(mappedBy = "checkoutId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Collection<CheckoutPayment> checkoutPayments;  
+    @OneToMany(mappedBy = "checkoutId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Collection<Change> changes;
     private Money amountPaid;
     private String performedBy;
+    private UUID shiftId;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")

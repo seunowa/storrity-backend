@@ -2,6 +2,16 @@ STORRITY RELEASE NOTES
 
 Version: 1.6.2
 
+Feature:
+* Multiple payment methods in checkout
+* Payment channel configuration per store
+* Remove the need for sales attendant
+* Remove the need for sales account
+* Opening and Closing of cashier shift
+* CashFLow to track cash movement in and out of the drawer
+
+Version: 1.6.2
+
 Bug Fix:
 * Fix issue with fetching detail of current logged in user in users store access controller
 
