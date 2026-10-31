@@ -60,7 +60,6 @@ public class SalesReturnServiceImpl implements SalesReturnService{
 
         validateReturnQuantity(sale, dto);
         
-//        @TOdo use security principal as performed by
         AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String permedBy = principal.getUsername();
 

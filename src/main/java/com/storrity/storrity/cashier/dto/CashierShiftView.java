@@ -11,7 +11,7 @@ public record CashierShiftView(
         UUID storeId,
         String cashierUsername,
         CashierShiftStatus status,
-        Money openingFloatInMicroNaira,
+        Money openingFloat,
         LocalDateTime openedAt,
         String openedBy,
         LocalDateTime closingSubmittedAt, 

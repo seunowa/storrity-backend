@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.storrity.storrity.security.config;
 
 import com.storrity.storrity.security.service.JwtAuthFilter;
@@ -50,6 +46,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // enable Spring Security CORS support
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                            "/",
+                            "/error",
+                            "/favicon.ico",
                             "/api/v1/auth/**",
                             "/api/v1/ping/**",
                             "/api/v1/license/**",

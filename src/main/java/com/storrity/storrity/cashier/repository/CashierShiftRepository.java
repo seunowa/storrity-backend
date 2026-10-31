@@ -6,7 +6,11 @@ import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
-public interface CashierShiftRepository extends JpaRepository<CashierShift, UUID> {
+/**
+ *
+ * @author Seun Owa
+ */
+public interface CashierShiftRepository extends JpaRepository<CashierShift, UUID>, CashierShiftRepositoryCustom{
 
     boolean existsByStoreIdAndCashierUsernameAndStatusIn(UUID storeId, String username, Collection<CashierShiftStatus> statuses);
 

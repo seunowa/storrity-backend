@@ -2,7 +2,9 @@ package com.storrity.storrity.cashier.controller;
 
 import com.storrity.storrity.cashier.dto.*;
 import com.storrity.storrity.cashier.entity.CashFlow;
+import com.storrity.storrity.cashier.entity.CashierShiftQueryParams;
 import com.storrity.storrity.cashier.service.CashierShiftService;
+import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.ApiError;
 import com.storrity.storrity.util.exception.AuthorizationError;
 import com.storrity.storrity.util.exception.ServerError;
@@ -18,6 +20,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.*;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +35,81 @@ public class CashierShiftController {
 
     public CashierShiftController(CashierShiftService s) {
         service = s;
+    }
+    
+    @Operation(
+        operationId = "listCashierShifts",
+        description = "Lists cashier shifts with optional filters, sorting and pagination "
+            + "requires permission: CASHIER_SHIFT_READ",
+        summary = "List cashier shifts",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Cashier shifts retrieved successfully",
+            content = @Content(
+                array = @ArraySchema(schema = @Schema(implementation = CashierShiftView.class))
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Validation Error",
+            content = @Content(schema = @Schema(implementation = ValidationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Authentication Error",
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected error",
+            content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })
+    @GetMapping
+    @PreAuthorize("hasAuthority('CASHIER_SHIFT_READ')")
+    public List<CashierShiftView> list(
+            @ModelAttribute @Valid  @ParameterObject CashierShiftQueryParams params) {
+        return service.listShifts(params);
+    }
+    
+    @Operation(
+        operationId = "countCashierShifts",
+        description = "Counts cashier shifts matching the supplied filters "
+            + "requires permission: CASHIER_SHIFT_READ",
+        summary = "Count cashier shifts",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Cashier shift count retrieved successfully",
+            content = @Content(schema = @Schema(implementation = Long.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Validation Error",
+            content = @Content(schema = @Schema(implementation = ValidationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Authentication Error",
+            content = @Content(schema = @Schema(implementation = AuthorizationError.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Unexpected error",
+            content = @Content(schema = @Schema(implementation = ServerError.class))
+        )
+    })
+    
+    @GetMapping("/count")
+    @PreAuthorize("hasAuthority('CASHIER_SHIFT_READ')")
+    public CountDto count(
+            @ModelAttribute @Valid  @ParameterObject CashierShiftQueryParams params) {
+        return service.countShifts(params);
     }
 
     @Operation(

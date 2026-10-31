@@ -225,7 +225,9 @@ public class CheckoutServiceImpl implements CheckoutService{
 //        update care status to paid
         cart.setCartStatus(CartStatus.PAID);
         cartRepositry.save(cart);
-        return checkout;
+        
+//        this is to ensure checkout is returnd with all the associated payments and changes
+        return checkoutRepository.findById(checkout.getId()).get();
     }
 
     private void validateCheckoutAmounts(CheckoutCreationDto dto, List<ChangeDto> changes) {

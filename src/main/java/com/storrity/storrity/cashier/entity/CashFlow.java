@@ -32,8 +32,6 @@ public class CashFlow {
     private UUID storeId;
     @Column(name = "checkout_id", updatable = false)
     private UUID checkoutId;
-    @Column(name = "checkout_payment_id", updatable = false)
-    private UUID checkoutPaymentId;
     @Enumerated(EnumType.STRING)
     @Column(name = "flow_type", nullable = false, updatable = false, length = 40)
     private CashFlowType flowType; 

@@ -6,8 +6,8 @@ import com.storrity.storrity.cart.entity.PaymentChannel;
 import com.storrity.storrity.cart.entity.PaymentChannelQueryParams;
 import com.storrity.storrity.cart.entity.PaymentMethod;
 import com.storrity.storrity.cart.repository.PaymentChannelRepository;
-import com.storrity.storrity.security.entity.AppUser;
 import com.storrity.storrity.security.repository.UserRepository;
+import com.storrity.storrity.security.service.AuthenticatedUser;
 import com.storrity.storrity.storeaccess.service.StoreAccessService;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.InputValidationAppException;
@@ -17,7 +17,6 @@ import java.util.Locale;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +52,10 @@ public class PaymentChannelServiceImpl implements PaymentChannelService{
             throw new InputValidationAppException(
                     "A payment channel with code '" + code + "' already exists for this store");
         }
+        if(PaymentMethod.CASH.equals(request.getPaymentMethod())){
+            throw new InputValidationAppException("Cash payment channel is created automatically for each store.");
+        }
+        
         return paymentChannelRepository.save(PaymentChannel.builder()
                 .storeId(request.getStoreId())
                 .paymentMethod(request.getPaymentMethod())
@@ -64,29 +67,18 @@ public class PaymentChannelServiceImpl implements PaymentChannelService{
     
     @Transactional
     @Override
-    public PaymentChannel createCashChannelForStore(UUID storeId) { 
-        
-        return paymentChannelRepository.findByStoreIdAndCode(storeId, CASH_CODE)
-                .orElseGet(() -> paymentChannelRepository.save(PaymentChannel.builder()
-                        .storeId(storeId)
-                        .paymentMethod(PaymentMethod.CASH)
-                        .code(CASH_CODE)
-                        .name("Cash")
-                        .active(true)
-                        .build()));
-//        return paymentChannelRepository.save(PaymentChannel.builder()
-//            .storeId(storeId)
-//            .paymentMethod(PaymentMethod.CASH)
-//            .code(CASH_CODE)
-//            .name("Cash")
-//            .active(true)
-//            .build());
+    public PaymentChannel createCashChannelForStore(UUID storeId) {       
+        return paymentChannelRepository.findCashChannelByStoreId(storeId)
+                .orElseGet(() -> paymentChannelRepository.save(
+                        PaymentChannel.builder()
+                                .storeId(storeId)
+                                .paymentMethod(PaymentMethod.CASH)
+                                .code(CASH_CODE)
+                                .name("Cash")
+                                .active(true)
+                                .build()
+                ));
     }
-
-//    @Override
-//    public PaymentChannel fetch(UUID id) {
-//        return paymentChannelRepository.findById(id).orElseThrow(()->{return new ResourceNotFoundAppException("Payment channel not found with id: " + id);});
-//    }
 
     @Override
     @Transactional(readOnly = true)
@@ -94,12 +86,10 @@ public class PaymentChannelServiceImpl implements PaymentChannelService{
         return fetchForManagement(id);
     }
 
-//    @Override
-//    public PaymentChannel fetch(UUID channelid, UUID storeId) {
-//        return paymentChannelRepository.findByIdAndStoreIdAndActiveTrue(channelid, storeId).orElseThrow(()->{return new ResourceNotFoundAppException("Payment channel not found with id: " + channelid + " in store: " + storeId);});
-//    }}
-
-    /** Checkout lookup intentionally returns active channels only. */
+    /** Checkout lookup intentionally returns active channels only.
+     * @param channelId
+     * @param storeId
+     * @return  */
     @Override
     @Transactional(readOnly = true)
     public PaymentChannel fetch(UUID channelId, UUID storeId) {
@@ -164,15 +154,10 @@ public class PaymentChannelServiceImpl implements PaymentChannelService{
         params.getStoreIds().forEach(this::requireStoreAccess);
     }
 
-    private void requireStoreAccess(UUID storeId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()
-                || authentication.getName() == null || authentication.getName().isBlank()) {
-            throw new AccessDeniedException("Authentication is required to access payment channels");
-        }
-        AppUser user = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new AccessDeniedException("Authenticated user was not found"));
-        if (!storeAccessService.hasStoreAccess(user.getUsername(), storeId)) {
+    private void requireStoreAccess(UUID storeId) {        
+        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String permedBy = principal.getUsername();
+        if (!storeAccessService.hasStoreAccess(permedBy, storeId)) {
             throw new AccessDeniedException("User does not have access to store: " + storeId);
         }
     }

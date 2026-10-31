@@ -1,6 +1,12 @@
 STORRITY RELEASE NOTES
 
-Version: 1.7
+Version: 1.7.1
+
+Feature:
+* Simplify payload for cashier shift reconciliation
+* List shift with filters
+
+Version: 1.7.0
 
 Feature:
 * Multiple payment methods in checkout

@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.storrity.storrity.cart.repository.CartItemRepository;
+import com.storrity.storrity.security.service.AuthenticatedUser;
 import com.storrity.storrity.util.csv.CsvUtils;
 import com.storrity.storrity.util.exception.DataExportAppException;
 import jakarta.persistence.EntityManager;
@@ -34,6 +35,7 @@ import jakarta.persistence.PersistenceContext;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -64,12 +66,16 @@ public class CartServiceImpl implements CartService{
     public PricedCartDto create(CartCreationDto dto) {
         Store store = storeService.fetch(dto.getStoreId());
         
+        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String permedBy = principal.getUsername();
+        
         Cart cart = Cart.builder()
                 .transactionRef(dto.getTransactionRef())
                 .tag(dto.getTag())
                 .store(store)
                 .customerId(dto.getCustomerId())
                 .cartStatus(CartStatus.AWAITING_PAYMENT)
+                .createdBy(permedBy)
                 .build();
         Cart savedCart = cartRepositry.save(cart);
         return PricedCartDto.from(savedCart);
