@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.security.sasl.AuthenticationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -46,6 +47,13 @@ public class GlobalExceptionHandler {
     public ApiError handleResourceAlreadyExists(ResourceAlreadyExistsAppException ex) {
         System.err.println(ex);
         return new ApiError(400, "Resource already exists", ex.getMessage());
+    }
+    
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiError handleResourceAlreadyExists(AccessDeniedException ex) {
+        System.err.println(ex);
+        return new ApiError(403, "Access denied", ex.getMessage());
     }
     
     @ExceptionHandler(BadRequestAppException.class)

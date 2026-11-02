@@ -7,11 +7,13 @@ import com.storrity.storrity.cart.entity.*;
 import com.storrity.storrity.cart.repository.PaymentChannelRepository;
 import com.storrity.storrity.cashaccounts.entity.Money;
 import com.storrity.storrity.security.service.AuthenticatedUser;
+import com.storrity.storrity.storeaccess.service.StoreAccessService;
 import com.storrity.storrity.util.dto.CountDto;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,19 +28,22 @@ public class CashierShiftService {
     private final CheckoutPaymentShiftRepository paymentRepo;
     private final ShiftClosingAttemptRepository attemptRepo;
     private final PaymentChannelRepository paymentChannelRepo;
+    private final StoreAccessService storeAccessService;
 
     public CashierShiftService(CashierShiftRepository shiftRepo,
             ShiftPaymentReconciliationRepository reconRepo,
             CashFlowRepository flowRepo,
             CheckoutPaymentShiftRepository paymentRepo,
             ShiftClosingAttemptRepository attemptRepo,
-            PaymentChannelRepository paymentChannelRepo) {
+            PaymentChannelRepository paymentChannelRepo,
+            StoreAccessService storeAccessService) {
         this.shiftRepo = shiftRepo;
         this.reconRepo = reconRepo;
         this.flowRepo = flowRepo;
         this.paymentRepo = paymentRepo;
         this.attemptRepo = attemptRepo;
         this.paymentChannelRepo = paymentChannelRepo;
+        this.storeAccessService = storeAccessService;
     }
     
     @Transactional(readOnly = true)
@@ -59,6 +64,9 @@ public class CashierShiftService {
     @Transactional
     public CashierShiftView openShift(OpenCashierShiftRequest req) {
         String username = currentUsername();
+        
+        requireStoreAccess(req.storeId());
+        
         List<CashierShiftStatus> active = List.of(CashierShiftStatus.OPEN, CashierShiftStatus.CLOSING_SUBMITTED);
         if (shiftRepo.existsByStoreIdAndCashierUsernameAndStatusIn(req.storeId(), username, active)) {
             throw new IllegalStateException("You already have an active shift for this store.");
@@ -372,6 +380,16 @@ public class CashierShiftService {
         Acc(String name, long amount) {
             this.name = name;
             this.amount = amount;
+        }
+    }
+    
+    
+
+    private void requireStoreAccess(UUID storeId) {        
+        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String permedBy = principal.getUsername();
+        if (!storeAccessService.hasStoreAccess(permedBy, storeId)) {
+            throw new AccessDeniedException("User does not have access to store: " + storeId);
         }
     }
 }

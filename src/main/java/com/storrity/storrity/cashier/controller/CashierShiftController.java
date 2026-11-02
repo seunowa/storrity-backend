@@ -86,7 +86,7 @@ public class CashierShiftController {
         @ApiResponse(
             responseCode = "200",
             description = "Cashier shift count retrieved successfully",
-            content = @Content(schema = @Schema(implementation = Long.class))
+            content = @Content(schema = @Schema(implementation = CountDto.class))
         ),
         @ApiResponse(
             responseCode = "400",
