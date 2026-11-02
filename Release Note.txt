@@ -1,5 +1,10 @@
 STORRITY RELEASE NOTES
 
+Version: 1.7.2
+
+Bug Fix:
+* Change output of count shifts endpoint 
+
 Version: 1.7.1
 
 Feature:
