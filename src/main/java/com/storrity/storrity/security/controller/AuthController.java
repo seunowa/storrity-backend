@@ -34,6 +34,7 @@ import com.storrity.storrity.security.repository.UserRoleRepository;
 import com.storrity.storrity.security.service.AppUserService;
 import com.storrity.storrity.security.service.JwtUtil;
 import com.storrity.storrity.storeaccess.dto.StoreAccessPolicyRequest;
+import com.storrity.storrity.storeaccess.service.StoreAccessContext;
 import com.storrity.storrity.storeaccess.service.StoreAccessService;
 import com.storrity.storrity.util.exception.AuthenticationAppException;
 import com.storrity.storrity.util.exception.BadRequestAppException;
@@ -143,13 +144,17 @@ public class AuthController {
             throw new AuthenticationAppException("Invalid credentials");
         }
 
-        var authorities = user.getRoles().stream()
+        List<String> authorities = user.getRoles().stream()
                 .flatMap(role -> role.getPermissions().stream())
                 .map(UserPermission::getId)
                 .distinct()
                 .toList();
+        
+        // Resolve store scope once at authentication time and embed it in the JWT.
+        StoreAccessContext storeAccessContext = storeAccessService.getStoreAccessContext(user.getUsername());
 
-        String token = jwtUtil.generateToken(user.getUsername(), request.getClientId(), cs.getName(), authorities);
+        String token = jwtUtil.generateToken(user.getUsername(), request.getClientId(),
+                cs.getName(), authorities, storeAccessContext);
         return LoginSuccessDto.builder().token(token).build();
     }
 //    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto request) {

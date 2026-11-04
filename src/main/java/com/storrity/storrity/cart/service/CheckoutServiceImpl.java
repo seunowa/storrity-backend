@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.storrity.storrity.sales.service.SalesService;
 import com.storrity.storrity.security.service.AuthenticatedUser;
+import com.storrity.storrity.storeaccess.service.StoreAccessContextService;
 import com.storrity.storrity.util.exception.BadRequestAppException;
 import java.util.ArrayList;
 import java.util.Set;
@@ -51,6 +52,7 @@ public class CheckoutServiceImpl implements CheckoutService{
     private final ChangeRepository changeRepository;
     private final CashierShiftService cashierShiftService;
     private final CasierCashFlowService cashFlowService;
+    private final StoreAccessContextService storeAccessContextService;
 
     @Autowired
     public CheckoutServiceImpl(CheckoutRepository checkoutRepository, CartRepositry cartRepositry,
@@ -59,7 +61,8 @@ public class CheckoutServiceImpl implements CheckoutService{
             CheckoutPaymentRepository checkoutPaymentRepository, 
             ChangeRepository changeRepository,
             CashierShiftService cashierShiftService,
-            CasierCashFlowService cashFlowService) {
+            CasierCashFlowService cashFlowService,
+            StoreAccessContextService storeAccessContextService) {
         this.checkoutRepository = checkoutRepository;
         this.cartRepositry = cartRepositry;
         this.salesService = salesService;
@@ -68,6 +71,7 @@ public class CheckoutServiceImpl implements CheckoutService{
         this.changeRepository = changeRepository;
         this.cashierShiftService = cashierShiftService;
         this.cashFlowService = cashFlowService;
+        this.storeAccessContextService = storeAccessContextService;
     }
 
     @Transactional
@@ -268,11 +272,13 @@ public class CheckoutServiceImpl implements CheckoutService{
 
     @Override
     public List<Checkout> list(CheckoutQueryParams params) {
+        storeAccessContextService.normalizeStoreFilters(params);
         return checkoutRepository.list(params);
     }
 
     @Override
-    public CountDto count(CheckoutQueryParams params) {        
+    public CountDto count(CheckoutQueryParams params) {
+        storeAccessContextService.normalizeStoreFilters(params);      
         return CountDto
                 .builder()
                 .count(checkoutRepository.countRecords(params))

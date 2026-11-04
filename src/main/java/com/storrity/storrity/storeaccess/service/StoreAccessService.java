@@ -9,12 +9,13 @@ import com.storrity.storrity.storeaccess.dto.StoreAssignmentRequest;
 import java.util.UUID;
 
 public interface StoreAccessService {
-    AccessibleStoresResponse getAccessibleStores(String username);
-    AccessibleStoresResponse replaceStoreAssignments(String username, StoreAssignmentRequest request, String actorUsername);
-    StoreAccessPolicyResponse getPolicy(String username);
-    StoreAccessPolicyResponse updatePolicy(String username, StoreAccessPolicyRequest request, String actorUsername);
-    StoreAccessUsersResponse getUsersWithStoreAccess(UUID storeId);
-    StoreAccessCheckResponse checkAccess(String username, UUID storeId);
-    boolean hasStoreAccess(String username, UUID storeId);
-    void revokeStoreAccess(String username, UUID storeId);
+    public StoreAccessContext getStoreAccessContext(String username);
+    public AccessibleStoresResponse getAccessibleStores(String username);
+    public AccessibleStoresResponse replaceStoreAssignments(String username, StoreAssignmentRequest request, String actorUsername);
+    public StoreAccessPolicyResponse getPolicy(String username);
+    public StoreAccessPolicyResponse updatePolicy(String username, StoreAccessPolicyRequest request, String actorUsername);
+    public StoreAccessUsersResponse getUsersWithStoreAccess(UUID storeId);
+    public StoreAccessCheckResponse checkAccess(String username, UUID storeId);
+    public boolean hasStoreAccess(String username, UUID storeId);
+    public void revokeStoreAccess(String username, UUID storeId);
 }

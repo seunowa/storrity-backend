@@ -64,7 +64,7 @@ public class PaymentChannelRepositoryImpl implements PaymentChannelRepositoryCus
         if (params.getIds() != null && !params.getIds().isEmpty()) {
             predicates.add(root.get("id").in(params.getIds()));
         }
-        if (params.getStoreIds() != null && !params.getStoreIds().isEmpty()) {
+        if (params.getStoreIds() != null) {
             predicates.add(root.get("storeId").in(params.getStoreIds()));
         }
         if (params.getPaymentMethods() != null && !params.getPaymentMethods().isEmpty()) {

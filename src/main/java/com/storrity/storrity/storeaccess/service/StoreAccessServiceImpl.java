@@ -21,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,23 @@ public class StoreAccessServiceImpl implements StoreAccessService {
         this.policyRepository = policyRepository;
         this.storeRepository = storeRepository;
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public StoreAccessContext getStoreAccessContext(String username) {
+        requireUser(username);
+
+        boolean accessAllStores = isAllStores(username);
+        if (accessAllStores) {
+            return new StoreAccessContext(true, Set.of());
+        }
+
+        Set<UUID> accessibleStoreIds = accessRepository.findAllByUsername(username).stream()
+                .map(UserStoreAccess::getStoreId)
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return new StoreAccessContext(false, accessibleStoreIds);
     }
 
     @Override

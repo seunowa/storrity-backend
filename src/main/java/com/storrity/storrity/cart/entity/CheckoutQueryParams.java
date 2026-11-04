@@ -4,6 +4,7 @@
  */
 package com.storrity.storrity.cart.entity;
 
+import com.storrity.storrity.storeaccess.query.StoreScopedQueryParams;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +26,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
-public class CheckoutQueryParams {        
+public class CheckoutQueryParams implements StoreScopedQueryParams{        
     private List<UUID> ids;    
     private List<String> transactionRefs;
     private List<UUID> storeIds;

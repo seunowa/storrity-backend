@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.storrity.storrity.cart.repository.CartItemRepository;
 import com.storrity.storrity.security.service.AuthenticatedUser;
+import com.storrity.storrity.storeaccess.service.StoreAccessContextService;
 import com.storrity.storrity.util.csv.CsvUtils;
 import com.storrity.storrity.util.exception.DataExportAppException;
 import jakarta.persistence.EntityManager;
@@ -50,16 +51,19 @@ public class CartServiceImpl implements CartService{
     private final StoreService storeService;
     private final CartItemRepository cartItemRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final StoreAccessContextService storeAccessContextService;
 
     @Autowired
     public CartServiceImpl(CartRepositry cartRepositry, ProductRepository productRepository
             , StoreService storeService, CartItemRepository cartItemRepository
-            , ApplicationEventPublisher eventPublisher) {
+            , ApplicationEventPublisher eventPublisher,
+            StoreAccessContextService storeAccessContextService) {
         this.cartRepositry = cartRepositry;
         this.productRepository = productRepository;
         this.storeService = storeService;
         this.cartItemRepository = cartItemRepository;
         this.eventPublisher = eventPublisher;
+        this.storeAccessContextService = storeAccessContextService;
     }
 
     @Override
@@ -90,6 +94,7 @@ public class CartServiceImpl implements CartService{
 
     @Override
     public List<CartDto> list(CartQueryParams params) {
+        storeAccessContextService.normalizeStoreFilters(params);
         List<Cart> carts = cartRepositry.list(params);
         return carts.stream()
                 .map(CartDto::from)
@@ -98,6 +103,7 @@ public class CartServiceImpl implements CartService{
 
     @Override
     public CountDto count(CartQueryParams params) {
+        storeAccessContextService.normalizeStoreFilters(params);
         return CountDto
                 .builder()
                 .count(cartRepositry.countRecords(params))

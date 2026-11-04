@@ -1,5 +1,6 @@
 package com.storrity.storrity.cart.entity;
 
+import com.storrity.storrity.storeaccess.query.StoreScopedQueryParams;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -19,9 +20,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
-public class PaymentChannelQueryParams {
+public class PaymentChannelQueryParams implements StoreScopedQueryParams {
     private List<UUID> ids;
-    @NotEmpty(message = "storeIds must contain at least one store the user is authorized to access")
     private List<UUID> storeIds;
     private List<PaymentMethod> paymentMethods;
     private List<String> codes;

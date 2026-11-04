@@ -6,8 +6,7 @@ import com.storrity.storrity.cart.entity.PaymentChannel;
 import com.storrity.storrity.cart.entity.PaymentChannelQueryParams;
 import com.storrity.storrity.cart.entity.PaymentMethod;
 import com.storrity.storrity.cart.repository.PaymentChannelRepository;
-import com.storrity.storrity.security.repository.UserRepository;
-import com.storrity.storrity.security.service.AuthenticatedUser;
+import com.storrity.storrity.storeaccess.service.StoreAccessContextService;
 import com.storrity.storrity.storeaccess.service.StoreAccessService;
 import com.storrity.storrity.util.dto.CountDto;
 import com.storrity.storrity.util.exception.InputValidationAppException;
@@ -16,8 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,23 +27,21 @@ public class PaymentChannelServiceImpl implements PaymentChannelService{
     
     private static final String CASH_CODE = "CASH";
     private final PaymentChannelRepository paymentChannelRepository;
-    private final StoreAccessService storeAccessService;
-    private final UserRepository userRepository;
+    private final StoreAccessContextService storeAccessContextService;
 
     @Autowired
     public PaymentChannelServiceImpl(
             PaymentChannelRepository paymentChannelRepository,
             StoreAccessService storeAccessService,
-            UserRepository userRepository) {
+            StoreAccessContextService storeAccessContextService) {
         this.paymentChannelRepository = paymentChannelRepository;
-        this.storeAccessService = storeAccessService;
-        this.userRepository = userRepository;
+        this.storeAccessContextService = storeAccessContextService;
     }
 
     @Override
     @Transactional
     public PaymentChannel create(PaymentChannelCreateRequest request) {
-        requireStoreAccess(request.getStoreId());
+        storeAccessContextService.requireStoreAccess(request.getStoreId());
         String code = normalizeCode(request.getCode());
         if (paymentChannelRepository.existsByStoreIdAndCode(request.getStoreId(), code)) {
             throw new InputValidationAppException(
@@ -93,7 +88,7 @@ public class PaymentChannelServiceImpl implements PaymentChannelService{
     @Override
     @Transactional(readOnly = true)
     public PaymentChannel fetch(UUID channelId, UUID storeId) {
-        requireStoreAccess(storeId);
+        storeAccessContextService.requireStoreAccess(storeId);
         return paymentChannelRepository.findByIdAndStoreIdAndActiveTrue(channelId, storeId)
                 .orElseThrow(() -> new ResourceNotFoundAppException(
                         "Active payment channel not found with id: " + channelId
@@ -103,14 +98,14 @@ public class PaymentChannelServiceImpl implements PaymentChannelService{
     @Override
     @Transactional(readOnly = true)
     public List<PaymentChannel> list(PaymentChannelQueryParams params) {
-        requireStoreFilters(params);
+        storeAccessContextService.normalizeStoreFilters(params);
         return paymentChannelRepository.list(params);
     }
 
     @Override
     @Transactional(readOnly = true)
     public CountDto count(PaymentChannelQueryParams params) {
-        requireStoreFilters(params);
+        storeAccessContextService.normalizeStoreFilters(params);
         return CountDto.builder().count(paymentChannelRepository.countRecords(params)).build();
     }
 
@@ -142,25 +137,25 @@ public class PaymentChannelServiceImpl implements PaymentChannelService{
         PaymentChannel channel = paymentChannelRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundAppException(
                         "Payment channel not found with id: " + id));
-        requireStoreAccess(channel.getStoreId());
+        storeAccessContextService.requireStoreAccess(channel.getStoreId());
         return channel;
     }
 
-    private void requireStoreFilters(PaymentChannelQueryParams params) {
-        if (params.getStoreIds() == null || params.getStoreIds().isEmpty()) {
-            throw new InputValidationAppException(
-                    "storeIds must contain at least one store the user is authorized to access");
-        }
-        params.getStoreIds().forEach(this::requireStoreAccess);
-    }
+//    private void requireStoreFilters(PaymentChannelQueryParams params) {
+//        if (params.getStoreIds() == null || params.getStoreIds().isEmpty()) {
+//            throw new InputValidationAppException(
+//                    "storeIds must contain at least one store the user is authorized to access");
+//        }
+//        params.getStoreIds().forEach(this::requireStoreAccess);
+//    }
 
-    private void requireStoreAccess(UUID storeId) {        
-        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String permedBy = principal.getUsername();
-        if (!storeAccessService.hasStoreAccess(permedBy, storeId)) {
-            throw new AccessDeniedException("User does not have access to store: " + storeId);
-        }
-    }
+//    private void requireStoreAccess(UUID storeId) {        
+//        AuthenticatedUser principal = (AuthenticatedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String permedBy = principal.getUsername();
+//        if (!storeAccessService.hasStoreAccess(permedBy, storeId)) {
+//            throw new AccessDeniedException("User does not have access to store: " + storeId);
+//        }
+//    }
 
     private String normalizeCode(String code) {
         return code.trim().toUpperCase(Locale.ROOT);

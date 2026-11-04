@@ -10,6 +10,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -32,15 +35,20 @@ public class JwtAuthFilter extends GenericFilter {
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             if (jwtUtil.isValid(token)) {
-                var username = jwtUtil.extractUsername(token);
+                String username = jwtUtil.extractUsername(token);
                 String clientId = jwtUtil.extractClientId(token);
                 String clientName = jwtUtil.extractClientName(token);
+                boolean accessAllStores = jwtUtil.extractAccessAllStores(token);
+                Set<UUID> accessibleStoreIds = jwtUtil.extractAccessibleStoreIds(token);
                 
-                var authorities = jwtUtil.extractAuthorities(token).stream()
+                List<SimpleGrantedAuthority> authorities = jwtUtil
+                        .extractAuthorities(token)
+                        .stream()
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
                 
-                var principal = new AuthenticatedUser(username, clientId, clientName);
+                AuthenticatedUser principal = new AuthenticatedUser(username, clientId, clientName,
+                        accessAllStores, accessibleStoreIds);
 
                 var auth = new UsernamePasswordAuthenticationToken(principal, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);

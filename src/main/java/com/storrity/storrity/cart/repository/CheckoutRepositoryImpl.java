@@ -86,9 +86,13 @@ public class CheckoutRepositoryImpl implements CheckoutRepositoryCustom{
             predicates.add(root.get("transactionRef").in(params.getTransactionRefs()));
         }
         
-        if (params.getStoreIds()!= null && !params.getStoreIds().isEmpty()) {
+//        if (params.getStoreIds()!= null && !params.getStoreIds().isEmpty()) {
+//            predicates.add(root.get("store").get("id").in(params.getStoreIds()));
+//        } 
+        
+        if (params.getStoreIds()!= null) {
             predicates.add(root.get("store").get("id").in(params.getStoreIds()));
-        }       
+        }   
                 
         if (params.getPerformedBy()!= null && !params.getPerformedBy().isEmpty()) {
             predicates.add(root.get("performedBy").in(params.getPerformedBy()));

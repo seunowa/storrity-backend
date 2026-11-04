@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.storrity.storrity;
 
 import com.storrity.storrity.cashaccounts.dto.CashAccountCreationDto;
@@ -15,7 +11,6 @@ import com.storrity.storrity.license.dto.LicenseDto;
 import com.storrity.storrity.license.service.LicenseService;
 import com.storrity.storrity.product.entity.Product;
 import com.storrity.storrity.product.entity.ProductPackage;
-import com.storrity.storrity.supply.entity.SupplyStatus;
 import com.storrity.storrity.product.repository.ProductPackageRepository;
 import com.storrity.storrity.product.repository.ProductRepository;
 import com.storrity.storrity.sales.dto.SaleCreationDto;
@@ -24,18 +19,12 @@ import com.storrity.storrity.sales.entity.PckQtyWithSellinPrice;
 import com.storrity.storrity.stockmovement.entity.PckQty;
 import com.storrity.storrity.store.entity.Store;
 import com.storrity.storrity.store.entity.StoreStatus;
-import com.storrity.storrity.store.repository.StoreRepository;
-import com.storrity.storrity.supply.dto.SupplyCreationDtoStale;
-import com.storrity.storrity.supply.dto.SupplyItemCreationDtoStale;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import com.storrity.storrity.sales.service.SalesService;
-import com.storrity.storrity.security.dto.UserCreationDto;
-import com.storrity.storrity.security.entity.UserPermission;
-import com.storrity.storrity.security.entity.UserRole;
 import com.storrity.storrity.security.repository.UserRepository;
 import com.storrity.storrity.security.repository.UserRoleRepository;
 import com.storrity.storrity.security.service.AppUserService;
@@ -49,6 +38,7 @@ import com.storrity.storrity.supply.dto.PurchaseOrderItemCreationDto;
 import com.storrity.storrity.supply.dto.PurchaseOrderCreationDto;
 import com.storrity.storrity.supply.dto.SupplyDto;
 import com.storrity.storrity.supply.service.SupplyService;
+import java.util.Set;
 import org.springframework.context.annotation.Profile;
 import java.util.UUID;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -106,7 +96,9 @@ public class DataInitializer implements CommandLineRunner{
         AuthenticatedUser devUser = new AuthenticatedUser(
                 "dev-user",
                 "dev-client",
-                "Development Client"
+                "Development Client",
+                true,
+                Set.of()
         );
 
         UsernamePasswordAuthenticationToken authentication =
